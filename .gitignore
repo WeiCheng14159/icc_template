@@ -1,0 +1,9 @@
+*.log
+*.key
+*.conf
+*.fsdb
+*.dc
+*.sdf
+jgproject/
+syn/
+build/
