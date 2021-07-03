@@ -6,7 +6,7 @@ viewPort 2560 23 1920 1137 201 130
 
 ; File list:
 ; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
-openDirFile -d / "" "/home/wei/git/sample_verilog/build/traffic_light.fsdb"
+openDirFile -d / "" "/home/wei/git/icc_template/build/traffic_light.fsdb"
 
 ; file time scale:
 ; fileTimeScale ### s|ms|us|ns|ps
@@ -25,7 +25,7 @@ marker 0.000000
 ; visible top row signal index
 top 0
 ; marker line index
-markerPos 6
+markerPos 19
 
 ; event list
 ; addEvent event_name event_expression
@@ -46,11 +46,11 @@ curSTATUS ByChange
 
 
 addGroup "System"
-activeDirFile "" "/home/wei/git/sample_verilog/build/traffic_light.fsdb"
+activeDirFile "" "/home/wei/git/icc_template/build/traffic_light.fsdb"
 addSignal -h 15 /traffic_light_tb/ul/clk
-addSignal -h 15 -holdScope curr_state[4:0]
-addSignal -h 15 -holdScope next_state[4:0]
 addSignal -h 15 -holdScope rst
+addSignal -h 15 -holdScope pass
+addSignal -h 15 /traffic_light_tb/ul/ul_ctrl/curr_state[4:0]
 addGroup "Output"
 addSignal -h 15 /traffic_light_tb/ul/R
 addSignal -h 15 -holdScope G
@@ -61,10 +61,16 @@ addSignal -h 15 -holdScope out[2]
 addSignal -h 15 -holdScope out[1]
 addSignal -h 15 -holdScope out[0]
 addGroup "G4"
+addSignal -h 15 /traffic_light_tb/ul/ul_dp/cmd_flags[3:0]
+addSignal -h 15 -holdScope int_flags[3:0]
+addSignal -h 15 -holdScope R_r
+addSignal -h 15 -holdScope G_r
+addSignal -h 15 -holdScope Y_r
+addGroup "G5"
 
 ; getSignalForm Scope Hierarchy Status
 ; active file of getSignalForm
-activeDirFile "" "/home/wei/git/sample_verilog/build/traffic_light.fsdb"
+activeDirFile "" "/home/wei/git/icc_template/build/traffic_light.fsdb"
 
 GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
 getSignalForm close
@@ -75,6 +81,8 @@ getSignalForm close
 SCOPE_LIST_BEGIN
 "/traffic_light_tb"
 "/traffic_light_tb/ul"
+"/traffic_light_tb/ul/ul_ctrl"
+"/traffic_light_tb/ul/ul_dp"
 SCOPE_LIST_END
 
 GETSIGNALFORM_SCOPE_HIERARCHY_END
