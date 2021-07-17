@@ -1,3 +1,5 @@
+`include "def.v"
+
 module dp(
   input                                 clk,
   input                                 reset,
