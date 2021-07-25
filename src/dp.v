@@ -4,8 +4,8 @@ module dp(
   input                                 clk,
   input                                 reset,
   input                                 cnt_rst,
-  input               [`CMD_FLAG_W-1:0] cmd_flags,
-  output reg          [`INT_FLAG_W-1:0] int_flags,
+  input                  [`STATE_W-1:0] state,
+  output reg             [`STATE_W-1:0] int_flags,
   output                                R,
   output                                G,
   output                                Y
@@ -22,28 +22,28 @@ module dp(
   // assign Y = Y_r;
   // assign R = R_r;
 
-  assign G = cmd_flags[`CMD_INIT] | G_r;
-  assign Y = cmd_flags[`CMD_Y];
-  assign R = cmd_flags[`CMD_R];
+  assign G = state[`S_INIT] | G_r;
+  assign Y = state[`S_Y];
+  assign R = state[`S_R];
 
-  reg      [`COUNTER_W-1:0] cnt;
-  wire     [`COUNTER_W-1:0] cnt_zero = {`COUNTER_W{1'b0}};
+  reg            [`CNT_W-1:0] cnt;
+  wire           [`CNT_W-1:0] cnt_zero = {`CNT_W{1'b0}};
 
   // G_rst
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
-      int_flags[`INT_INIT] <= 1'b0;
-    end else if (cmd_flags[`CMD_INIT]) begin
-      int_flags[`INT_INIT] <= (cnt < 1022) ? 1'b0 : 1'b1;
+      int_flags[`S_INIT] <= 1'b0;
+    end else if (state[`S_INIT]) begin
+      int_flags[`S_INIT] <= (cnt < 1022) ? 1'b0 : 1'b1;
     end else
-      int_flags[`INT_INIT] <= 1'b0;
+      int_flags[`S_INIT] <= 1'b0;
   end
 
   // Grst_r
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
       Grst_r <= 1'b0;
-    end else if (cmd_flags[`CMD_INIT]) begin
+    end else if (state[`S_INIT]) begin
       Grst_r <= (cnt < 1023) ? 1'b1 : 1'b0;
     end
   end
@@ -51,18 +51,18 @@ module dp(
   // G
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
-      int_flags[`INT_G] <= 1'b0;
-    end else if (cmd_flags[`CMD_G]) begin
-      int_flags[`INT_G] <= (cnt < 510) ? 1'b0 : 1'b1;
+      int_flags[`S_G] <= 1'b0;
+    end else if (state[`S_G]) begin
+      int_flags[`S_G] <= (cnt < 510) ? 1'b0 : 1'b1;
     end else
-      int_flags[`INT_G] <= 1'b0;
+      int_flags[`S_G] <= 1'b0;
   end
 
   // G_r
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
       G_r <= 1'b0;
-    end else if (cmd_flags[`CMD_G]) begin
+    end else if (state[`S_G]) begin
       G_r <= ( (cnt >= 127 & cnt <= 254) | (cnt >= 383 & cnt <= 510)) ? 1'b1 : 1'b0;
     end
   end
@@ -70,18 +70,18 @@ module dp(
   // R
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
-      int_flags[`INT_R] <= 1'b0;
-    end else if (cmd_flags[`CMD_R]) begin
-      int_flags[`INT_R] <= (cnt <= 1021) ? 1'b0 : 1'b1;
+      int_flags[`S_R] <= 1'b0;
+    end else if (state[`S_R]) begin
+      int_flags[`S_R] <= (cnt <= 1021) ? 1'b0 : 1'b1;
     end else
-      int_flags[`INT_R] <= 1'b0;
+      int_flags[`S_R] <= 1'b0;
   end
 
   // R_r
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
       R_r <= 1'b0;
-    end else if (cmd_flags[`CMD_R]) begin
+    end else if (state[`S_R]) begin
       R_r <= (cnt <= 1024) ? 1'b1 : 1'b0;
     end
   end
@@ -89,24 +89,24 @@ module dp(
   // Y 
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
-      int_flags[`INT_Y] <= 1'b0;
-    end else if (cmd_flags[`CMD_Y]) begin
-      int_flags[`INT_Y] <= (cnt <= 509) ? 1'b0 : 1'b1;
+      int_flags[`S_Y] <= 1'b0;
+    end else if (state[`S_Y]) begin
+      int_flags[`S_Y] <= (cnt <= 509) ? 1'b0 : 1'b1;
     end else
-      int_flags[`INT_Y] <= 1'b0;
+      int_flags[`S_Y] <= 1'b0;
   end
 
   // Y_r
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
       Y_r <= 1'b0;
-    end else if (cmd_flags[`CMD_Y]) begin
+    end else if (state[`S_Y]) begin
       Y_r <= (cnt <= 512) ? 1'b1 : 1'b0;
     end
   end
 
   // cnt
-  wire do_cnt = |cmd_flags;
+  wire do_cnt = |state;
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
       cnt <= cnt_zero;

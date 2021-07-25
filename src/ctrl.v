@@ -4,18 +4,18 @@ module ctrl(
   input                                 clk,
   input                                 reset,
   output reg                            dp_cnt_rst,
-  input               [`INT_FLAG_W-1:0] fb_flags,
-  output              [`CMD_FLAG_W-1:0] cmd_flags,
+  input                  [`STATE_W-1:0] fb_flags,
+  output reg             [`STATE_W-1:0] curr_state,
   input                                 pass
 );
 
-  reg                    [`STATE_W-1:0] curr_state, next_state;
-  reg                  [`COUNTER_W-1:0] cnt;
+  reg                    [`STATE_W-1:0] next_state;
+  reg                      [`CNT_W-1:0] cnt;
 
-  wire                      init_done = fb_flags[`INT_INIT];
-  wire                    turn_yellow = fb_flags[`INT_G];
-  wire                       turn_red = fb_flags[`INT_Y];
-  wire                       turn_end = fb_flags[`INT_R];
+  wire                      init_done = fb_flags[`S_INIT];
+  wire                    turn_yellow = fb_flags[`S_G];
+  wire                       turn_red = fb_flags[`S_Y];
+  wire                       turn_end = fb_flags[`S_R];
 
   // State Register (S)
   always @(posedge clk, posedge reset) begin
@@ -80,11 +80,6 @@ module ctrl(
       next_state[`S_INIT] = 1'b1;
     end
   end // Next State Logic (C)
-
-  assign cmd_flags[`CMD_INIT] = curr_state[`S_INIT];
-  assign cmd_flags[`CMD_G] = curr_state[`S_G];
-  assign cmd_flags[`CMD_Y] = curr_state[`S_Y];
-  assign cmd_flags[`CMD_R] = curr_state[`S_R];
 
   // Output Logic (C)
   always @(*) begin

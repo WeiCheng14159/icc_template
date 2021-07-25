@@ -9,19 +9,19 @@ module traffic_light (
   output Y
 );
 
-  wire                [`CMD_FLAG_W-1:0] fb_flags;
-  wire                [`CMD_FLAG_W-1:0] cmd_flags;
-  wire                [`INT_FLAG_W-1:0] int_flags;
+  wire                [`STATE_W-1:0] fb_flags;
+  wire                [`STATE_W-1:0] state;
+  wire                [`STATE_W-1:0] int_flags;
 
-  assign                                fb_flags = int_flags & cmd_flags;
-  wire                                  dp_cnt_rst;
+  assign                             fb_flags = int_flags & state;
+  wire                               dp_cnt_rst;
 
   ctrl ul_ctrl(
     .clk(clk),
     .reset(rst),
     .dp_cnt_rst(dp_cnt_rst),
     .fb_flags(fb_flags),
-    .cmd_flags(cmd_flags),
+    .curr_state(state),
     .pass(pass)
   );
 
@@ -29,7 +29,7 @@ module traffic_light (
     .clk(clk),
     .reset(rst),
     .cnt_rst(dp_cnt_rst),
-    .cmd_flags(cmd_flags),
+    .state(state),
     .int_flags(int_flags),
     .R(R),
     .G(G),

@@ -1,10 +1,10 @@
-# SimVision Command Script (Sat Jul 17 20:58:57 CST 2021)
+# SimVision Command Script (Sat Jul 03 15:43:03 CST 2021)
 #
 # Version 15.20.s084
 #
 # You can restore this configuration with:
 #
-#     simvision -input /home/wei/git/icc_template/conf/simvision_conf/rtl.sv
+#     simvision -input /home/wei/git/icc_template/conf/simvision_conf/post.sv
 #
 
 
@@ -61,7 +61,6 @@ preferences set toolbar-TimeSearch-WatchWindow {
   usual
   shown 0
 }
-preferences set key-bindings {PageUp PageUp Edit>Undo Ctrl+z View>Zoom>Next {Alt+Right arrow} View>Zoom>In Alt+i PageDown PageDown ScrollDown {Down arrow} Edit>Copy Ctrl+c View>Zoom>FullY_widget y Edit>Create>Group Ctrl+g Simulation>NextInScope F7 Edit>Select>All Ctrl+a Format>Radix>Decimal Ctrl+Shift+D Edit>Ungroup Ctrl+Shift+G TopOfPage Home Edit>Create>Condition Ctrl+e {command -console SimVision {%w sidebar access designbrowser selectall}} Alt+a ScrollLeft {Left arrow} View>Zoom>FullX_widget = Edit>SelectAllText Alt+a Edit>TextSearchConsole Alt+s Windows>SendTo>Waveform Ctrl+w Simulation>Return Shift+F5 View>CallstackDown {Ctrl+Down arrow} Select>All Ctrl+a Edit>Delete Del Format>Radix>Octal Ctrl+Shift+O Edit>Cut Ctrl+x Simulation>Run F2 Edit>Create>Marker Ctrl+m View>Center Alt+c View>CallstackInWindow Ctrl+k Edit>SelectAll Ctrl+a File>OpenDatabase Ctrl+o Edit>Redo Ctrl+y Format>Radix>Binary Ctrl+Shift+B View>ExpandSequenceTime>AtCursor Alt+x ScrollUp {Up arrow} File>CloseWindow Ctrl+Shift+w ScrollRight {Right arrow} View>Zoom>FullX Alt+= Edit>Create>Bus Ctrl+b Explore>NextEdge Ctrl+\] View>Zoom>Cursor-Baseline Alt+z View>Zoom>OutX Alt+o Edit>GoToLine Ctrl+g View>Zoom>Fit Alt+= View>Zoom>OutX_widget o View>CallstackUp {Ctrl+Up arrow} View>Bookmarks>Add Ctrl+b Format>Radix>Hexadecimal Ctrl+Shift+H Edit>Search Ctrl+f Simulation>Next F6 View>ShowValues Ctrl+s View>Zoom>InX Alt+i Edit>Create>MarkerAtCursor Ctrl+Shift+M View>Zoom>Out Alt+o Edit>TextSearch Ctrl+f Format>Signed Ctrl+Shift+S Edit>Paste Ctrl+v View>Zoom>Previous {Alt+Left arrow} View>CollapseSequenceTime>AtCursor Alt+s Format>Radix>ASCII Ctrl+Shift+A View>Zoom>InX_widget i Explore>PreviousEdge {Ctrl+[} Simulation>Step F5 BottomOfPage End}
 
 #
 # Databases
@@ -70,20 +69,6 @@ database require traffic_light -search {
 	./traffic_light.shm/traffic_light.trn
 	/home/wei/git/icc_template/build/traffic_light.shm/traffic_light.trn
 }
-#
-# Groups
-#
-catch {group new -name Output -overlay 0}
-group using Output
-group set -overlay 0
-group set -comment {}
-group clear 0 end
-
-group insert \
-     {traffic_light::traffic_light_tb.out[2:0]}  \
-     traffic_light::traffic_light_tb.ul.ul_dp.R  \
-     traffic_light::traffic_light_tb.ul.ul_dp.G  \
-     traffic_light::traffic_light_tb.ul.ul_dp.Y 
 
 #
 # Mnemonic Maps
@@ -122,34 +107,31 @@ set id [waveform add -signals  {
 	traffic_light::traffic_light_tb.ul.ul_ctrl.pass
 	} ]
 set id [waveform add -signals  {
-	{traffic_light::traffic_light_tb.ul.ul_ctrl.curr_state[4:0]}
-	} ]
-waveform hierarchy collapse $id
-set id [waveform add -signals  {
-	traffic_light::traffic_light_tb.ul.ul_dp.R_r
+	{traffic_light::traffic_light_tb.ul.ul_ctrl.next_state[3:0]}
 	} ]
 set id [waveform add -signals  {
-	traffic_light::traffic_light_tb.ul.ul_dp.G_r
+	traffic_light::traffic_light_tb.ul.ul_dp.cnt_rst
 	} ]
 set id [waveform add -signals  {
-	traffic_light::traffic_light_tb.ul.ul_dp.Y_r
+	{traffic_light::traffic_light_tb.ul.ul_dp.cnt[14:0]}
 	} ]
 set id [waveform add -signals  {
-	{traffic_light::traffic_light_tb.ul.ul_dp.int_flags[3:0]}
+	{traffic_light::traffic_light_tb.out[2:0]}
 	} ]
-
-set groupId0 [waveform add -groups Output]
-
+waveform hierarchy expand $id
+set id [waveform add -signals  {
+	traffic_light::traffic_light_tb.ul.ul_dp.G
+	} ]
+set id [waveform add -signals  {
+	traffic_light::traffic_light_tb.ul.ul_dp.R
+	} ]
+set id [waveform add -signals  {
+	traffic_light::traffic_light_tb.ul.ul_dp.Y
+	} ]
 
 waveform xview limits 0 81921ns
 
 #
 # Waveform Window Links
 #
-
-#
-# Console windows
-#
-console set -windowname Console
-window geometry Console 600x250+242+265
 
