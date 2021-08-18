@@ -1,5 +1,17 @@
 `include "def.v"
 
+`define send_interrupt(flag_i, thres_i)\
+  always @(posedge clk) begin          \
+    if(reset) begin                    \
+      int_flags[flag_i] <= 1'b0;       \
+    end else begin                     \
+      if(state[flag_i])                \
+        int_flags[flag_i] <= (cnt <= thres_i) ? 1'b0 : 1'b1; \
+      else                             \
+        int_flags[flag_i] <= 1'b0;     \
+    end                                \
+  end                                  \
+
 module dp(
   input                                 clk,
   input                                 reset,
@@ -17,11 +29,6 @@ module dp(
   reg                       G_r;
   reg                       Y_r;
   
-  // Connect pseudo output to real output
-  // assign G = Grst_r | G_r;
-  // assign Y = Y_r;
-  // assign R = R_r;
-
   assign G = state[`S_INIT] | G_r;
   assign Y = state[`S_Y];
   assign R = state[`S_R];
@@ -29,15 +36,11 @@ module dp(
   reg            [`CNT_W-1:0] cnt;
   wire           [`CNT_W-1:0] cnt_zero = {`CNT_W{1'b0}};
 
-  // G_rst
-  always @(posedge clk, posedge reset) begin
-    if(reset) begin 
-      int_flags[`S_INIT] <= 1'b0;
-    end else if (state[`S_INIT]) begin
-      int_flags[`S_INIT] <= (cnt < 1022) ? 1'b0 : 1'b1;
-    end else
-      int_flags[`S_INIT] <= 1'b0;
-  end
+  // Interrupts
+  `send_interrupt (`S_INIT, 1021)
+  `send_interrupt (`S_R, 1021)
+  `send_interrupt (`S_G, 509)
+  `send_interrupt (`S_Y, 509)
 
   // Grst_r
   always @(posedge clk, posedge reset) begin
@@ -46,16 +49,6 @@ module dp(
     end else if (state[`S_INIT]) begin
       Grst_r <= (cnt < 1023) ? 1'b1 : 1'b0;
     end
-  end
-
-  // G
-  always @(posedge clk, posedge reset) begin
-    if(reset) begin 
-      int_flags[`S_G] <= 1'b0;
-    end else if (state[`S_G]) begin
-      int_flags[`S_G] <= (cnt < 510) ? 1'b0 : 1'b1;
-    end else
-      int_flags[`S_G] <= 1'b0;
   end
 
   // G_r
@@ -67,16 +60,6 @@ module dp(
     end
   end
 
-  // R
-  always @(posedge clk, posedge reset) begin
-    if(reset) begin 
-      int_flags[`S_R] <= 1'b0;
-    end else if (state[`S_R]) begin
-      int_flags[`S_R] <= (cnt <= 1021) ? 1'b0 : 1'b1;
-    end else
-      int_flags[`S_R] <= 1'b0;
-  end
-
   // R_r
   always @(posedge clk, posedge reset) begin
     if(reset) begin 
@@ -84,16 +67,6 @@ module dp(
     end else if (state[`S_R]) begin
       R_r <= (cnt <= 1024) ? 1'b1 : 1'b0;
     end
-  end
-
-  // Y 
-  always @(posedge clk, posedge reset) begin
-    if(reset) begin 
-      int_flags[`S_Y] <= 1'b0;
-    end else if (state[`S_Y]) begin
-      int_flags[`S_Y] <= (cnt <= 509) ? 1'b0 : 1'b1;
-    end else
-      int_flags[`S_Y] <= 1'b0;
   end
 
   // Y_r
