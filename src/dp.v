@@ -43,7 +43,7 @@ module dp(
   `send_interrupt (`S_Y, 509)
 
   // Grst_r
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if(reset) begin 
       Grst_r <= 1'b0;
     end else if (state[`S_INIT]) begin
@@ -52,7 +52,7 @@ module dp(
   end
 
   // G_r
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if(reset) begin 
       G_r <= 1'b0;
     end else if (state[`S_G]) begin
@@ -61,7 +61,7 @@ module dp(
   end
 
   // R_r
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if(reset) begin 
       R_r <= 1'b0;
     end else if (state[`S_R]) begin
@@ -70,7 +70,7 @@ module dp(
   end
 
   // Y_r
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if(reset) begin 
       Y_r <= 1'b0;
     end else if (state[`S_Y]) begin
@@ -80,7 +80,7 @@ module dp(
 
   // cnt
   wire do_cnt = |state;
-  always @(posedge clk, posedge reset) begin
+  always @(posedge clk) begin
     if(reset) begin 
       cnt <= cnt_zero;
     end else if(cnt_rst) begin
