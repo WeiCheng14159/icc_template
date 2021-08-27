@@ -80,7 +80,7 @@ module dp(
 
   // cnt
   wire do_cnt = |state;
-  always @(posedge clk) begin
+  always @(posedge clk, posedge reset) begin
     if(reset) begin 
       cnt <= cnt_zero;
     end else if(cnt_rst) begin
