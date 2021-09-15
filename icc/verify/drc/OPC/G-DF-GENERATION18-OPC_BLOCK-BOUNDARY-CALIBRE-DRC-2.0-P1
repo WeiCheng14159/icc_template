@@ -1,0 +1,181 @@
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//     Title     : DRC(CALIBRE) of 0.18um Logic OPC_BLOCK Layers    //
+//                 Boundary Rule                                    //
+//     Parent Doc: G-03BO-GENERATION18-OPC_BLOCK-TLR/BOUNDARY	    //
+//     DRC Revision  : 2.0 P1                                       //
+//                                                                  //
+//     Copyright (c) United Microelectronics Corporation, 1980-2006 //
+//     All Right Reserved.                                          //
+//                                                                  //
+//     LIMITATION OF LIABILITY:                                     //
+//        United Microelectronics Corp. is not  liable  for  any    //
+//        property damage, personal  injury,  loss  of  profits,    //
+//        interruption of business,  or  for  any other special,    //
+//        consequential or incidental  damages, however  caused,    //
+//        whether for breach of warranty,contract tort(including    //
+//        negligence),strict liability or otherwise.                //
+//                                                                  //
+//     This runset is validated with Calibre 2004.3.                //       
+//////////////////////////////////////////////////////////////////////
+// revision  date         who              changes                  //
+//========= ==========  ======== ===================================//
+// V.1      2004/10/28    Momo    New Create                        //
+// 2.0 P1   2006/2/15  C.C.Chang 1.Rename:                          //
+//                                 From: G-1B-095-calibre-drc       //
+//                                 To: G-DF-GENERATION18-OPC_BLOCK- //
+//                                  BOUNDARY-CALIBRE-DRC            //
+//                               2.Reduce and merge layer mapping   //
+//                                 file into main deck.             //
+//                               3.Update: OPC_BOUN.4.2C.           //
+//////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)
+// =================================
+// (1) Please set up RESOLUTION,LAYOUT PATH,LAYOUT PRIMARY
+//     according to your design before run CALIBRE drc.
+// (2) This document includes 1 file.
+//     G-DF-GENERATION18-OPC_BLOCK-BOUNDARY-CALIBRE-DRC-2.0-P1  
+//////////////////////////////////////////////////////////////////////
+
+// *** INPUT LAYERS ***  
+
+//The layer mapping table is filtered from 180nm_layers_v2.6.cal
+            
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER MAP	 1	DATATYPE	0	1001
+LAYER DIFF		1001		// Diffusion
+LAYER MAP	41	DATATYPE	0	1040
+LAYER PO1		1040		// Poly1
+LAYER MAP	46	DATATYPE	0	1045
+LAYER ME1		1045		// Metal1
+LAYER MAP	70	DATATYPE	0	1170
+LAYER XOPCD		1170		// Diff OPC Block
+LAYER MAP	71	DATATYPE	0	1171
+LAYER XOPCP		1171		// Poly OPC Block
+LAYER MAP	72	DATATYPE	0	1172
+LAYER XOPCM1		1172		// Metal1 OPC Block
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+ 
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+ 
+RESOLUTION 10
+PRECISION  1000
+ 
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+ 
+FLAG ACUTE   YES
+FLAG OFFGRID YES
+FLAG SKEW    YES
+
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+DRC RESULTS DATABASE "../OPC.db" ASCII
+DRC SUMMARY REPORT   "../OPC.sum"
+ 
+DRC CHECK TEXT       COMMENTS RFI   
+DRC KEEP EMPTY       NO
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+DRC TOLERANCE FACTOR .003
+
+//**************************************************
+
+GROUP OPC_BOUNDARY_CHECK OPC_BOUN.?
+
+//***************************************************
+// 0.18um Logic OPC_BLOCK layers Boundary Rule CHECK
+//***************************************************
+
+//*********************
+// Diffusion Layer 
+//*********************
+OPC_BOUN.4.1A {@ Min width of Diff overhang DIFFUSION_OPC_BLOCK layer boundary outside OPC block region is 0 or 0.24
+	ENC XOPCD DIFF <0.12 ABUT>0<90 REGION
+}
+OPC_BOUN.4.1B {@ Min area of diff pattern is 0.144 when the width of this pattern overhang DIFFUSION_OPC_BLOCK layer boundary,x
+      @ and 0.12<=x<0.24 
+   X = DIFF INTERACT XOPCD
+   Y = ENC XOPCD X   >= 0.12 < 0.24 ABUT>0<90 REGION
+   A = INT Y < 0.24 ABUT>0<90 SINGULAR REGION
+   B = AREA X < 0.144
+   C = A INTERACT B
+   C INTERACT Y
+}
+OPC_BOUN.4.1N {@ DIFFUSION_OPC_BLOCK layer is only allowed 90 angle
+	ANGLE XOPCD >0 <90
+}
+//*********************
+//  Poly  Layer 
+//*********************
+OPC_BOUN.4.2A {@ Min width of Poly1 overhang POLY1_OPC_BLOCK layer boundary outside OPC block region is 0 or 0.18
+	ENC XOPCP PO1 <0.09  ABUT>0<90 REGION
+}
+OPC_BOUN.4.2B {@ Min area of poly1 pattern is 0.144 when the width of this pattern POLY1 DIFFUSION_OPC_BLOCK layer boundary,x
+      @ and 0.09<=x<0.18  
+   X = PO1 INTERACT XOPCP
+   Y = ENC XOPCP X   >=0.09 <0.18 ABUT>0<90 REGION
+   A = INT y < 0.18 ABUT>0<90 SINGULAR REGION
+   B = AREA X < 0.144
+   C = A INTERACT B
+   C INTERACT Y
+}
+//OPC_BOUN.4.2C {@ Mos area can not be straddled by DIFFSION or POLY1_OPC_BLOCK layer boundary
+//      @ Min spacing of MOS area to DIFFUSION of POLY1_OPC_BLOCK layer boundary
+//	X = PO1 AND DIFF
+//	Y = NOT RECTANGLE X ==0.12 BY ==0.03
+//	EXT Y XOPCD <0.1 ABUT<90  SINGULAR OVERLAP REGION
+//	EXT Y XOPCP <0.1 ABUT<90  SINGULAR OVERLAP REGION
+//	ENC Y XOPCD <0.1 ABUT<90  SINGULAR OVERLAP REGION
+//	ENC Y XOPCP <0.1 ABUT<90  SINGULAR OVERLAP REGION
+//}
+OPC_BOUN.4.2C {@ Mos area can not be straddled by DIFFSION or POLY1_OPC_BLOCK layer boundary
+      @ Min spacing of MOS area to DIFFUSION of POLY1_OPC_BLOCK layer boundary
+	X = PO1 AND DIFF
+	EXT X XOPCD <0.1 ABUT<90  SINGULAR OVERLAP REGION
+	EXT X XOPCP <0.1 ABUT<90  SINGULAR OVERLAP REGION
+	ENC X XOPCD <0.1 ABUT<90  SINGULAR OVERLAP REGION
+	ENC X XOPCP <0.1 ABUT<90  SINGULAR OVERLAP REGION
+}
+
+OPC_BOUN.4.2N {@ POLY1_OPC_BLOCK layer is only allowed 90 angle
+	ANGLE XOPCP>0 <90
+
+}
+
+//*********************
+// Metal1 Layer 
+//*********************
+OPC_BOUN.4.3A {@ Min width of Metal1 overhang METAL1_OPC_BLOCK layer boundary outside OPC block region is 0 or 0.24
+	ENC XOPCM1 ME1 <0.12 ABUT>0<90 REGION
+}
+OPC_BOUN.4.3B {@ Min area of diff pattern is 0.212 when the width of this pattern overhang METAL1_OPC_BLOCK layer boundary,x
+      @ and 0.12<=x<0.24 
+   X = ME1 INTERACT XOPCM1
+   Y = ENC XOPCM1 X   >=0.12 <0.24 ABUT>0<90 REGION
+   A = INT y < 0.24 ABUT>0<90 SINGULAR REGION
+   B = AREA X < 0.212
+   C = A INTERACT B
+   C INTERACT Y
+}
+OPC_BOUN.4.3N {@ METAL1_OPC_BLOCK layer is only allowed 90 angle
+	ANGLE XOPCM1>0 <90
+}
+
+// END OF FILE

@@ -1,0 +1,946 @@
+
+
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//     Title     : Calibre DRC of 0.18um Process 1P6M ESD             //
+//                 Design Rule                                      //
+//                                                                  //
+//     DRC Version  : 2.3-P1                                        //
+//                                                                  //
+//     Parent Doc: G-03B-GENERATION18-TLR/ESD 2.3_P1                //
+//                                                                  //
+//     Copyright (c) United Microelectronics Corporation, 1980-2011 //
+//     All Right Reserved.                                          //
+//     LIMITATION OF LIABILITY:                                     //
+//        United Microelectronics Corp. is not  liable  for  any    //
+//        property damage, personal  injury,  loss  of  profits,    //
+//        interruption of business,  or  for  any other special,    //
+//        consequential or incidental  damages, however  caused,    //
+//        whether for breach of warranty,contract tort(including    //
+//        negligence),strict liability or otherwise.                //
+//                                                                  //
+//     This runset is validated with Calibre 2008.1-13.11           //  
+//////////////////////////////////////////////////////////////////////
+// revision  date    changes                                        //
+//========= ======== ===============================================//
+// 1.0      11/05/99 Create for customers with IO mark layer        //       
+// 2.0      11/04/99 S M Lee Update to Version 2.0                  //                 
+//          11/05/99 L.Ling  Add ESD checks                         //                       
+// 4.0      03/08/01 S M Lee Update to Version 4.0                  //                  
+// 5.0-p1   10/24/01 Create version 5.0                             //                            
+// 5.0-p2   01/15/02 Remove ESD layer                               //                            
+// 6.0-p1   02/08/02 Update to version 6                            //
+// 6.0-p2   05/10/02 Create official layer table                    //
+// 6.0-p3   08/17/02 Change IO5.1.9 IO5.1.11                        //
+// 6.0-p4   11/09/02 Change IO5.2.4a                                //
+// 6.0-p5   12/10/02 Change sanity_3 rule                           //
+// 7.0-p1   01/07/03 Version 7 phase 1                              //
+// 7.0-p2   01/23/03 Update the 5.1.5 and 5.1.6 rules               //
+// 7.0-p3   02/24/03 Tune off the 5.1.9 and 5.1.11 rules            //
+// 7.0-p3   03/03/03 For new number and guideline rules             //
+// 8.0-p1   04/28/03 Version 8 phase 1                              //
+// 8.0-p2   12/15/03 Update the IO5.1.3 and IO5.1.4 rules           //
+// 8.0-p3   02/18/04 Update the cascode coding                      //
+// 2.0-p1   05/28/05 Rename by C.C. Chang/UMC                       //
+//                   from: G-DF-1B_029-1P6M-Calibre-drc-8-p3        //
+//                   to  : G-DF-GENERATION18-ESD-1P6M-Calibre-drc-  //
+//                         2.0-P1                                   //
+// 2.0-p2   01/18/06 1. Update layer mapping: ( by C.C. Chang/UMC ) //
+//                     from: 150nm_layers.cal                       //
+//                     to: 180nm_layers_v2.6.cal and merge it into  // 
+//                          main deck.                              //
+//                   2. Merge 1P3M/4M/5M/6M into one deck           //
+//                   3. Update rule: IO5.4.* (PESD implant rule)    //
+//                   4. Add NOTICE_IOID.                            //
+// 2.0-p3   03/18/09 Y.C Lee                                        //
+//                   1. Update                                      //
+//                      ACTIVE_PS   ACTIVE_NW   IO5.4.*             //
+//                   2. Split metal option                          //
+//                                                                  //  
+// 2.1-p1   07/15/09 Y.H Yang                                       //
+//                   1. Add shrinkable (90% and 85%) rule deck      //
+//                   2. Established connectivity on EXPOL           //
+//                                                                  //  
+// 2.2-p1   11/26/09 K.C. Hsu                                       //
+//                   1. Modify IO5.1.3, IO5.1.4, Guideline_IO5.3.3, //
+//                      Guideline_IO5.3.4 (85% and 90% shrinkable)  //
+//                   2. Remove Guideline_IO5.3.3.pmos,              //
+//                             Guideline_IO5.3.3.nmos,              //
+//                             Guideline_IO5.3.4.pmos,              //
+//                             Guideline_IO5.3.4.nmos               //
+//                   3. Change rule ID                              //
+//                      Guideline_IO5.3.5 -> Guideline_IO5.3.3,     //
+//                      Guideline_IO5.3.6 -> Guideline_IO5.3.4,     //
+//                      Guideline_IO5.3.7 -> Guideline_IO5.3.5      //
+// 2.2-p2   06/02/10 Y.H Yang                                       //
+//                   1. Remove EXPOL connection                     //
+//                   2. Guideline_IO5.3.1 (correct typo)            //
+//                      Guideline_IO5.3.2 (correct typo)            //
+// 2.3-p1   08/15/2011 Eric
+//                   1. Update all
+//////////////////////////////////////////////////////////////////////
+//
+//NOTES ( Importtant, Read Me First )
+//===================================
+// 1. This rule deck is coded accoring to  UMC ESD Protection
+//    Rule, UMC SPEC G-03E-GENERATION18-TLR/ESD
+//
+// 2. Please set correct value for RESOLUTION, LAYOUT SYSTEM, 
+//    LAYOUT PATH, LAYOUT PRIMARY, make sure layer numbers in LAYER 
+//    DECLARATIONS section are correct before run drc.
+//
+// 3. Marker layer IOID 91(0) should be cover whole IO area you want to check
+//    include "double ring" structure
+//
+// 4. In order to do correct check, please set the correct gds number in
+//    PAD, Metal, VIA  and CONT layers.
+//
+// 5. The run deck check for 3.3V & 5V 1P/2P3M-6M cases in L180 GENERATION only,
+//    other cases will cause errors.
+//
+// 6. The default IO is 3.3V device , if You want to check 5V device , please turn off
+//    "DRC UNSELECT CHECK 5V_Device" and turn on "DRC UNSELECT CHECK 3.3V_Device"
+//
+// 7. Rule cannot checked by DRC : 
+//    5.1.W3 5.1.W4 5.1.W5 5.1.R2 5.1.Note1
+//    5.2.1.L1.f 5.2.2.L1.f 5.2.3.L1.f
+//
+// 8. IO5.2.1.EN2 IO5.2.2.EN2 IO5.2.3.EN2 check all direction by DRC , 
+//    because TLR doesn't define in channel width direction rules.
+//
+// 9. This document includes 6 file.
+//    G-DF-GENERATION18-1P3M-ESD-CALIBRE-DRC-2.3-P1
+//    G-DF-GENERATION18-1P4M-ESD-CALIBRE-DRC-2.3-P1
+//    G-DF-GENERATION18-1P5M-ESD-CALIBRE-DRC-2.3-P1
+//    G-DF-GENERATION18-1P6M-ESD-CALIBRE-DRC-2.3-P1
+//    Release_notes
+//    check.list
+// 
+//////////////////////////////////////////////////////////////////////
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+DRC RESULTS DATABASE "../ESD.db" ASCII	//GDSII,BINARY
+DRC SUMMARY REPORT   "../ESD.sum" 
+ 
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII 
+RESOLUTION 5
+PRECISION 1000 
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+
+//================================
+//===  DRC UNSELECT CHECK RULES ==
+//================================
+
+
+//DRC UNSELECT CHECK 3.3V_Device
+DRC UNSELECT CHECK 5V_Device
+
+//DRC UNSELECT CHECK RECOMMAND_RULES
+//DRC UNSELECT CHECK SANITY_RULES
+
+ 
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+DRC CHECK TEXT       COMMENTS RFI   
+DRC KEEP EMPTY       NO
+DRC MAXIMUM RESULTS  1000	// By Default 1000
+DRC MAXIMUM VERTEX   199	// By Default 4096 
+DRC TOLERANCE FACTOR .003
+
+
+
+            
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+// Notice: The layers as below are all necessary,
+// please set correct layer mapping in below layers.
+
+LAYER MAP	1	DATATYPE	0	1001
+LAYER DIFF		1001		// Diffusion
+
+LAYER MAP	3	DATATYPE	0	1003
+LAYER NWEL		1003		// N-well
+
+LAYER MAP	6	DATATYPE	0	1006
+LAYER TWEL		1006		// T-well
+
+LAYER MAP	11	DATATYPE	0	1009
+LAYER PPLUS		1009		// P+ Imp
+
+LAYER MAP	32	DATATYPE	0	1030
+LAYER PESD		1030		// P+ ESD Imp
+
+LAYER MAP	36	DATATYPE	0	1034
+LAYER SAB		1034		// Salicide Block
+
+LAYER MAP	37	DATATYPE	0	1035
+LAYER TG		1035		// Thick Oxide
+
+LAYER MAP	39	DATATYPE	0	1037
+LAYER CONT		1037		// Contact
+
+LAYER MAP	41	DATATYPE	0	1040
+LAYER PO1		1040		// Poly1
+
+LAYER MAP	46	DATATYPE	0	1045
+LAYER ME1		1045		// Metal1
+
+LAYER MAP	47	DATATYPE	0	1046
+LAYER VI1		1046		// Mvia1
+
+LAYER MAP	48	DATATYPE	0	1048
+LAYER ME2		1048		// Metal2
+
+LAYER MAP	49	DATATYPE	0	1049
+LAYER VI2		1049		// Mvia2
+
+LAYER MAP	50	DATATYPE	0	1051
+LAYER ME3		1051		// Metal3
+
+LAYER MAP	51	DATATYPE	0	1052
+LAYER VI3		1052		// Mvia3
+
+LAYER MAP	52	DATATYPE	0	1054
+LAYER ME4		1054		// Metal4
+
+LAYER MAP	53	DATATYPE	0	1055
+LAYER VI4		1055		// Mvia4
+
+LAYER MAP	54	DATATYPE	0	1057
+LAYER ME5		1057		// Metal5
+
+LAYER MAP	55	DATATYPE	0	1058
+LAYER VI5		1058		// Mvia5
+
+LAYER MAP	56	DATATYPE	0	1060
+LAYER ME6		1060		// Metal6
+
+LAYER MAP	65	DATATYPE	0	1071
+LAYER MMC		1071		// Metal_Cap
+
+LAYER MAP	66	DATATYPE	0	1072
+LAYER PAD		1072		// Pad
+
+LAYER MAP	88	DATATYPE	0	1119
+LAYER FUSEMARK		1119		// Fuse Area Marker
+
+LAYER MAP	91	DATATYPE	0	1122
+LAYER IOID		1122		// Marker for ESD protection
+
+
+
+//==================================================
+//===  Establish Layer Connectivity for DRC Only ===
+//==================================================
+//
+
+VIRTUAL CONNECT COLON YES
+VIRTUAL CONNECT NAME VSS GND VBB VCC VDD VDD18 VDD33
+
+    
+LAYOUT TOP LAYER PAD ME6 VI5 ME5 VI4 ME4 VI3 ME3 VI2 ME2 VI1 ME1
+
+CONNECT PAD ME6
+CONNECT ME6 MMC ME5 BY VI5
+CONNECT ME5 ME4 BY VI4
+CONNECT ME4 ME3 BY VI3
+CONNECT ME3 ME2 BY VI2
+CONNECT ME2 ME1 BY VI1
+CONNECT ME1 PO1 NTAP PTAP IO_PSD IO_NSD BY CONT
+SCONNECT NTAP NWELL_T
+SCONNECT PTAP TWEL
+
+
+//===================================================================
+//===  Defined types from combinations of layers (DO NOT MODIFY)  ===
+//===================================================================
+
+
+//--- Define whole chip region ---//
+
+DRC:1       = EXTENT
+BULK        = SIZE DRC:1 BY 1.0
+
+
+//--- Define WELL region ---//
+
+NWELL_T     = NWEL NOT TWEL                    // N_WELL without T_WELL
+
+
+//--- Define DIFFUSION region ---//
+
+ACTIVE_NW   = DIFF NOT OUTSIDE NWELL_T         // DIFFUSION at N type WELL
+ACTIVE_PS   = DIFF OUTSIDE NWELL_T             // DIFFUSION at P type WELL
+
+PTAP        = PPLUS AND ACTIVE_PS              // P+ pickup
+NDIF        = ACTIVE_PS NOT PPLUS              // N+ active
+PDIF        = PPLUS AND ACTIVE_NW              // P+ active
+NTAP        = ACTIVE_NW NOT PPLUS              // N+ pickup
+
+PSD         = PDIF NOT PO1                     // P+ source/drain DIFFUSION
+NSD         = NDIF NOT PO1                     // N+ source/drain DIFFUSION
+
+
+//--- Define POLY1 region ---//
+
+PGATE       = PO1 AND PDIF                     // PMOS Gate
+NGATE       = PO1 AND NDIF                     // NMOS Gate
+GATE        = PGATE OR NGATE                   // Gate
+
+PGATE_W     = PGATE COIN INSIDE EDGE PO1       // PMOS Gate edge (POLY1)
+NGATE_W     = NGATE COIN INSIDE EDGE PO1       // NMOS Gate edge (POLY1)
+
+EXPOL       = PO1 NOT DIFF                     // field POLY1
+SAB_PO      = EXPOL AND SAB                    // non-salicide POLY1
+RES_PO      = SAB_PO NOT TOUCH GATE            // non-salicide resistor POLY1
+NORES_PO    = PO1 NOT RES_PO
+
+
+//--- Define CONTACT region ---//
+
+POLCNT      = CONT OUTSIDE DIFF                // POLY1 CONTACT or floating CONTACT
+DIFCNT      = CONT NOT OUTSIDE DIFF            // DIFFUSION CONTACT
+
+
+
+//--- Define I/O ESD region ---//
+
+IO_PGATE    = PGATE AND IOID                   // ESD PMOS Gate
+IO_NGATE    = NGATE AND IOID                   // ESD NMOS Gate
+IO_GATE     = IO_PGATE OR IO_NGATE
+IO_PGATE_W  = PGATE_W COIN INSIDE EDGE IO_GATE
+IO_NGATE_W  = NGATE_W COIN INSIDE EDGE IO_GATE
+
+IO_PTAP     = PTAP AND IOID                    // ESD P+ pickup
+IO_NTAP     = NTAP AND IOID                    // ESD N+ pickup
+IO_PTAP_H   = HOLES IO_PTAP                    // ESD P+ pickup enclosed region
+IO_NTAP_H   = HOLES IO_NTAP                    // ESD N+ pickup enclosed region
+
+IO_PSD      = PSD AND  IOID                    // ESD P+ source/drain
+IO_PDa      = IO_PSD INTERACT SAB
+IO_PD       = IO_PDa TOUCH IO_GATE             // ESD P+ drain
+
+IO_NSD      = NSD AND  IOID                    // ESD N+ source/drain
+IO_NDa      = IO_NSD INTERACT SAB
+IO_ND       = IO_NDa TOUCH IO_GATE             // ESD N+ drain
+IO_DRAIN    = IO_PD OR IO_ND                   // ESD drain DIFFUSION region
+IO_SD       = IO_PSD OR IO_NSD                 // ESD source/drain
+
+IO_PS       = IO_PSD NOT IO_PD                 // ESD P+ source
+IO_NS       = IO_NSD NOT IO_ND                 // ESD N+ source
+IO_SOURCE   = IO_PS OR IO_NS                   // ESD source DIFFUSION region
+
+IO_ACT      = DIFF INTERACT IO_DRAIN           // ESD active
+IO_NW       = NWEL INTERACT IOID               // ESD N_WELL
+
+IO_DRAIN_E  = IO_DRAIN TOUCH INSIDE EDGE IO_ACT  // For DIFF edge
+
+PAD_POLYa   = NET AREA RATIO EXPOL PAD > 0     // poly connected to pad
+PAD_PL_T    = PAD_POLYa NOT TOUCH (GATE OR FUSEMARK)     // poly resistor 
+
+PAD_PL_CO   = POLCNT AND PAD_PL_T
+
+IODIF_CO    = DIFCNT AND IOID                  // ESD DIFFUSION CONTACT
+DRAIN_CO    = IODIF_CO AND IO_DRAIN            // ESD drain CONTACT
+SOURCE_CO   = IODIF_CO AND IO_SOURCE           // ESD source CONTACT
+WCO_SOURCE  = IO_SOURCE ENCLOSE IODIF_CO       // ESD true source (with CONTACT)
+NOCO_SOURCE = IO_SOURCE NOT ENCLOSE IODIF_CO   // define cascode preparation
+
+
+CAS_INTER_GATE_SD = ( IO_SD TOUCH GATE == 2 ) NOT INTERACT CONT // The S/D between two gate for cascode ESD. 
+CAS_GATE    = IO_GATE  INTERACT CAS_INTER_GATE_SD
+CAS_DRAIN   = IO_DRAIN TOUCH CAS_GATE
+First_PO1   = ( PO1 INTERACT CAS_GATE ) INTERACT CAS_DRAIN
+Second_PO1  = ( PO1 INTERACT NOCO_SOURCE ) NOT First_PO1 
+
+
+FALSE_GATE  = NOCO_SOURCE OR CAS_GATE
+
+IO_SAB_DRAIN= SAB INTERACT IO_DRAIN
+IO_SAB_cas  = IO_SAB_DRAIN INTERACT CAS_DRAIN
+IO_SAB_ncas = IO_SAB_DRAIN NOT INTERACT CAS_DRAIN
+
+CAS_CO      = DRAIN_CO AND PESD
+NOCAS_CO    = DRAIN_CO NOT PESD
+
+//For rules 5.3.3 and 5.3.4
+
+IO_SUBRING_NMOS = IO_PTAP INTERACT (IO_PTAP_H INTERACT IO_NSD)
+IO_NGUARD_NMOS = IO_NTAP INTERACT (IO_NTAP_H INTERACT IO_NSD)
+
+IO_NGUARD_PMOS = IO_NTAP INTERACT (IO_NTAP_H INTERACT IO_PSD)
+IO_SUBRING_PMOS = IO_PTAP INTERACT (IO_PTAP_H INTERACT IO_PSD)
+
+//============================
+//=== ESD rules check ========
+//============================
+//
+GROUP SANITY_RULES sanity_?
+GROUP RECOMMAND_RULES IO5.5.4.?
+
+sanity_1 {@ only one gugrding or no guarding for ESD device
+   IO_DRAIN NOT INSIDE IO_NTAP_H
+   IO_DRAIN NOT INSIDE IO_PTAP_H
+}
+
+sanity_2 {@ A gate touch two source, one drain missed SAB ?
+   IO_GATE TOUCH WCO_SOURCE >=2		// one gate touch two source with co
+   FALSE_GATE TOUCH WCO_SOURCE >=2      // source_wco|gate|source_wo_co|gate|source_wco
+} 
+
+sanity_3 {@ cascode ESD drain not covered by PESD,
+          @ or A drain lost SAB
+   (CAS_DRAIN NOT PPLUS) OUTSIDE PESD
+   WCO_SOURCE INTERACT PESD
+   PESD AND PPLUS
+}
+
+sanity_4 {@ SAB must be overlap poly gate(3.3V)
+          @ SAB must be outside poly gate(1.8V)
+   X = SAB INTERACT (TG INTERACT IOID)
+   X NOT INTERACT IO_GATE     // For 3.3V
+   Y = (SAB INTERACT IOID) NOT INTERACT TG
+   Y INTERACT IO_GATE         // For 1.8V
+}
+
+
+////////////////////////////////////
+// 5.1 ESD Guidelines
+////////////////////////////////////
+
+IO5.1.EN1 {@ Minimum CAD_IO_ID_MARK enclosure of DIFFUSION of ESD MOSFET is 0um
+   (DIFF INTERACT IO_GATE) NOT IOID
+}  
+
+IO5.1.W1 {@ Range of unit finger width is >=20 um <=50 um 
+   LENGTH IO_NGATE_W < 20
+   LENGTH IO_NGATE_W > 50
+   LENGTH IO_PGATE_W < 20
+   LENGTH IO_PGATE_W > 50
+}
+
+IO5.1.W2 {@ Minimum width of pickup up ring is 3 um 
+   INT IO_PTAP < 3 ABUT>0<90 SINGULAR REGION
+   INT IO_NTAP < 3 ABUT>0<90 SINGULAR REGION
+}
+
+
+// refererce S4
+IO5.1.R1 {@ Minimum Columns of CONTACT at drain side is 2
+   X = CONT INTERACT IO_DRAIN
+   Y = SAB INTERACT IO_DRAIN
+   Z = HOLES Y
+   W = EXPAND EDGE Z INSIDE BY 0.3 EXTEND BY -0.3
+   W NOT (W INTERACT CONT >= 2)
+}
+
+
+// IO5.1.W3 IO5.1.W4 IO5.1.W5 cannot check by DRC and TLR has symbol
+// IO5.1.R2 cannot check by DRC and TLR has symbol
+// IO5.1.Note1 cannot check by DRC and TLR has symbol
+
+
+
+////////////////////////////////////
+// 5.2 ESD rules for 1.8V device
+////////////////////////////////////
+
+
+IO_NDIF = DIFF INTERACT IO_NGATE 
+IO_PDIF = DIFF INTERACT IO_PGATE 
+  
+IO_NDIFF_fake = IOID AND IO_NDIF
+IO_PDIFF_fake = IOID AND IO_PDIF
+
+IO_NGATE_EXPAND_001 = EXPAND EDGE IO_NGATE_W INSIDE BY 0.01 
+IO_PGATE_EXPAND_001 = EXPAND EDGE IO_PGATE_W INSIDE BY 0.01 
+    
+CONNECT IO_NGATE_EXPAND_001 IO_NDIFF_fake
+CONNECT IO_PGATE_EXPAND_001 IO_PDIFF_fake
+
+
+IO5.2.1.W1.a {@ Minimum Total channel width of 1.8V NMOS is 320 um
+   X = IO_NGATE_EXPAND_001 NOT INTERACT (DIFF INTERACT CAS_GATE)
+   NET AREA X < 6.4    // Minium total expand edge area = 320 X 0.01 X2 = 6.4
+}
+
+IO5.2.1.W1.b {@ Minimum Total channel width of 1.8V PMOS is 400 um
+   NET AREA IO_PGATE_EXPAND_001 < 8.0    // Minium total expand edge area = 400 X 0.01 X2 = 8.0
+}
+
+
+IO5.2.1.L1.a {@ Minimum channel length of 1.8V NMOS is 0.28 um
+   X = IO_NGATE NOT TG 
+   E = INT X < 0.28 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.1.L1.b {@ Maximum channel length of 1.8V NMOS is 0.4 um
+   X = IO_NGATE NOT TG 
+   E = SIZE (SIZE X BY -0.2) BY 0.2
+   E AND IOID
+}
+
+IO5.2.1.L1.c {@ Minimum channel length of 1.8V PMOS is 0.28 um
+   X = IO_PGATE NOT TG 
+   E = INT X < 0.28 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.1.L1.d {@ Maximum channel length of 1.8V PMOS is 0.4 um
+   X = IO_PGATE NOT TG 
+   E = SIZE (SIZE X BY -0.2) BY 0.2
+   E AND IOID
+}
+
+
+IO5.2.1.L1.e {@ Minimum poly resistor width is 1.5 um
+   E = INT PAD_PL_T < 1.5 OPPOSITE REGION
+   E AND IOID
+}
+
+IO5.2.1.L1.g {@ Minimum number of CONTACT of POLY1 resistor is 4
+   E = PAD_PL_T NOT (PAD_PL_T INTERACT CONT >= 4)
+   E AND IOID
+}
+
+// IO5.2.1.L1.f cannot check by DRC and TLR symbol
+
+IO5.2.1.S1 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at drain side is 2.15 um 
+   X = (CONT INTERACT IO_DRAIN) NOT TG
+   E = EXT X IO_GATE < 2.15 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.1.S2 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at source side is 0.36 um 
+   X = (CONT INTERACT IO_SOURCE) NOT TG
+   E = EXT X IO_GATE < 0.36 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+
+IO5.2.1.EN1 {@ Minimum drain side Diffusion enclosure of CONTACT at channel width direction is 2 um 
+   X = (CONT INTERACT IO_DRAIN) NOT TG
+   E = ENC X DIFF < 2 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID 
+}
+
+IO5.2.1.S3 {@ Exact spacing of SAB to POLY1 is 0.45 um
+   X  = IO_DRAIN NOT TG
+   Y  = SAB INTERACT X
+   Z  = SIZE Y BY 0.45
+   W  = IO_GATE INTERACT X
+   E1 = EXT Y IO_GATE < 0.45 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E2 = W NOT INTERACT Z
+   (E1 OR E2) AND IOID
+}
+
+
+IO5.2.1.S4 {@ Exact spacing of Drain side Diffusion CONTACT to SAB is 0.3 um
+   X  = IO_DRAIN NOT TG
+   Y  = SAB INTERACT X
+   Z  = CONT INTERACT X
+   W  = HOLES Y
+   R  = EXPAND EDGE W INSIDE BY 0.3 EXTEND BY -0.3
+
+   E1 = EXT Z SAB < 0.3 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E2 = R NOT INTERACT Z
+   
+   (E1 OR E2) AND IOID
+}
+
+//IO5.2.1.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+//   X = IO_DRAIN NOT TG
+//   Y = CONT INTERACT X
+//   Z = EXT [PESD] IO_GATE < 10
+//   E = ENC Y Z < 1.15 ABUT<90 REGION
+//   E AND IOID
+//}
+
+// Because in channel width direction doesn't have rule , so DRC will check all directions.
+IO5.2.1.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+   X = IO_SD NOT TG
+   Y = CONT INTERACT X
+   E = ENC Y PESD < 1.15 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID
+}
+
+
+IO5.2.1.EN3 {@ Minimum DIFF edge enclosure of PESD implant in channel width direction is 0.5 um
+   X  = IO_SD NOT TG
+   Y  = X COIN INSIDE EDGE DIFF
+   Z  = PESD INTERACT X
+   E  = ENC Z DIFF < 0.5 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+   E AND IOID 
+}
+
+//IO5.2.1.EN3 {@ Minimum DIFF edge enclosure of PESD implant in channel width direction is 0.5 um
+//   X  = IO_SD NOT TG
+//   Y  = X COIN INSIDE EDGE DIFF
+//   Z  = PESD INTERACT X
+//   E1 = ENC PESD X < 0.5 ABUT<90 REGION
+//   E2 = Z NOT DIFF 
+//   (E1 OR E2) AND IOID 
+//}
+
+
+IO5.2.1.S5 {@ Minimum spacing of PESD implant to POLY1 is 1 um
+   X = IO_SD NOT TG
+   Y = PESD INTERACT X
+   E = EXT Y PO1 < 1 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID
+}
+
+//IO5.2.1.S5 {@ Minimum spacing of PESD implant to POLY1 is 1 um
+//   X = IO_SD NOT TG
+//   Y = IO_GATE INTERACT X
+//   E = EXT PESD Y < 1 ABUT<90 SINGULAR INSIDE ALSO REGION
+//   E AND IOID
+//}
+
+////////////////////////////////////
+// 5.2.2 ESD rules for 3.3V device
+////////////////////////////////////
+
+
+GROUP 3.3V_Device IO5.2.2.? IO5.3.1.?
+
+// IO5.2.2.W1.a & IO5.2.2.W1.b is checked by IO5.2.1.W1.a & IO5.2.1.W1.b
+
+
+IO5.2.2.L1.a {@ Minimum channel length of 3.3V NMOS is 0.44 um
+   X = (IO_NGATE AND TG) NOT CAS_GATE 
+   E = INT X < 0.44 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.2.L1.b {@ Maximum channel length of 3.3V NMOS is 0.6 um
+   X = (IO_NGATE AND TG) NOT CAS_GATE 
+   E = SIZE (SIZE X BY -0.3) BY 0.3
+   E AND IOID
+}
+
+IO5.2.2.L1.c {@ Minimum channel length of 3.3V PMOS is 0.44 um
+   X = IO_PGATE AND TG 
+   E = INT X < 0.44 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.2.L1.d {@ Maximum channel length of 3.3V PMOS is 0.6 um
+   X = IO_PGATE AND TG 
+   E = SIZE (SIZE X BY -0.3) BY 0.3
+   E AND IOID
+}
+
+// IO5.2.2.L1.e is checked by IO5.2.1.L1.e
+// IO5.2.2.L1.f cannot check by DRC and TLR symbol
+// IO5.2.2.L1.g is checked by IO5.2.1.L1.g 
+
+
+IO5.2.2.S1 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at drain side is 2.15 um   
+   X = ((CONT INTERACT IO_DRAIN) AND TG) NOT (DIFF INTERACT CAS_GATE)
+   E = EXT X IO_GATE < 2.15 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.2.S2 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at source side is 0.5 um 
+   X = ((CONT INTERACT IO_SOURCE) AND TG) NOT (DIFF INTERACT CAS_GATE)
+   E = EXT X IO_GATE < 0.5 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.2.EN1 {@ Minimum drain side Diffusion enclosure of CONTACT at channel width direction is 2 um 
+   X = ((CONT INTERACT IO_DRAIN) AND TG) NOT (DIFF INTERACT CAS_GATE)
+   E = ENC X DIFF < 2 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID 
+}
+
+
+IO5.2.2.OL1 {@ Exact SAB overlap of POLY1 is 0.03 um
+   X  = (IO_DRAIN AND TG) NOT (DIFF INTERACT CAS_GATE) 
+   Y  = SAB INTERACT X
+   Z  = Y AND IO_GATE
+
+   E1 = INT Y IO_GATE < 0.03 ABUT<90 SINGULAR REGION
+   E2 = SIZE (SIZE Z BY -0.015) BY 0.015
+   E3 = Y NOT INTERACT IO_GATE
+   E4 = Y TOUCH IO_GATE
+   (((E1 OR E2) OR E3) OR E4) AND IOID
+}
+
+IO5.2.2.S4 {@ Exact spacing of Drain side Diffusion CONTACT to SAB is 0.3 um
+   X  = (IO_DRAIN AND TG) NOT (DIFF INTERACT CAS_GATE)
+   Y  = SAB INTERACT X
+   Z  = CONT INTERACT X
+   W  = HOLES Y
+   R  = EXPAND EDGE W INSIDE BY 0.3 EXTEND BY -0.3
+
+   E1 = EXT Z SAB < 0.3 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E2 = R NOT INTERACT Z
+   
+   (E1 OR E2) AND IOID
+}
+
+//IO5.2.2.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+//   X = (IO_DRAIN AND TG) NOT (DIFF INTERACT CAS_GATE)
+//   Y = CONT INTERACT X
+//   Z = EXT [PESD] IO_GATE < 10
+//   E = ENC Y Z < 1.15 ABUT<90 REGION
+//   E AND IOID
+//}
+
+// Because in channel width direction doesn't have rule , so DRC will check all directions.
+IO5.2.2.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+   X = (IO_SD AND TG) NOT (DIFF INTERACT CAS_GATE)
+   Y = CONT INTERACT X
+   E = ENC Y PESD < 1.15 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID
+}
+
+
+IO5.2.2.EN3 {@ Minimum DIFF edge enclosure of PESD implant in channel width direction is 0.5 um
+   X  = (IO_SD AND TG) NOT (DIFF INTERACT CAS_GATE)
+   Y  = X COIN INSIDE EDGE DIFF
+   Z  = PESD INTERACT X
+   E  = ENC Z DIFF < 0.5 ABUT<90 OUTSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.2.S5 {@ Minimum spacing of PESD implant to POLY1 is 1 um
+   X = (IO_SD AND TG) NOT (DIFF INTERACT CAS_GATE)
+   Y = PESD INTERACT X
+   E = EXT Y PO1 < 1 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID
+}
+
+
+
+////////////////////////////////////
+// 5.2.3 ESD rules for 5V device
+////////////////////////////////////
+
+
+GROUP 5V_Device IO5.2.3.?
+
+// IO5.2.3.W1.a & IO5.2.3.W1.b is checked by IO5.2.1.W1.a & IO5.2.1.W1.b
+
+
+IO5.2.3.L1.a {@ Minimum channel length of 5V NMOS is 0.6 um
+   X = IO_NGATE AND TG 
+   E = INT X < 0.6 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.3.L1.b {@ Maximum channel length of 5V NMOS is 1 um
+   X = IO_NGATE AND TG 
+   E = SIZE (SIZE X BY -0.5) BY 0.5
+   E AND IOID
+}
+
+IO5.2.3.L1.c {@ Minimum channel length of 5V PMOS is 0.6 um
+   X = IO_PGATE AND TG 
+   E = INT X < 0.6 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.2.3.L1.d {@ Maximum channel length of 5V PMOS is 1 um
+   X = IO_PGATE AND TG 
+   E = SIZE (SIZE X BY -0.5) BY 0.5
+   E AND IOID
+}
+
+// IO5.2.3.L1.e is checked by IO5.2.1.L1.e
+// IO5.2.3.L1.f cannot check by DRC and TLR symbol
+// IO5.2.3.L1.g is checked by IO5.2.1.L1.g 
+
+
+IO5.2.3.S1 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at drain side is 2.15 um   
+   X = (CONT INTERACT IO_DRAIN) AND TG
+   E = EXT X IO_GATE < 2.15 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.3.S2 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at source side is 0.5 um 
+   X = (CONT INTERACT IO_SOURCE) AND TG
+   E = EXT X IO_GATE < 0.5 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.2.3.EN1 {@ Minimum drain side Diffusion enclosure of CONTACT at channel width direction is 2 um 
+   X = (CONT INTERACT IO_DRAIN) AND TG
+   E = ENC X DIFF < 2 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID 
+}
+
+
+IO5.2.3.OL1 {@ Exact SAB overlap of POLY1 is 0.03 um
+   X  = IO_DRAIN AND TG 
+   Y  = SAB INTERACT X
+   Z  = Y AND IO_GATE
+
+   E1 = INT Y IO_GATE < 0.03 ABUT<90 SINGULAR REGION
+   E2 = SIZE (SIZE Z BY -0.015) BY 0.015
+   E3 = Y NOT INTERACT IO_GATE
+   E4 = Y TOUCH IO_GATE
+   (((E1 OR E2) OR E3) OR E4) AND IOID
+}
+
+IO5.2.3.S4 {@ Exact spacing of Drain side Diffusion CONTACT to SAB is 0.3 um
+   X  = IO_DRAIN AND TG
+   Y  = SAB INTERACT X
+   Z  = CONT INTERACT X
+   W  = HOLES Y
+   R  = EXPAND EDGE W INSIDE BY 0.3 EXTEND BY -0.3
+
+   E1 = EXT Z SAB < 0.3 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E2 = R NOT INTERACT Z
+   
+   (E1 OR E2) AND IOID
+}
+
+//IO5.2.3.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+//   X = IO_DRAIN AND TG
+//   Y = CONT INTERACT X
+//   Z = EXT [PESD] IO_GATE < 10
+//   E = ENC Y Z < 1.15 ABUT<90 REGION
+//   E AND IOID
+//}
+
+// Because in channel width direction doesn't have rule , so DRC will check all directions.
+IO5.2.3.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT in channel lenghth direction is 1.15 um
+   X = IO_SD AND TG
+   Y = CONT INTERACT X
+   E = ENC Y PESD < 1.15 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID
+}
+
+
+IO5.2.3.EN3 {@ Minimum DIFF edge enclosure of PESD implant in channel width direction is 0.5 um
+   X  = IO_SD AND TG
+   Y  = X COIN INSIDE EDGE DIFF
+   Z  = PESD INTERACT X
+   E  = ENC Z DIFF < 0.5 ABUT<90 OUTSIDE ALSO REGION
+   E AND IOID
+}
+
+IO5.2.3.S5 {@ Minimum spacing of PESD implant to POLY1 is 1 um
+   X = IO_SD AND TG
+   Y = PESD INTERACT X
+   E = EXT Y PO1 < 1 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID
+}
+
+
+
+////////////////////////////////////
+// 5.3.1 ESD rules for cascode 3.3V NMOS
+////////////////////////////////////
+
+
+IO5.3.1.W1 {@ Minimum Total channel width of 3.3V NMOS in cascode structure is 320 um
+   X = IO_NGATE_EXPAND_001 INTERACT (DIFF INTERACT CAS_GATE)
+   NET AREA X < 12.8    // Minium total expand edge area = 320 X 0.01 X2 X2 = 12.8
+}
+
+IO5.3.1.L1 {@ Minimum channel length of 3.3V NMOS in cascode structure is 0.44 um
+   X = (IO_NGATE AND TG) AND CAS_GATE
+   E = INT X < 0.44 ABUT>0<90 REGION
+   E AND IOID
+}
+
+IO5.3.1.S1 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at drain side is 2.15 um   
+   X = ((CONT INTERACT IO_DRAIN) AND TG) AND (DIFF INTERACT CAS_GATE)
+   E = EXT X IO_GATE < 2.15 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.3.1.S2 {@ Minimum spacing of Diffusion CONTACT to POLY1 gate at source side is 0.5 um 
+   X = ((CONT INTERACT IO_SOURCE) AND TG) AND (DIFF INTERACT CAS_GATE)
+   E = EXT X IO_GATE < 0.5 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID 
+}
+
+IO5.3.1.EN1 {@ Minimum drain side Diffusion enclosure of CONTACT at channel width direction is 1 um 
+   X = ((CONT INTERACT IO_DRAIN) AND TG) AND (DIFF INTERACT CAS_GATE)
+   E = ENC X DIFF < 1 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID 
+}
+
+IO5.3.1.S3 {@ Minimum spacing of 1st POLY1 and 2nd POLY1 is 0.32 um 
+   E = EXT First_PO1 Second_PO1 < 0.32 ABUT>0<90 SINGULAR REGION
+   E AND IOID
+}
+
+IO5.3.1.S4 {@ Exact spacing of Drain side Diffusion CONTACT to SAB is 0.3 um
+   X  = (IO_DRAIN AND TG) AND (DIFF INTERACT CAS_GATE)
+   Y  = SAB INTERACT X
+   Z  = CONT INTERACT X
+   W  = HOLES Y
+   R  = EXPAND EDGE W INSIDE BY 0.3 EXTEND BY -0.3
+
+   E1 = EXT Z SAB < 0.3 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E2 = R NOT INTERACT Z
+   
+   (E1 OR E2) AND IOID
+}
+
+IO5.3.1.OL1 {@ Exact SAB overlap of POLY1 is 0.03 um
+   X  = (IO_DRAIN AND TG) AND (DIFF INTERACT CAS_GATE) 
+   Y  = SAB INTERACT X
+   Z  = Y AND IO_GATE
+
+   E1 = INT Y IO_GATE < 0.03 ABUT<90 SINGULAR REGION
+   E2 = SIZE (SIZE Z BY -0.015) BY 0.015
+   E3 = Y NOT INTERACT IO_GATE
+   E4 = Y TOUCH IO_GATE
+   (((E1 OR E2) OR E3) OR E4) AND IOID
+}
+
+//it's different from others spec
+IO5.3.1.S5 {@ Minimum spacing of PESD implant to POLY1 is 0.1 um
+   X = (IO_SD AND TG) AND (DIFF INTERACT CAS_GATE)
+   Y = PESD INTERACT X
+   E = EXT Y PO1 < 0.1 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND IOID
+}
+
+IO5.3.1.EN2 {@ Minimum PESD implant enclosure of DIFFUSION CONTACT is 1.15 um
+   X = (IO_SD AND TG) AND (DIFF INTERACT CAS_GATE)
+   Y = CONT INTERACT X
+   E = ENC Y PESD < 1.15 ABUT<90 SINGULAR OVERLAP REGION
+   E AND IOID
+}
+
+IO5.3.1.EN3 {@ Minimum DIFF edge enclosure of PESD implant in channel width direction is 0.5 um
+   X  = (IO_SD AND TG) AND (DIFF INTERACT CAS_GATE)
+   Y  = X COIN INSIDE EDGE DIFF
+   Z  = PESD INTERACT X
+   E  = ENC Z DIFF < 0.5 ABUT<90 OUTSIDE ALSO REGION
+   E AND IOID
+}
+
+
+
+IO5.5.4.Note {@ Layer IOID is necessary in ESD rule check, please set up the correct layer mapping to process the DRC
+  BULK NOT INTERACT IOID
+ }
+    
+
+// end of rules
+
+    

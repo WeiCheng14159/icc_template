@@ -1,0 +1,108 @@
+////////////////////////////////////////////////////////////////////////
+//                                                                    //
+//     Title      : Calibre DRC of 0.15um Above DIFFUSION Dummy Rule  //
+//                                                                    //
+//     Parent Doc : G-03D-GENERATION15_ABOVE-DIFFUSION-TLR/DUMMY      //
+//                  Ver 2.1-P1                                        //
+//     DRC Version: 2.1-P1                                            //
+//                                                                    //
+//     Copyright (c) United Microelectronics Corporation, 1980-2006   //
+//     All Rights Reserved                                            //
+//                                                                    //
+//     This source file is proprietary information of United          //
+//     Microelectronics Corporation.  It may not be distributed,      //
+//     in whole or in any part without prior written permission.      //
+//                                                                    //
+//     LIMITATION OF LIABILITY:                                       //
+//        United Microelectronics Corp. is not  liable  for  any      //
+//        property damage, personal  injury,  loss  of  profits,      //
+//        interruption of business,  or  for  any other special,      //
+//        consequential or incidental  damages, however  caused,      //
+//        whether for breach of warranty,contract tort(including      //
+//        negligence),strict liability or otherwise.                  //
+//                                                                    //
+//      This runset is validated with Calibre 2004.3.                 //
+////////////////////////////////////////////////////////////////////////
+// revision    date         who              changes                  //
+//========= ============ ========== ==================================//
+// 2.1 p1    05/12/2009   Y.C LEE    New create                       //
+//                                                                    //
+////////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)                                  //
+// ================================================================== //
+// (1) Please set up RESOLUTION,LAYOUT PATH,LAYOUT PRIMARY            //
+//     according to your design before run CALIBRE drc.               //
+//                                                                    //
+// (2) This Document includes 2 files                                 //
+//     G-DF-GENERATION15_ABOVE-DIFFUSION_DUMMY-Calibre-DRC-2.1-P1     //
+//     ReleaseNote.txt                                                //
+////////////////////////////////////////////////////////////////////////
+
+
+// 
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+
+
+DRC CHECK TEXT       COMMENTS RFI   
+DRC KEEP EMPTY       NO
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+DRC RESULTS DATABASE "../DIFF.db" ASCII
+DRC SUMMARY REPORT   "../DIFF.sum"
+DRC TOLERANCE FACTOR .003
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+ 
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+ 
+RESOLUTION  1
+PRECISION  1000
+ 
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+ 
+FLAG ACUTE   YES
+FLAG OFFGRID YES
+FLAG SKEW    YES
+
+
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER MAP	1	DATATYPE	0	1001
+LAYER DIFF		    1001		// Diffusion
+
+LAYER MAP	70	DATATYPE	8	1072
+LAYER DIFFDUMY		    1072		// Diffusion Dummy
+
+
+//
+//==================
+//=== DRC Rules  ===
+//==================
+//
+
+
+7.1A {@ Minimum DIFFUSION_CUSTOMER_DUMMY to DIFFUSION spacing is 1.0um
+   EXT DIFFDUMY DIFF < 1.0  ABUT<90 OVERLAP SINGULAR REGION
+   AND DIFFDUMY DIFF
+}
+
+
+
+//END

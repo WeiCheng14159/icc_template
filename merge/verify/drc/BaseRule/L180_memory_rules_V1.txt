@@ -1,0 +1,1031 @@
+//****************
+// MEMORY CHECK
+//****************
+
+
+
+//******************************************************************************
+// revision  date      who                  changes                     
+//========= =======   ========   =======================================//
+// V.0		                 Original
+// V.1     01/14/04    Momo      Add BLSP_1A rule {for 4.0um SRAM (G1 update to G2)}
+// V.1     01/19/04    Momo      Update BLSP_1A rule 4.12A/4.12B.1/4.12B.2
+//******************************************************************************
+
+
+SRAM_ALL = (((((((BDSP OR BLSP) OR BLSP1) OR DP) OR DP1) OR DP2) OR ROM) OR BLSPLP) OR BLSP_1A
+
+GROUP SRAM_CHECK BDSP?.? BDSP.? BLSP?.? BLSP.? BLSP?_? DP?.? DP.? DP?_? ROM?.? BLSPLP?.? BLSPLP.? OPC_? BLSP_1A?
+
+
+//**************************************************
+// RULES TO CHECK THE BORDERED SP SRAM CORE REGIONS 
+//**************************************************
+
+
+BDSP4.1AB {@ Minimum dimension of an Active region is 0.14um
+   E = INT DIFF < 0.14 ABUT>0<90 SINGULAR REGION
+   E AND BDSP_ID
+}
+BDSP4.1C.1 {@ Minimum space between two Active regions is 0.26um
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND BDSP_ID
+}
+BDSP4.1C.2 {@ Minimum space between two Active regions is 0.11um
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND BDSP_ID
+}
+BDSP4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.38um
+   E = EXT NWEL NDIF1_ram < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND BDSP_ID
+}
+BDSP4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.20um
+   E = ENC PDIF1_ram NWEL < 0.20 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BDSP_ID
+}
+BDSP4.8AaBaC{@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.08um
+   E = INT PO1 < 0.08 ABUT>0<90 SINGULAR REGION
+   E AND BDSP_ID
+}
+BDSP4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width < 0.24um is 0.34um
+   T = LENGTH TGATE_Wb > 0.02 
+   E = EXT T < 0.34 ABUT>0<90 REGION
+   E AND BDSP_ID 
+}
+BDSP4.8D.c1.1 {@ Minimum space between two Poly regions on field area is 0.2um
+   E = EXT EXPO_E < 0.20 ABUT>0<90 REGION SPACE
+   E AND BDSP_ID
+}
+BDSP4.8D.c1.2 {@ Minimum space between two Poly regions on field area is 0.03um
+   E = EXT EXPO_E < 0.03 ABUT>0<90 REGION NOTCH
+   E AND BDSP_ID
+}
+
+shrunk_poly = size EXPOL by -0.12
+wide_poly = size shrunk_poly by 0.12
+BDSP4.8D.c2.1 {@ Minimum space between two Poly regions on field area is 0.24um
+   E = EXT wide_poly EXPOL < 0.24 ABUT>0<90 REGION NOT ACUTE
+   E AND BDSP_ID
+}
+BDSP4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.01um
+   E = ENC DIFF PO1 < 0.01 ABUT<90 REGION
+   E AND BDSP_ID
+}
+BDSP4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.02um
+   E = EXT PO1 DIFF < 0.02 SINGULAR REGION PARALLEL ONLY
+   E AND BDSP_ID
+}
+BDSP4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um//filter false endcaps
+   END_CAP1 =  INTPOL TOUCH GATE == 1
+   END_CAP = END_CAP1 VERTEX == 4
+   x = EXT GATE DIFF < 0.12 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND BDSP_ID
+}
+BDSP4.8H {@ Minimum Poly gate to field edge spacing is 0.09um
+   x1 = SIZE GATE BY -0.01
+   x2 = SIZE x1 BY 0.01
+   E = ENC x2 DIFF < 0.09 REGION
+   E AND BDSP_ID
+}
+BDSP4.8J {@ Gate at 90 degree angle is not allowed.
+   T = LENGTH GATE_W > 0.02
+   E1 = EXT T < 0.1 ABUT == 90 REGION
+   E2 = INT T < 0.1 ABUT == 90 REGION
+   E = E1 OR E2
+   E AND BDSP_ID
+}
+BDSP4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.02
+   E = EXT GATE_W EXPO_E < 0.02 OBTUSE ONLY REGION
+   E AND BDSP_ID
+}
+BDSP4.10D.b {@ Minimum P+ implant to N+ diffusion spacing(inside N-Well) is 0.08um 
+   E = EXT PPLUS ACTIVE_NW < 0.08 ABUT<90 SINGULAR REGION
+   E AND BDSP_ID
+}
+BDSP4.12C.a {@ Minimum diffusion CONT to Poly(1.8V) spacing is 0.08um, no contact on gate
+   E = EXT DIFCNT1 GATE < 0.08 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND BDSP_ID
+}
+BDSP4.12D {@ Minimum PO1 Contact to Diffusion spacing is 0.17um
+   E = EXT POLCNT DIFF < 0.17 ABUT<90 SINGULAR REGION
+   E AND BDSP_ID
+}
+BDSP4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.03
+   E = ENC DIFCNT DIFF < 0.03 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BDSP_ID
+}
+BDSP4.13B.a {@ Minimum space between ME1 regions is 0.23um where MET1 width < 10um
+    E = EXT ME1 < 0.23 ABUT>0<90 REGION
+    E AND BDSP
+}
+BDSP4.13D.bc {@ metal enclose contact at end-of-line or outer corner is 0.04 
+   x = ENC [CONT] ME1 < 0.04 ABUT<90  OPPOSITE    // co edge with metal enc < 0.04
+   E = INT x < 0.24 ABUT==90 INTERSECTING ONLY REGION
+   E AND BDSP_ID
+}
+ 
+BDSP4.14C.cd {@ metal1 enclose Via1 at end-of-line or outer corner is 0.04
+   x = ENC [VI1] ME1 < 0.04 ABUT<90  OPPOSITE    // via edge with metal enc < 0.04
+   E = INT x < 0.28 ABUT==90 INTERSECTING ONLY REGION
+   E AND BDSP_ID
+}
+
+BDSP.OPC.DIFF {@ BDSP mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+   BDSP OUTSIDE XOPCD
+   
+}
+BDSP.OPC.POLY {@ BDSP mark_layer must overlap poly OPC_BLOCK_LAYERS
+   BDSP OUTSIDE XOPCP
+   
+}
+
+BDSP.OPC.M1 {@ BDSP mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   BDSP OUTSIDE XOPCM1
+   
+}
+
+  
+//**************************************************
+// RULES TO CHECK THE BORDERLESS SP SRAM CORE REGIONS 
+//**************************************************
+BLSP4.1AB {@ Minimum dimension of an Active region is 0.07um
+   E = INT DIFF < 0.070 ABUT>0<90 SINGULAR REGION
+   E AND BLSP
+}
+BLSP4.1C.1 {@ Minimum space between two Active regions is 0.26um 
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND BLSP
+}
+BLSP4.1C.2 {@ Minimum space between two Active regions is 0.11um 
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND BLSP
+}
+BLSP4.1D.a {@ Minimum NWELL to a N+ diffusion spacing is 0.38um 
+   E = EXT NWEL NDIF1_ram < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND BLSP
+}
+BLSP4.1E {@ Minimum NWELL overlap N+ diffusion is 0.23um
+   E = ENC NTAP NWEL < 0.23 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSP
+}
+BLSP4.1G.a {@ Minimum NWELL overlap P+ diffusion is 0.2um
+   E = ENC PDIF1_ram NWEL < 0.20 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSP
+}
+BLSP4.8AaBaC{@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.09um
+   E = INT PO1 < 0.09 ABUT>0<90 SINGULAR REGION
+   E AND BLSP
+}
+BLSP4.8D.a1 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width < 0.24um is 0.23um
+   E = EXT TGATE_Wa < 0.23 ABUT>0<90 REGION
+   E AND BLSP
+}
+BLSP4.8D.a2 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width >= 0.24um is 0.23um
+   E = EXT WGATE_Wa GATE_W < 0.23 ABUT>0<90 REGION
+   E AND BLSP
+}
+BLSP4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width < 0.24um is 0.22um
+   E = EXT TGATE_Wb < 0.22 ABUT>0<90 REGION 
+   E AND BLSP
+}
+BLSP4.8D.b2 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width >= 0.24um is 0.259um
+   E = EXT WGATE_Wb GATE_W < 0.259 ABUT>0<90 REGION
+   E AND BLSP 
+}
+BLSP4.8D.c1.1 {@ Minimum space between two Poly regions on field area is 0.256um
+   E = EXT TEXPO_E < 0.156 ABUT>0<90 REGION SPACE
+   E AND BLSP
+}
+BLSP4.8D.c1.2 {@ Minimum space between two Poly regions on field area is 0.1um
+   E = EXT TEXPO_E < 0.10 ABUT>0<90 REGION NOTCH
+   E AND BLSP
+}
+BLSP4.8D.c2.1a {@ Minimum space between two Poly regions on field area is 0.158um
+   E = EXT WEXPO_E EXPO_E < 0.158 ABUT>0<90 REGION SPACE
+   E AND BLSP
+}
+BLSP4.8D.c2.1b {@ Minimum space between two Poly regions on field area is 0.1um
+   E = EXT WEXPO_E EXPO_E < 0.10 ABUT>0<90 REGION NOTCH
+   E AND BLSP
+}
+BLSP4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.02um
+   E = ENC DIFF PO1 < 0.02 ABUT<90 REGION
+   E AND BLSP
+}
+BLSP4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um
+   END_CAP1 =  INTPOL TOUCH GATE == 1
+   END_CAP = END_CAP1 VERTEX == 4
+   x = EXT GATE DIFF < 0.12 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND BLSP
+}
+BLSP4.8H {@ Minimum Poly gate to field edge spacing is 0.02um
+   E = ENC PO1 DIFF < 0.02 REGION PARALLEL ONLY
+   E AND BLSP
+}
+BLSP4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.05
+      E = EXT GATE_W EXPO_E < 0.05 OBTUSE ONLY REGION
+      E AND BLSP
+}
+BLSP4.9C.a {@ Minimum NPlus overlap N+ diffusion inside P-Well is 0.15um
+   E = ENC ACTIVE_PS NPLUS < 0.15 SINGULAR ABUT<90 REGION
+   E AND BLSP
+}
+BLSP4.10D.a {@ Minimum P+ implant to N+ diffusion spacing(inside P-Well) is 0.19um
+   E = EXT PPLUS ACTIVE_PS < 0.19  ABUT<90 SINGULAR REGION
+   E AND BLSP     
+}
+BLSP4.10D.b {@ Minimum P+ implant to N+ diffusion spacing(inside N-Well) is 0.08um 
+   E = EXT PPLUS ACTIVE_NW < 0.08 ABUT<90 SINGULAR REGION
+   E AND BLSP
+}
+
+BLSP4.12A {@ Minimum width of a CONT region is 0.05um
+   E = INT CONT < 0.05 ABUT>0<90 SINGULAR REGION
+   E AND BLSP
+}
+BLSP4.12B.1 {@ Minimum space between two CONT regions is 0.22um
+   E = EXT CONT < 0.22 ABUT>0<90 SINGULAR REGION SPACE
+   E AND BLSP
+}
+BLSP4.12B.2 {@ Minimum space between two CONT regions is 0.1um
+   E = EXT CONT < 0.10 ABUT>0<90 SINGULAR REGION NOTCH
+   E AND BLSP
+}
+BLSP4.12E {@ Minimum Poly overlap contact is 0.031um, no floating conntact
+   E = ENC POLCNT PO1 < 0.031 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+   E AND BLSP
+}
+BLSP4.13A {@ Minimum width of ME1 region is 0.05um
+    E = INT ME1 < 0.05 ABUT>0<90 SINGULAR REGION
+    E AND BLSP
+}
+BLSP4.13B.a {@ Minimum space between ME1 regions is 0.16um where MET1 width < 10um
+    E = EXT ME1 < 0.16 ABUT>0<90 REGION
+    E AND BLSP
+} 
+
+BLSP.OPC.DIFF {@ BLSP mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+   BLSP OUTSIDE XOPCD
+   
+}
+BLSP.OPC.POLY {@ BLSP mark_layer must overlap poly OPC_BLOCK_LAYERS
+   BLSP OUTSIDE XOPCP
+   
+}
+
+BLSP.OPC.M1 {@ BLSP mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   BLSP OUTSIDE XOPCM1
+   
+}
+
+//***********************************************
+// RULES TO CHECK THE Virage SP SRAM CORE REGIONS 
+//***********************************************
+
+
+BLSP1_4.1AB {@ Minimum dimension of an Active region is 0.24um
+   E = INT DIFF < 0.070 ABUT>0<90 SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.1C.1 {@ Minimum space between two Active regions is 0.26um 
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND BLSP1
+}
+BLSP1_4.1C.2 {@ Minimum space between two Active regions is 0.11um 
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND BLSP1
+}
+BLSP1_4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.38um 
+   E = EXT NWEL NDIF1_ram < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.2um
+   E = ENC PDIF1_ram NWEL < 0.20 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSP1
+}
+BLSP1_4.8AaBaC {@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.09um
+   E = INT PO1 < 0.09 ABUT>0<90 SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.8D.a1 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width < 0.24um is 0.23um
+   E = EXT TGATE_Wa < 0.23 ABUT>0<90 REGION
+   E AND BLSP1
+}
+BLSP1_4.8D.a2 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width >= 0.24um is 0.23um
+   E = EXT WGATE_Wa GATE_W < 0.23 ABUT>0<90 REGION
+   E AND BLSP1
+}
+BLSP1_4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width < 0.24um is 0.22um
+   E = EXT TGATE_Wb < 0.22 ABUT>0<90 REGION 
+   E AND BLSP1
+}
+BLSP1_4.8D.c1.1 {@ Minimum space between two Poly regions on field area is 0.156um
+   E = EXT TEXPO_E < 0.156 ABUT>0<90 REGION SPACE
+   E AND BLSP1
+}
+BLSP1_4.8D.c1.2 {@ Minimum space between two Poly regions on field area is 0.08um
+   E = EXT TEXPO_E < 0.08 ABUT>0<90 REGION NOTCH
+   E AND BLSP1
+}
+BLSP1_4.8D.c2.1a {@ Minimum space between two Poly regions on field area is 0.158um
+   E = EXT WEXPO_E EXPO_E < 0.158 ABUT>0<90 REGION SPACE
+   E AND BLSP1
+}
+BLSP1_4.8D.c2.1b {@ Minimum space between two Poly regions on field area is 0.18um
+   E = EXT WEXPO_E EXPO_E < 0.18 ABUT>0<90 REGION NOTCH
+   E AND BLSP1
+}
+BLSP1_4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.02um
+   E = ENC DIFF PO1 < 0.02 ABUT<90 REGION
+   E AND BLSP1
+}
+BLSP1_4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.010um
+   E = EXT PO1 DIFF < 0.01 ABUT>45<90 SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um
+   END_CAP1 =  INTPOL TOUCH GATE == 1
+   END_CAP = END_CAP1 VERTEX == 4
+   x = EXT GATE DIFF < 0.12 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND BLSP1
+}
+BLSP1_4.8H {@ Minimum Poly gate to field edge spacing is 0.02um
+   E = ENC PO1 DIFF < 0.02 REGION PARALLEL ONLY
+   E AND BLSP1
+}
+BLSP1_4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.05
+      E = EXT GATE_W EXPO_E < 0.05 OBTUSE ONLY REGION
+      E AND BLSP1
+}
+BLSP1_4.9C.a {@ Minimum NPlus overlap N+ diffusion inside P-Well is 0.19um
+   E = ENC ACTIVE_PS NPLUS < 0.19 SINGULAR ABUT<90 REGION
+   E AND BLSP1
+}
+BLSP1_4.12A {@ Minimum width of a CONT region is 0.05um
+   E = INT CONT < 0.05 ABUT>0<90 SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.12B.1 {@ Minimum space between two CONT regions is 0.22um
+   E = EXT CONT < 0.22 ABUT>0<90 SINGULAR REGION SPACE
+   E AND BLSP1
+}
+BLSP1_4.12B.2 {@ Minimum space between two CONT regions is 0.1um
+   E = EXT CONT < 0.10 ABUT>0<90 SINGULAR REGION NOTCH
+   E AND BLSP1
+}
+BLSP1_4.12E {@ Minimum Poly overlap contact is 0.05um, no floating conntact
+   E = ENC POLCNT PO1 < 0.05 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+   E AND BLSP1
+}
+BLSP1_4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.010
+   E = ENC DIFCNT DIFF < 0.01 ABUT>0<90 SINGULAR REGION
+   E AND BLSP1
+}
+BLSP1_4.13A {@ Minimum width of ME1 region is 0.05um
+    E = INT ME1 < 0.05 ABUT>0<90 SINGULAR REGION
+    E AND BLSP1
+}
+BLSP1_4.13B.a {@ Minimum space between ME1 regions is 0.15um where MET1 width < 10um
+    E = EXT ME1 < 0.15 ABUT>0<90 REGION
+    E AND BLSP1
+} 
+BLSP1_4.13D.ad {@ Minimum Metal1 overlap contact is 0.01um, no contact outside Metal1
+   E = ENC CONT ME1 < 0.01 ABUT>45<90 REGION
+   E AND BLSP1
+} 
+BLSP1_4.13D.bc {@ metal enclose contact at end-of-line or outer corner is 0.01 
+   x = ENC [CONT] ME1 < 0.01 ABUT<90  OPPOSITE    // co edge with metal enc < 0.01
+   E = INT x < 0.24 ABUT==90 INTERSECTING ONLY REGION
+   E AND BLSP1
+}
+
+BLSP1.OPC.DIFF {@ BLSP1 mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+   BLSP1 OUTSIDE XOPCD
+ 
+}
+BLSP1.OPC.POLY {@ BDSP4 mark_layer must overlap poly OPC_BLOCK_LAYERS
+   BLSP1 OUTSIDE XOPCP
+  
+}
+
+BLSP1.OPC.M1 {@ BDSP4 mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   BLSP1 OUTSIDE XOPCM1
+  
+}
+
+//*****************************************
+// RULES TO CHECK THE DP SRAM CORE REGIONS 
+//*****************************************
+DP4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.43um
+   E = EXT NWEL NDIF1_ram < 0.43 ABUT<90 OVERLAP SINGULAR REGION
+   E AND DP
+}
+DP4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.43um //0.32um
+   E = ENC PDIF1_ram NWEL < 0.32 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP
+}
+DP4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.08um
+   E = EXT PO1 DIFF < 0.08 ABUT<90 SINGULAR REGION OPPOSITE 
+   E AND DP
+}
+
+DP4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.08
+   END_CAP =  INTPOL TOUCH GATE == 1
+   x = EXT GATE DIFF < 0.08 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND DP
+}
+DP4.9C.a {@ Minimum NPlus overlap N+ diffusion inside P-Well is 0.22um //0 (butting)
+   E = ENC ACTIVE_PS NPLUS < 0.22 SINGULAR ABUT<90 REGION
+   F = E NOT INTERACT BUT_NS
+   F AND DP
+}
+DP4.9C.b {@ Minimum NPlus overlap N+ diffusion inside N-Well is 0.08um //0.04um
+   E = ENC ACTIVE_NW NPLUS < 0.04 SINGULAR ABUT<90 REGION
+   E AND DP
+}
+DP4.9D.b {@ Minimum NPlus to P+ diffusion spacing(inside P-Well) is 0.08um //0.07um
+   E = EXT NPLUS ACTIVE_PS < 0.07 ABUT<90 SINGULAR REGION
+   E AND DP
+}
+DP4.10C.b {@ Minimum P+ implant overlap P+ diffusion(inside P-Well) is 0.08um //0.07um
+   E = ENC ACTIVE_PS PPLUS < 0.07 SINGULAR ABUT<90 REGION
+   E AND DP
+}
+DP4.10D.a {@ Minimum P+ implant to N+ diffusion spacing(inside P-Well) is 0.22um,butting cont is 0um
+   E = EXT PPLUS ACTIVE_PS < 0.22  ABUT<90 SINGULAR REGION
+   F = E NOT INTERACT BUT_PTAP
+   F AND DP    
+}
+DP4.10D.b {@ Minimum P+ implant to N+ diffusion spacing(inside N-Well) is 0.08um
+   E = EXT PPLUS ACTIVE_NW < 0.04 ABUT<90 SINGULAR REGION
+   E AND DP
+}
+DP4.12E {@ Minimum Poly overlap contact is 0.10um, no floating conntact//0.08um
+   E = ENC POLCNT PO1 < 0.08 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+   E AND DP
+}
+DP4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.10 //0.07um
+   E = ENC DIFCNT DIFF < 0.07 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP
+}
+DP4.13A {@ Minimum width of ME1 region is 0.24um //0.07um
+   E = INT ME1 < 0.07 ABUT>0<90 SINGULAR REGION
+   E AND DP
+}
+DP4.13B.a.1 {@ Minimum space between ME1 regions is 0.24um where MET1 width < 10um //0.21um
+   E = EXT ME1 < 0.21 ABUT>0<90 REGION SPACE
+   E AND DP
+}
+DP4.13B.a.2 {@ Minimum space between ME1 regions is 0.24um where MET1 width < 10um //0.2um
+   E = EXT ME1 < 0.20 ABUT>0<90 REGION NOTCH
+   E AND DP
+}
+DP4.13D.bc {@ metal enclose contact at end-of-line or outer corner is 0.04 
+   x = ENC [CONT] ME1 < 0.04 ABUT<90  OPPOSITE NOT ACUTE   // co edge with metal enc < 0.04
+   E = INT x < 0.24 ABUT==90 INTERSECTING ONLY REGION
+   E AND DP
+}
+
+//DP.OPC.DIFF {@ DP mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+//   DP OUTSIDE XOPCD
+//}
+//DP.OPC.POLY {@ DP mark_layer must overlap poly OPC_BLOCK_LAYERS
+//   DP OUTSIDE XOPCP
+//}
+
+DP.OPC.M1 {@ DP mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   DP OUTSIDE XOPCM1
+  
+}
+
+//*****************************************
+// RULES TO CHECK THE DP1 SRAM CORE REGIONS
+//*****************************************
+
+DP1_4.1AB {@ Minimum dimension of an Active region is 0.14um
+   E = INT DIFF < 0.14 ABUT>0<90 SINGULAR REGION
+   E AND DP1
+}
+DP1_4.1C.1 {@ Minimum space between two Active regions is 0.26um
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND DP1
+}
+DP1_4.1C.2 {@ Minimum space between two Active regions is 0.11um
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND DP1
+}
+DP1_4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.33um
+   E = EXT NWEL NDIF1_ram < 0.33 ABUT<90 OVERLAP SINGULAR REGION
+   E AND DP1
+}
+DP1_4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.36um
+   E = ENC PDIF1_ram NWEL < 0.36 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP1
+}
+DP1_4.8AaBaC{@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.08um
+   E = INT PO1 < 0.08 ABUT>0<90 SINGULAR REGION
+   E AND DP1
+}
+DP1_4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact
+         @ poly width < 0.24um is 0.20um
+   E = EXT TGATE_Wb < 0.20 ABUT>0<90 REGION
+   E AND DP1
+}
+DP1_4.8D.c1. {@ Minimum space between two Poly regions on field area is 0.20um
+   E = EXT TEXPO_E < 0.20 ABUT>0<90 REGION 
+   E AND DP1
+}
+DP1_4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.03um
+   E = ENC DIFF PO1 < 0.03 ABUT<90 REGION
+   E AND DP1
+}
+DP1_4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.07um
+   E = EXT PO1 DIFF < 0.07 SINGULAR REGION PARALLEL ONLY
+   E AND DP1
+}
+DP1_4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.07um
+   x = EXT GATE DIFF < 0.07 PERP ONLY ABUT == 90 REGION
+   x AND DP1
+}
+DP1_4.8H {@ Minimum Poly gate to field edge spacing is 0.05um
+   E = ENC PO1 DIFF < 0.05 REGION PARALLEL ONLY
+   E AND DP1
+}
+DP1_4.8J {@ Gate at 90 degree angle is not allowed.
+   T = LENGTH GATE_W > 0.02
+   E1 = EXT T < 0.1 ABUT == 90 REGION
+   E2 = INT T < 0.1 ABUT == 90 REGION
+   E = E1 OR E2
+   E AND DP1
+}
+DP1_4.12C.a {@ Minimum diffusion CONT to Poly(1.8V) spacing is 0.06um, no contact on gate
+   E = EXT DIFCNT1 GATE < 0.06 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND DP1
+}
+DP1_4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.03
+   E = ENC DIFCNT DIFF < 0.03 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP1
+}
+ 
+//DP1.OPC.DIFF {@ DP1 mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+//   DP1 OUTSIDE XOPCD
+//}
+
+//DP1.OPC.POLY {@ DP1 mark_layer must overlap poly OPC_BLOCK_LAYERS
+//   DP1 OUTSIDE XOPCP
+//}
+
+//DP1.OPC.M1 {@ DP1 mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+//   DP1 OUTSIDE XOPCM1
+//}
+
+
+//*****************************************
+// RULES TO CHECK THE DP2 SRAM CORE REGIONS
+//*****************************************
+
+
+DP2_4.1AB {@ Minimum dimension of an Active region is 0.24um //0.14um
+   E = INT DIFF < 0.14 ABUT>0<90 SINGULAR REGION
+   E AND DP2
+}
+DP2_4.1C.1 {@ Minimum space between two Active regions is 0.28um //0.26um
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND DP2
+}
+DP2_4.1C.2 {@ Minimum space between two Active regions is 0.28um //0.11um
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND DP2
+}
+DP2_4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.43um //0.38um
+   E = EXT NWEL NDIF1_ram < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND DP2
+}
+DP2_4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.43um //0.20um
+   E = ENC PDIF1_ram NWEL < 0.20 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP2
+}
+DP2_4.8AaBaC{@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.18um //0.08um
+   E = INT PO1 < 0.08 ABUT>0<90 SINGULAR REGION
+   E AND DP2
+}
+DP2_4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact
+         @ poly width < 0.24um is 0.34um
+   T = LENGTH TGATE_Wb > 0.02
+   E = EXT T < 0.34 ABUT>0<90 REGION
+   E AND DP2
+}
+DP2_4.8D.c1.1 {@ Minimum space between two Poly regions on field area is 0.2um
+   E = EXT EXPO_E < 0.20 ABUT>0<90 REGION SPACE
+   E AND DP2
+}
+DP2_4.8D.c1.2 {@ Minimum space between two Poly regions on field area is 0.09um
+   E = EXT EXPO_E < 0.09 ABUT>0<90 REGION NOTCH
+   E AND DP2
+}
+ 
+DP2_4.8D.c2.1 {@ Minimum space between two Poly regions on field area is 0.24um
+   E = EXT wide_poly EXPOL < 0.24 ABUT>0<90 REGION NOT ACUTE
+   E AND DP2
+}
+DP2_4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.22um//0.01um
+   E = ENC DIFF PO1 < 0.01 ABUT<90 REGION
+   E AND DP2
+}
+DP2_4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.10um //0.02um
+   E = EXT PO1 DIFF < 0.02 SINGULAR REGION PARALLEL ONLY
+   E AND DP2
+}
+DP2_4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um//filter false endcaps
+   END_CAP1 =  INTPOL TOUCH GATE == 1
+   END_CAP = END_CAP1 VERTEX == 4
+   x = EXT GATE DIFF < 0.12 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND DP2
+}
+DP2_4.8H {@ Minimum Poly gate to field edge spacing is 0.28um//0.09um
+   x1 = SIZE GATE BY -0.01
+   x2 = SIZE x1 BY 0.01
+   E = ENC x2 DIFF < 0.09 REGION
+   E AND DP2
+}
+DP2_4.8J {@ Gate at 90 degree angle is not allowed.
+   T = LENGTH GATE_W > 0.02
+   E1 = EXT T < 0.1 ABUT == 90 REGION
+   E2 = INT T < 0.1 ABUT == 90 REGION
+   E = E1 OR E2
+   E AND DP2
+}
+DP2_4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.02
+   E = EXT GATE_W EXPO_E < 0.02 OBTUSE ONLY REGION
+   E AND DP2
+}
+DP2_4.10D.b {@ Minimum P+ implant to N+ diffusion spacing(inside N-Well) is 0.08um
+   E = EXT PPLUS ACTIVE_NW < 0.08 ABUT<90 SINGULAR REGION
+   E AND DP2
+}
+DP2_4.12C.a {@ Minimum diffusion CONT to Poly(1.8V) spacing is 0.08um, no contact on gate
+   E = EXT DIFCNT1 GATE < 0.08 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND DP2
+}
+DP2_4.12D {@ Minimum PO1 Contact to Diffusion spacing is 0.17um
+   E = EXT POLCNT DIFF < 0.17 ABUT<90 SINGULAR REGION
+   E AND DP2
+}
+DP2_4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.03
+   E = ENC DIFCNT DIFF < 0.03 ABUT<90 SINGULAR OVERLAP REGION
+   E AND DP2
+}
+DP2_4.13D.bc {@ metal enclose contact at end-of-line or outer corner is 0.04
+   x = ENC [CONT] ME1 < 0.04 ABUT<90  OPPOSITE    // co edge with metal enc < 0.04
+   E = INT x < 0.24 ABUT==90 INTERSECTING ONLY REGION
+   E AND DP2
+}
+DP2_4.14C.cd {@ metal1 enclose Via1 at end-of-line or outer corner is 0.04
+   x = ENC [VI1] ME1 < 0.04 ABUT<90  OPPOSITE    // via edge with metal enc < 0.04
+   E = INT x < 0.28 ABUT==90 INTERSECTING ONLY REGION
+   E AND DP2
+}
+
+//DP2.OPC.DIFF {@ DP2 mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+//   DP2 OUTSIDE XOPCD
+//}
+
+//DP2.OPC.POLY {@ DP2 mark_layer must overlap poly OPC_BLOCK_LAYERS
+//   DP2 OUTSIDE XOPCP
+//}
+
+//DP2.OPC.M1 {@ DP2 mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+//   DP2 OUTSIDE XOPCM1
+//}
+
+
+//*****************************************
+// RULES TO CHECK THE ROM CORE REGIONS 
+//*****************************************
+ROM4.12C.a {@ Minimum diffusion CONT to Poly(1.8V) spacing is 0.15um, no contact on gate
+   E = EXT DIFCNT1 GATE < 0.14 ABUT<90 SINGULAR INSIDE ALSO REGION
+   E AND ROM
+}
+ROM4.12FG {@ Minimum extension of an Active region beyond a CONT region is 0.10
+   E = ENC DIFCNT DIFF < 0.09 ABUT<90 SINGULAR OVERLAP REGION
+   E AND ROM
+}
+
+//****************************************
+//LOW POWER SRAM  REGIONS
+//****************************************
+BLSPLP4.1AB {@ Minimum dimension of an Active region is 0.07um
+   E = INT DIFF < 0.07 ABUT>0<90 SINGULAR REGION
+   E AND  BLSPLP
+}
+BLSPLP4.1C {@ Minimum space between two Active regions is 0.11um 
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION
+   E AND BLSPLP
+}
+BLSPLP4.1D.a {@ Minimum NWELL to a N+ diffusion(1.8V) spacing is 0.38um 
+   e = EXT NWEL NDIF1_logic < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND BLSPLP
+}
+BLSPLP4.1G.a {@ Minimum NWELL overlap P+ diffusion(1.8V) is 0.2um
+   E = ENC PDIF1_logic NWEL < 0.2 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSPLP
+}
+BLSPLP4.8AaBaC {@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.09um
+   E = INT PO1 < 0.09 ABUT>0<90 SINGULAR REGION
+   E AND BLSPLP
+}
+BLSPLP4.8D.a1 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width < 0.24um is 0.206um
+   E = EXT TGATE_Wa < 0.206 ABUT>0<90 REGION
+   E AND  BLSPLP
+}
+BLSPLP4.8D.a2 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width >= 0.24um is 0.206um
+   E = EXT WGATE_Wa GATE_W < 0.206 ABUT>0<90 REGION
+   E AND BLSPLP
+}
+BLSPLP4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width < 0.24um is 0.22um
+   E = EXT TGATE_Wb < 0.22 ABUT>0<90 REGION
+   E AND BLSPLP
+}
+BLSPLP4.8D.c1 {@ Minimum space between two Poly regions on field area is 0.08um
+   E = EXT TEXPO_E < 0.08 ABUT>0<90 REGION
+   E AND BLSPLP
+}
+BLSPLP4.8D.c2.1 {@ Minimum space between two Poly regions on field area is 0.1um
+   E = EXT WEXPO_E EXPO_E < 0.1 ABUT>0<90 REGION
+   E AND  BLSPLP
+}
+BLSPLP4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.02um
+   //E = ENC DIFF PO1 < 0.02 ABUT<90 REGION
+    E = GATE NOT PO1 
+   E AND BLSPLP
+}
+BLSPLP4.8F {@ Minimum clearance from an Active region to Poly on field oxide is 0.007um
+   E = EXT PO1 DIFF < 0.007 ABUT<90 SINGULAR REGION
+   y = E NOT ME3 
+   y  AND  BLSPLP
+}
+BLSPLP4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um
+   END_CAP =  INTPOL TOUCH GATE == 1
+   x = EXT GATE DIFF < 0.05 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   u= E outside PO1 
+   u  AND  BLSPLP
+}
+BLSPLP4.8H {@ Minimum Poly gate to field edge spacing is 0.03um
+   E = ENC PO1 DIFF < 0.03 REGION PARALLEL ONLY
+   E AND BLSPLP
+}
+BLSPLP4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.2
+//    x = EXT PO1 DIFF < 0.2 ACUTE ONLY REGION
+//    EXT [x] GATE < 0.2 SINGULAR INTERSECTING ONLY
+    E = EXT GATE_W EXPO_E < 0.05 OBTUSE ONLY REGION
+    E AND BLSPLP
+} 
+BLSPLP4.9A {@ Minimum width of a NPlus region is 0.29um
+ x   =   INT NPLUS < 0.29  ABUT>0<90 SINGULAR REGION
+ x AND BLSPLP 
+}
+BLSPLP4.9B {@ Minimum space between two NPlus regions is 0.23um
+  x =  EXT NPLUS < 0.23 ABUT>0<90 REGION
+  x AND BLSPLP 
+}
+BLSPLP4.9C.a {@ Minimum NPlus overlap N+ diffusion inside P-Well is 0.2um
+   E = ENC ACTIVE_PS NPLUS < 0.2 SINGULAR ABUT<90 REGION
+   E AND BLSPLP
+}
+BLSPLP4.10B {@ Minimum space between two PPlus regions is 0.29um
+   x = EXT PPLUS < 0.290 ABUT>0<90 REGION
+  x AND BLSPLP 
+}
+BLSPLP4.12B {@ Minimum space between two CONT regions is 0.1um
+   E = EXT CONT < 0.1 ABUT>0<90 SINGULAR REGION
+   E AND BLSPLP
+}
+BLSPLP4.12C.a {@ Minimum diffusion CONT to Poly(1.8V) spacing is 0.01um, no contact on gate
+   E = EXT DIFCNT1 GATE < 0.01 ABUT<90 SINGULAR  REGION
+//  E = CONT NOT GATE     
+   E AND BLSPLP
+}
+BLSPLP4.12D {@ Minimum PO1 Contact to Diffusion spaceing is 0.014um
+   x = PO1 AND CONT
+   E = EXT x DIFF < 0.01 ABUT<90 OPPOSITE SINGULAR  REGION  
+   E AND BLSPLP
+}
+BLSPLP4.12E {@ Minimum Poly overlap contact is 0.03um, no floating conntact
+   E = ENC POLCNT PO1 < 0.03 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+   E AND BLSPLP
+}
+BLSPLP4.13A {@ Minimum width of ME1 region is 0.05um
+    E = INT ME1 < 0.05 ABUT>0<90 SINGULAR REGION
+    E AND BLSPLP
+}
+BLSPLP4.13B.a {@ Minimum space between ME1 regions is 0.14um where MET1 width < 10um
+    E = EXT ME1 < 0.14 ABUT>0<90 REGION
+    E AND  BLSPLP
+}
+BLSPLP4.14C.cd {@ metal1 enclose Via1 at end-of-line or outer corner is 0.04
+   x = ENC [VI1] ME1 < 0.04 ABUT<90  OPPOSITE    // via edge with metal enc < 0.04
+   E = INT x < 0.28 ABUT==90 INTERSECTING ONLY REGION
+   E AND  BLSPLP
+}
+
+BLSPLP.OPC.DIFF {@ BLSPLP mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+   BLSPLP OUTSIDE XOPCD
+ 
+}
+BLSPLP.OPC.POLY {@ BLSPLP mark_layer must overlap poly OPC_BLOCK_LAYERS
+   BLSPLP OUTSIDE XOPCP
+  
+}
+
+BLSPLP.OPC.M1 {@ BLSPLP mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   BLSPLP OUTSIDE XOPCM1
+  
+}
+
+
+  
+//**************************************************
+// RULES TO CHECK THE BORDERLESS SP SRAM CORE REGIONS 
+//**************************************************
+BLSP_1A4.1AB {@ Minimum dimension of an Active region is 0.07um
+   E = INT DIFF < 0.070 ABUT>0<90 SINGULAR REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.1C.1 {@ Minimum space between two Active regions is 0.26um 
+   E = EXT DIFF < 0.26 ABUT>0<90 REGION SPACE
+   E AND BLSP_1A
+}
+BLSP_1A4.1C.2 {@ Minimum space between two Active regions is 0.11um 
+   E = EXT DIFF < 0.11 ABUT>0<90 REGION NOTCH
+   E AND BLSP_1A
+}
+BLSP_1A4.1D.a {@ Minimum NWELL to a N+ diffusion spacing is 0.38um 
+   E = EXT NWEL NDIF1_ram < 0.38 ABUT<90 OVERLAP SINGULAR REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.1E {@ Minimum NWELL overlap N+ diffusion is 0.23um
+   E = ENC NTAP NWEL < 0.23 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.1G.a {@ Minimum NWELL overlap P+ diffusion is 0.2um
+   E = ENC PDIF1_ram NWEL < 0.20 ABUT<90 SINGULAR OVERLAP REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.8AaBaC{@ Minimum PO1 width for 1.8V NMOS or PMOS or interconnect is 0.09um
+   E = INT PO1 < 0.09 ABUT>0<90 SINGULAR REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.a1 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width < 0.24um is 0.23um
+   E = EXT TGATE_Wa < 0.23 ABUT>0<90 REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.a2 {@ Minimum Poly spacing on diffusion regions without contact 
+         @ poly width >= 0.24um is 0.23um
+   E = EXT WGATE_Wa GATE_W < 0.23 ABUT>0<90 REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.b1 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width < 0.24um is 0.22um
+   E = EXT TGATE_Wb < 0.22 ABUT>0<90 REGION 
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.b2 {@ Minimum Poly spacing on diffusion regions with contact 
+         @ poly width >= 0.24um is 0.229um
+   E = EXT WGATE_Wb GATE_W < 0.229 ABUT>0<90 REGION
+   E AND BLSP_1A 
+}
+BLSP_1A4.8D.c1.1 {@ Minimum space between two Poly regions on field area is 0.256um
+   E = EXT TEXPO_E < 0.156 ABUT>0<90 REGION SPACE
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.c1.2 {@ Minimum space between two Poly regions on field area is 0.1um
+   E = EXT TEXPO_E < 0.10 ABUT>0<90 REGION NOTCH
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.c2.1a {@ Minimum space between two Poly regions on field area is 0.158um
+   E = EXT WEXPO_E EXPO_E < 0.158 ABUT>0<90 REGION SPACE
+   E AND BLSP_1A
+}
+BLSP_1A4.8D.c2.1b {@ Minimum space between two Poly regions on field area is 0.1um
+   E = EXT WEXPO_E EXPO_E < 0.10 ABUT>0<90 REGION NOTCH
+   E AND BLSP_1A
+}
+BLSP_1A4.8E {@ Minimum overlap of a Poly region extended into field oxide is 0.02um
+   E = ENC DIFF PO1 < 0.02 ABUT<90 REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.8G {@ Minimum Poly endcap to RELATED Active spacing is 0.12um
+   END_CAP1 =  INTPOL TOUCH GATE == 1
+   END_CAP = END_CAP1 VERTEX == 4
+   x = EXT GATE DIFF < 0.12 PERP ONLY ABUT == 90 REGION
+   E = x INTERACT END_CAP
+   E AND BLSP_1A
+}
+BLSP_1A4.8H {@ Minimum Poly gate to field edge spacing is 0.02um
+   E = ENC PO1 DIFF < 0.02 REGION PARALLEL ONLY
+   E AND BLSP_1A
+}
+BLSP_1A4.8N {@ Minimum PO1 bent gate on field region to DIffusion spacing = 0.05
+      E = EXT GATE_W EXPO_E < 0.05 OBTUSE ONLY REGION
+      E AND BLSP_1A
+}
+BLSP_1A4.9C.a {@ Minimum NPlus overlap N+ diffusion inside P-Well is 0.15um
+   E = ENC ACTIVE_PS NPLUS < 0.15 SINGULAR ABUT<90 REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.10D.a {@ Minimum P+ implant to N+ diffusion spacing(inside P-Well) is 0.19um
+   E = EXT PPLUS ACTIVE_PS < 0.19  ABUT<90 SINGULAR REGION
+   E AND BLSP_1A     
+}
+BLSP_1A4.10D.b {@ Minimum P+ implant to N+ diffusion spacing(inside N-Well) is 0.08um 
+   E = EXT PPLUS ACTIVE_NW < 0.08 ABUT<90 SINGULAR REGION
+   E AND BLSP_1A
+} 
+BLSP_1A4.12A {@ Minimum width of a CONT region is 0.05->0.24um
+   E = INT CONT < 0.24 ABUT>0<90 SINGULAR REGION
+   E AND BLSP_1A
+}
+BLSP_1A4.12B.1 {@ Minimum space between two CONT regions is 0.22->0.23um
+   E = EXT CONT < 0.23 ABUT>0<90 SINGULAR REGION SPACE
+   E AND BLSP_1A
+}
+BLSP_1A4.12B.2 {@ Minimum space between two CONT regions is 0.1->0.23um
+   E = EXT CONT < 0.23 ABUT>0<90 SINGULAR REGION NOTCH
+   E AND BLSP_1A
+}
+BLSP_1A4.12E {@ Minimum Poly overlap contact is 0um, no floating conntact
+   E = NOT POLCNT PO1 
+   E AND BLSP_1A
+}
+BLSP_1A4.13A {@ Minimum width of ME1 region is 0.05um
+    E = INT ME1 < 0.05 ABUT>0<90 SINGULAR REGION
+    E AND BLSP_1A
+}
+BLSP_1A4.13B.a {@ Minimum space between ME1 regions is 0.16um where MET1 width < 10um
+    E = EXT ME1 < 0.16 ABUT>0<90 REGION
+    E AND BLSP_1A
+} 
+
+BLSP_1A.OPC.DIFF {@ BLSP_1A mark_layer must overlap diffusion OPC_BLOCK_LAYERS
+   BLSP_1A OUTSIDE XOPCD
+   
+}
+BLSP_1A.OPC.POLY {@ BLSP_1A mark_layer must overlap poly OPC_BLOCK_LAYERS
+   BLSP_1A OUTSIDE XOPCP
+   
+}
+
+BLSP_1A.OPC.M1 {@ BLSP_1A mark_layer must overlap metal-1 OPC_BLOCK_LAYERS
+   BLSP_1A OUTSIDE XOPCM1
+   
+}
+
+
+//***************************
+//   OPC check
+//***************************
+
+BDSP_L = SIZE BDSP BY 5.0
+BLSP_L = SIZE BLSP BY 5
+BLSP1_L = SIZE BLSP1 BY 5
+DP_L = SIZE DP BY 5
+DP1_L = SIZE DP1 BY 5
+DP2_L = SIZE DP2 BY 5
+ROM_L = SIZE ROM BY 5
+BLSPLP_L = SIZE BLSPLP BY 5
+BLSP_1A_L = SIZE BLSP_1A BY 5
+
+
+
+OPC_BLOCK.DIFF {@ diffusion OPC block layer must be covered by SRAM mark layers
+   ((((( XOPCD NOT BDSP_L) NOT BLSP_L) NOT BLSP1_L)  NOT ROM_L) NOT BLSPLP_L) NOT BLSP_1A_L
+}
+OPC_BLOCK.POLY {@ poly OPC block layer must be covered by SRAM mark layers 
+   ((((( XOPCP NOT BDSP_L) NOT BLSP_L) NOT BLSP1_L)  NOT ROM_L) NOT BLSPLP_L) NOT BLSP_1A_L
+}
+
+OPC_BLOCK.M1 {@ metal1 OPC block layer must be covered by SRAM mark layers
+   (((((( XOPCM1 NOT BDSP_L) NOT BLSP_L) NOT BLSP1_L) NOT DP_L) NOT ROM_L) NOT BLSPLP_L) NOT BLSP_1A_L
+}
+
+
+// END OF FILE
+ 

@@ -1,0 +1,48 @@
+set_pad_physical_constraints -side 1 -pad_name cornerUL
+set_pad_physical_constraints -side 2 -pad_name cornerUR
+set_pad_physical_constraints -side 3 -pad_name cornerLR
+set_pad_physical_constraints -side 4 -pad_name cornerLL
+
+set_pad_physical_constraints -side 1 -pad_name io_gnd0         -order 1      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_0         -order 2      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name core_vcc0       -order 3      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_1         -order 4      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name core_gnd0       -order 5      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name io_vcc0         -order 6      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_2         -order 7      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_12        -order 8      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_3         -order 9      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 1 -pad_name iopad_4         -order 10     -min_left_iospace 31  -min_right_iospace 31
+
+set_pad_physical_constraints -side 2 -pad_name io_gnd1         -order 1      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name iopad_5         -order 2      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name iopad_6         -order 3      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name io_vcc2         -order 4      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name iopad_7         -order 5      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name iopad_8         -order 6      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name io_vcc1         -order 7      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name core_vcc1       -order 8      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name iopad_9         -order 9      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 2 -pad_name core_gnd2       -order 10     -min_left_iospace 31  -min_right_iospace 31
+
+set_pad_physical_constraints -side 3 -pad_name iopad_22        -order 1      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name iopad_10        -order 2      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name iopad_11        -order 3      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name io_gnd2         -order 4      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name iopad_15        -order 5      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name core_vcc3       -order 6      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name iopad_13        -order 7      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name core_gnd1       -order 8      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name io_gnd3         -order 9      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 3 -pad_name io_vcc3         -order 10     -min_left_iospace 31  -min_right_iospace 31
+
+set_pad_physical_constraints -side 4 -pad_name io_gnd4         -order 1      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name io_gnd5         -order 2      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name core_vcc2       -order 3      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name io_vcc4         -order 4      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name core_gnd3       -order 5      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name iopad_17        -order 6      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name iopad_18        -order 7      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name iopad_23        -order 8      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name iopad_19        -order 9      -min_left_iospace 31  -min_right_iospace 31
+set_pad_physical_constraints -side 4 -pad_name iopad_20        -order 10     -min_left_iospace 31  -min_right_iospace 31

@@ -1,0 +1,436 @@
+////////////////////////////////////////////////////////////////////// 
+//                                                                  //
+//     DRC(Calibre) for Antenna rule in 0.18um 1P6M Process         //
+//                                                                  //
+//     Revision  : 1.0-P3                                           //  
+//                                                                  //
+//     LIMITATION OF LIABILITY:                                     //
+//        United Microelectronics Corp. is not  liable  for  any    //
+//        property damage, personal  injury,  loss  of  profits,    //
+//        interruption of business,  or  for  any other special,    //
+//        consequential or incidental  damages, however  caused,    //
+//        whether for breach of warranty,contract tort(including    //
+//                                                                  //
+//        negligence),strict liability or otherwise.                //
+//     Copyright (c) United Microelectronics Corporation, 1980-2006 //
+//     All Right Reserved.                                          //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
+//NOTES ( Important, Read Me First )
+//===================================
+//    
+// 1. This rule deck is coded accoring to Section-Antenna Rule of 
+//    following SPEC. 
+//    G-03-LOGIC18-1.5V/3.3V-1P6M-TLR
+// 2. Please set correct value for RESOLUTION, LAYOUT SYSTEM,
+//    LAYOUT PATH, LAYOUT PRIMARY, make sure layer numbers in LAYER
+//    DECLARATIONS section are correct before run drc.
+// 3. Increment Connection is used in this antenna check, it can be run flat or 
+//    hierarchical(Calibre July,99 release or late version for hierarchical run), 
+//    but do NOT inlude or integrate it into basic drc command file that has normal 
+//    CONNECT commands.
+//==================================================================================
+//  Revision History
+//   10/13/2006 Y.C Lee  1. Update version to 1.0_P3
+//                       2. change connectivity sequence for POLY1 process flow
+//                          (connect PO1 Metal1 after check POLY1 antenna rule)
+//
+//   07/12/2006 C.C. Chang/UMC 
+//                   1.Update version to 1.0 P2
+//                   2.Update definition for dual diode cases.
+//   05/12/2006 C.C. Chang/UMC 
+//                   1.Update version to 1.0 P1
+//                   2.Redefine connection layers
+//   07/14/2005 C.C. Chang/UMC 
+//              Redefine layer DIODE, NDIODE and PDIODE.
+//   11/20/2003 Shuwen Yu/UMC 
+//              Redefine the NWEL layer (NOT TWEL)
+//   07/15/2003 hsiuchen  by Draft TLR for DSQA library test
+//                        created all rule 
+//   09/25/2002 James Yeh/UMC
+//		(1)Algorithm change. Use "Accumulate" option. 
+//		(2)Change definition of DIODE
+//		(3)Change FPO1 to PO1 in area and perimeter antenna ratio checking.
+//   11/02/2000 Merge 0.13/0.15/0.18/0.25 Antenna check to a deck.
+//   09/18/2000 Algorithm change.
+//              Cumulative antenna ratio calculation is refined by
+//              excluding non-top metals which do not connect downward 
+//	 	to gate directly.
+//              This algorithm has been approved by Wang Mu-Chung/TD.
+//		For detail descriptions, please refer to UMC Doc
+//   09/1999 Preliminary versino by S M  LEE
+//   09/1999 by Andy Moore & LEI LING
+//   02/1999 by Andy Moore
+// ===============================================================================//
+//
+// Antenna Ratio Look Up Table 
+// -----------------------------------------------------------------------------
+// Variable/Technology	0.18LOGIC
+//------------------------------------------------------------------------------
+// POLY_THICK		0.2um
+// MET_BOT_THICK	0.38um
+// MET_MID_THICK	0.48um
+// MET_TOP_THICK	0.86um
+// DIO_AREA		0.60*0.60um^2
+//-------------------------------------------------------------------------------
+// *For thoes technology not listed in the look up table, please refer to the 
+//  INTERCAP SPEC.
+//
+// ----------------------------------------------------------------
+// Please set following VARIABLEs according to your design technology
+// ----------------------------------------------------------------
+//
+
+VARIABLE DIO_AREA       0.60*0.60	//DIODE AREA
+
+VARIABLE N_PO_SS	200	//Diode not used, perimeter ratio of PO1
+VARIABLE N_MET_SS	800	//Diode not used, perimeter ratio of METAL (NON_TOP METAL)
+VARIABLE N_TOP_MET_SS	400	//Diode not used, perimeter ratio of TOP METAL
+
+VARIABLE MET_SS		10000	//Diode used, (N+/P or P+/N), perimeter ratio of METAL (NON_TOP METAL)
+VARIABLE TOP_MET_SS	5000	//Diode used, (N+/P or P+/N), perimeter ratio of TOP METAL
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"	
+DRC SUMMARY REPORT "../ANT.sum"
+DRC RESULTS DATABASE "../ANT.db" ASCII
+
+LAYOUT SYSTEM GDSII
+DRC MAXIMUM VERTEX 199 
+DRC KEEP EMPTY       NO
+
+PRECISION 1000
+UNIT LENGTH U
+RESOLUTION 1
+
+//////////////////////////////////////////////
+// INPUT LAYER STATEMENTS
+//////////////////////////////////////////////
+
+
+LAYER MAP	1	DATATYPE	0	1001
+LAYER DIFF		1001		// Diffusion
+LAYER MAP	3	DATATYPE	0	1003
+LAYER NWEL		1003		// N-well
+LAYER MAP	6	DATATYPE	0	1006
+LAYER TWEL		1006		// T-well for Triple Well Process
+LAYER MAP	11	DATATYPE	0	1009
+LAYER PPLUS		1009		// P+ Imp
+LAYER MAP	39	DATATYPE	0	1037
+LAYER CONT		1037		// Contact
+LAYER MAP	41	DATATYPE	0	1040
+LAYER PO1		1040		// Poly1
+LAYER MAP	46	DATATYPE	0	1045
+LAYER ME1		1045		// Metal1
+LAYER MAP	47	DATATYPE	0	1046
+LAYER VI1		1046		// Mvia1
+LAYER MAP	48	DATATYPE	0	1048
+LAYER ME2		1048		// Metal2
+LAYER MAP	49	DATATYPE	0	1049
+LAYER VI2		1049		// Mvia2
+LAYER MAP	50	DATATYPE	0	1051
+LAYER ME3		1051		// Metal3
+LAYER MAP	51	DATATYPE	0	1052
+LAYER VI3		1052		// Mvia3
+LAYER MAP	52	DATATYPE	0	1054
+LAYER ME4		1054		// Metal4
+LAYER MAP	53	DATATYPE	0	1055
+LAYER VI4		1055		// Mvia4
+LAYER MAP	54	DATATYPE	0	1057
+LAYER ME5		1057		// Metal5
+LAYER MAP	55	DATATYPE	0	1058
+LAYER VI5		1058		// Mvia5
+LAYER MAP	56	DATATYPE	0	1060
+LAYER ME6		1060		// Metal6
+LAYER MAP	65	DATATYPE	0	1071
+LAYER MMC		1071		// Metal Cap (top Plate)
+
+//  PWELL IS NWEL REVERSE TONE
+
+
+
+
+
+
+// Derived layers  ** DO NOT MODIFY **
+
+
+
+GATE1  = PO1 AND DIFF
+GATE = SIZE (SIZE GATE1 BY -0.03 ) BY 0.03 TRUNCATE 0.03 // TOUCH SD == 2 
+// 0.03 means to fit the Library of after OPC
+//GATE = GATE1 TOUCH SD == 2 
+
+NWEL_A = NWEL NOT TWEL
+PDIFF = DIFF NOT OUTSIDE NWEL_A
+NDIFF = DIFF OUTSIDE NWEL_A
+
+PSB  = PPLUS AND NDIFF    	// P substrate tie
+PDIF = PPLUS AND PDIFF
+NDIF = NDIFF NOT PSB
+NSB  = PDIFF NOT PDIF		// N-well substrate tie
+
+PSD  = PDIF NOT GATE        	// P devices, FET OR Diode
+NSD  = NDIF NOT GATE        	// N devices, FET OR Diode
+
+DIODE = AREA (  NSD OR (PSD OR (PSB OR NSB))  ) >= DIO_AREA
+//DIODE = DIODE1 NOT INTERACT PO1
+
+NDIODE = AREA   NSD >=  DIO_AREA//NOT INTERACT PO1	//N+/P-well diode
+PDIODE = AREA   PSD >=  DIO_AREA //NOT INTERACT PO1	//P+/N-well diode
+
+DRC INCREMENTAL CONNECT YES
+
+
+// Connectivity statements //
+
+DIODE_C    = AND DIODE ME1 
+NDIODE_C   = AND NDIODE ME1 
+PDIODE_C   = AND PDIODE ME1 
+
+CONNECT PO1 GATE
+
+/////////////////////////
+//  Poly Antenna check //
+////////////////////////
+
+// Antenna check // 
+
+
+
+ANT.1A.poly { @ Ratio of sidewall of the poly area to the gate area > ^N_PO_SS, WITH NO DIODE
+	NET AREA RATIO PO1 PERIMETER ONLY GATE PERIMETER ONLY> N_PO_SS
+}
+
+CONNECT ME1 PO1 BY CONT
+CONNECT ME1 DIODE_C BY CONT
+
+CONNECT ME1 NDIODE_C BY CONT
+CONNECT ME1 PDIODE_C BY CONT
+
+////////////////////////
+/// DIODE AREA CHECK ///
+////////////////////////
+real_diode = NET AREA RATIO DIODE_C GATE >0 
+s_diode = AREA real_diode < DIO_AREA
+b_diode = real_diode NOT s_diode
+
+//ANT.diode_area {@At least one diode which area needs to bigger than ^DIO_AREA in the same net }
+err_s_diode = NET AREA RATIO s_diode b_diode ==0
+
+CONNECT ME1 err_s_diode BY CONT
+/////////////////////////////
+// Metal 1 Antenna check   //
+/////////////////////////////
+   
+
+ME1_NO_NP = NET AREA RATIO ME1 DIODE_C ==0	//ME1 DO NOT CONNECT WITH DIODE
+ME1_NPS_1   = NET AREA RATIO ME1 DIODE_C >0 	//ME1 CONNECT WITH DIODE
+
+ME1_N   = NET AREA RATIO ME1 NDIODE_C >0	//ME1 CONNECT WITH NDIODE
+ME1_P   = NET AREA RATIO ME1 PDIODE_C >0	//ME1 CONNECT WITH PDIODE
+ME1_NP  = NET AREA RATIO ME1_N PDIODE_C >0	//ME1 CONNECT WITH DUAL   POLARITY DIODE
+ME1_NPS = ME1_NPS_1 NOT  ME1_NP	                //ME1 CONNECT WITH SINGLE POLARITY DIODE
+
+ANT.1A.ME1 { @Ratio of sidewall of the ME1 area to the gate area >^N_MET_SS, WITH NO DIODE
+	a = NET AREA RATIO ME1_NO_NP PERIMETER ONLY GATE PERIMETER ONLY> N_MET_SS
+	b = NET AREA RATIO PO1 a >0
+	ornet a b
+}
+
+
+
+ANT.1B.ME1 { @Ratio of sidewall of the ME1 area to the gate area >^MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME1_NPS PERIMETER ONLY GATE PERIMETER ONLY> MET_SS
+        b = NET AREA RATIO PO1 a >0
+	c = NET AREA RATIO err_s_diode b>0
+	ornet (ornet a b) c
+}
+
+
+////////////////////////////
+// Metal 2 Antenna check  //
+////////////////////////////
+
+// Connectivity statements //
+CONNECT  ME2 ME1  BY VI1
+   
+
+ME2_NO_NP = NET AREA RATIO ME2 DIODE_C ==0	//ME2 DO NOT CONNECT WITH DIODE
+ME2_NPS_1   = NET AREA RATIO ME2 DIODE_C >0 	//ME2 CONNECT WITH DIODE
+
+ME2_N   = NET AREA RATIO ME2 NDIODE_C >0	//ME2 CONNECT WITH NDIODE
+ME2_P   = NET AREA RATIO ME2 PDIODE_C >0	//ME2 CONNECT WITH PDIODE
+ME2_NP  = NET AREA RATIO ME2_N PDIODE_C >0	//ME2 CONNECT WITH DUAL   POLARITY DIODE
+ME2_NPS = ME2_NPS_1 NOT  ME2_NP	                //ME2 CONNECT WITH SINGLE POLARITY DIODE
+
+
+ANT.1A.ME2 { @Ratio of sidewall of the ME2 area to the gate area >^N_MET_SS, WITH NO DIODE
+        a = NET AREA RATIO ME2_NO_NP PERIMETER ONLY GATE PERIMETER ONLY > N_MET_SS
+	b = NET AREA RATIO ME1 a >0
+	c = NET AREA RATIO PO1 b >0
+	ornet (ornet a b ) c
+}
+
+
+ANT.1B.ME2 { @Ratio of sidewall of the ME2 area to the gate area >^MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME2_NPS PERIMETER ONLY GATE PERIMETER ONLY > MET_SS
+        b = NET AREA RATIO ME1 a >0
+        c = NET AREA RATIO PO1 b >0
+	d = NET AREA RATIO err_s_diode c >0
+        ornet (ornet (ornet a b ) c) d
+}
+
+
+////////////////////////////
+// Metal 3 Antenna check  //
+////////////////////////////
+
+// Connectivity statements //
+CONNECT ME3  ME2  BY VI2
+
+
+ME3_NO_NP = NET AREA RATIO ME3 DIODE_C ==0	//ME3 DO NOT CONNECT WITH DIODE
+ME3_NPS_1   = NET AREA RATIO ME3 DIODE_C >0 	//ME3 CONNECT WITH DIODE
+
+ME3_N   = NET AREA RATIO ME3 NDIODE_C >0	//ME3 CONNECT WITH NDIODE
+ME3_P   = NET AREA RATIO ME3 PDIODE_C >0	//ME3 CONNECT WITH PDIODE
+ME3_NP  = NET AREA RATIO ME3_N PDIODE_C >0	//ME3 CONNECT WITH DUAL   POLARITY DIODE
+ME3_NPS = ME3_NPS_1 NOT  ME3_NP	                //ME3 CONNECT WITH SINGLE POLARITY DIODE
+
+ANT.1A.ME3 { @Ratio of sidewall of the ME3 area to the gate area >^N_MET_SS, WITH NO DIODE
+        a = NET AREA RATIO ME3_NO_NP PERIMETER ONLY GATE PERIMETER ONLY > N_MET_SS
+	b = NET AREA RATIO ME2 a >0
+	c = NET AREA RATIO ME1 b >0 
+	d = NET AREA RATIO PO1 c >0
+	ornet (ornet (ornet a b) c) d
+}
+
+ANT.1B.ME3 { @Ratio of sidewall of the ME3 area to the gate area >^MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME3_NPS PERIMETER ONLY GATE PERIMETER ONLY > MET_SS
+        b = NET AREA RATIO ME2 a >0
+        c = NET AREA RATIO ME1 b >0 
+        d = NET AREA RATIO PO1 c >0
+	e = NET AREA RATIO err_s_diode d >0
+        ornet (ornet (ornet (ornet a b) c) d) e 
+}
+
+
+////////////////////////////
+// Metal 4 Antenna check  //
+////////////////////////////
+
+// Connectivity statements //
+CONNECT ME4  ME3  BY VI3
+
+
+ME4_NO_NP = NET AREA RATIO ME4 DIODE_C ==0	//ME4 DO NOT CONNECT WITH DIODE
+ME4_NPS_1   = NET AREA RATIO ME4 DIODE_C >0 	//ME4 CONNECT WITH DIODE
+
+ME4_N   = NET AREA RATIO ME4 NDIODE_C >0	//ME4 CONNECT WITH NDIODE
+ME4_P   = NET AREA RATIO ME4 PDIODE_C >0	//ME4 CONNECT WITH PDIODE
+ME4_NP  = NET AREA RATIO ME4_N PDIODE_C >0	//ME4 CONNECT WITH DUAL   POLARITY DIODE
+ME4_NPS = ME4_NPS_1 NOT  ME4_NP	                //ME4 CONNECT WITH SINGLE POLARITY DIODE
+
+ANT.1A.ME4{ @Ratio of sidewall of the ME4 area to the gate area >^N_MET_SS, WITH NO DIODE
+        a = NET AREA RATIO ME4_NO_NP PERIMETER ONLY GATE PERIMETER ONLY> N_MET_SS
+	b = NET AREA RATIO ME3 a >0
+	c = NET AREA RATIO ME2 b >0
+	d = NET AREA RATIO ME1 c >0
+	e = NET AREA RATIO PO1 d >0
+	ornet (ornet (ornet (ornet a b) c) d) e
+}
+
+
+ANT.1B.ME4 { @Ratio of sidewall of the ME4 area to the gate area >^MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME4_NPS PERIMETER ONLY GATE PERIMETER ONLY > MET_SS
+        b = NET AREA RATIO ME3 a >0
+        c = NET AREA RATIO ME2 b >0
+        d = NET AREA RATIO ME1 c >0
+        e = NET AREA RATIO PO1 d >0
+	f = NET AREA RATIO err_s_diode e >0
+        ornet (ornet (ornet (ornet (ornet a b) c) d) e) f
+}
+
+////////////////////////////
+// Metal 5 Antenna check  //
+////////////////////////////
+
+// Connectivity statements //
+CONNECT ME5  ME4 BY VI4
+
+
+ME5_NO_NP = NET AREA RATIO ME5 DIODE_C ==0	//ME5 DO NOT CONNECT WITH DIODE
+ME5_NPS_1   = NET AREA RATIO ME5 DIODE_C >0 	//ME5 CONNECT WITH DIODE
+
+ME5_N   = NET AREA RATIO ME5 NDIODE_C >0	//ME5 CONNECT WITH NDIODE
+ME5_P   = NET AREA RATIO ME5 PDIODE_C >0	//ME5 CONNECT WITH PDIODE
+ME5_NP  = NET AREA RATIO ME5_N PDIODE_C >0	//ME5 CONNECT WITH DUAL   POLARITY DIODE
+ME5_NPS = ME5_NPS_1 NOT  ME5_NP	                //ME5 CONNECT WITH SINGLE POLARITY DIODE
+
+ANT.1A.ME5 { @Ratio of sidewall of the ME5 area to the gate area >^N_MET_SS, WITH NO DIODE
+        a = NET AREA RATIO ME5_NO_NP PERIMETER ONLY GATE PERIMETER ONLY> N_MET_SS
+	b = NET AREA RATIO ME4 a >0
+	c = NET AREA RATIO ME3 b >0
+	d = NET AREA RATIO ME2 c >0
+	e = NET AREA RATIO ME1 d >0
+	f = NET AREA RATIO PO1 e >0
+	ornet (ornet (ornet (ornet (ornet a b) c) d) e) f
+}
+
+
+
+
+ANT.1B.ME5 { @Ratio of sidewall of the ME5 area to the gate area >^MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME5_NPS PERIMETER ONLY GATE PERIMETER ONLY> MET_SS
+        b = NET AREA RATIO ME4 a >0
+        c = NET AREA RATIO ME3 b >0
+        d = NET AREA RATIO ME2 c >0
+        e = NET AREA RATIO ME1 d >0
+        f = NET AREA RATIO PO1 e >0
+	g = NET AREA RATIO err_s_diode f >0
+        ornet (ornet (ornet (ornet (ornet (ornet a b) c) d) e) f) g
+}
+
+
+/////////////////////////////////
+// Metal6 (Top) Antenna check  //
+////////////////////////////////
+
+
+// Connectivity statements //
+CONNECT ME6 MMC ME5  BY VI5
+
+ME6_NO_NP = NET AREA RATIO ME6 DIODE_C ==0	//ME6 DO NOT CONNECT WITH DIODE
+ME6_NPS_1   = NET AREA RATIO ME6 DIODE_C >0 	//ME6 CONNECT WITH DIODE
+
+ME6_N   = NET AREA RATIO ME6 NDIODE_C >0	//ME6 CONNECT WITH NDIODE
+ME6_P   = NET AREA RATIO ME6 PDIODE_C >0	//ME6 CONNECT WITH PDIODE
+ME6_NP  = NET AREA RATIO ME6_N PDIODE_C >0	//ME6 CONNECT WITH DUAL   POLARITY DIODE
+ME6_NPS = ME6_NPS_1 NOT  ME6_NP	                //ME6 CONNECT WITH SINGLE POLARITY DIODE
+
+ANT.1A.ME6 { @Ratio of sidewall of the ME6 area to the gate area >^N_TOP_MET_SS, WITH NO DIODE
+        a = NET AREA RATIO ME6_NO_NP PERIMETER ONLY GATE PERIMETER ONLY> N_TOP_MET_SS
+	b = NET AREA RATIO ME5 a >0
+	c = NET AREA RATIO ME4 b >0
+	d = NET AREA RATIO ME3 c >0
+	e = NET AREA RATIO ME2 d >0
+	f = NET AREA RATIO ME1 e >0
+	g = NET AREA RATIO PO1 f >0
+	ornet (ornet (ornet (ornet (ornet (ornet a b) c) d) e) f) g
+}
+
+
+ANT.1B.ME6 { @Ratio of sidewall of the ME6 area to the gate area >^TOP_MET_SS,WITH N OR P DIODE
+        a = NET AREA RATIO ME6_NPS PERIMETER ONLY GATE PERIMETER ONLY> TOP_MET_SS
+        b = NET AREA RATIO ME5 a >0
+        c = NET AREA RATIO ME4 b >0
+        d = NET AREA RATIO ME3 c >0
+        e = NET AREA RATIO ME2 d >0
+        f = NET AREA RATIO ME1 e >0
+        g = NET AREA RATIO PO1 f >0
+	h = NET AREA RATIO err_s_diode g >0
+        ornet (ornet (ornet (ornet (ornet (ornet (ornet a b) c) d) e) f) g) h
+}
+
+

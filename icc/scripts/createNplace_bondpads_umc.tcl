@@ -1,0 +1,1 @@
+/usr/cad/CBDK/CBDK018_UMC_Faraday_v1.0/CIC/ICC/createNplace_bondpads_umc_D.tcl

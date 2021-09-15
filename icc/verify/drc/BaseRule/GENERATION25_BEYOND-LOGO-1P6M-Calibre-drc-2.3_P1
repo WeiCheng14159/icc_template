@@ -1,0 +1,479 @@
+
+//////////////////////////////////////////////////////////////////////
+//
+//  Parent Doc  : G-03LO-GENERATION25_BEYOND-TLR/LOGO Ver: 2.3-P1
+//
+//  Notice
+//  ================================
+//  (1) This DRC deck is for 0.25um and beyond process LOGO rules check.
+//  (2) The layer LOGOMK (GDS:91(1)) on the LOGO region for DRC.
+//
+//////////////////////////////////////////////////////////////////////
+
+
+//  LOGO rule is follow G-03LO-GENERATION25_BEYOND-TLR/LOGO
+//==========================
+//===  LOGO  Rule 	 ===
+//==========================
+DIFF_LOGO   = DIFF  AND  LOGOMK
+DIFF_N_LOGO = DIFF  NOT  LOGOMK
+
+NWEL_LOGO   = NWEL  AND  LOGOMK
+NWEL_N_LOGO = NWEL  NOT  LOGOMK
+
+TG_LOGO	    = TG    AND  LOGOMK
+TG_N_LOGO   = TG    NOT  LOGOMK
+
+PO1_LOGO    = PO1   AND  LOGOMK
+PO1_N_LOGO  = PO1   NOT  LOGOMK
+
+NPLUS_LOGO  = NPLUS AND  LOGOMK
+NPLUS_N_LOGO= NPLUS NOT  LOGOMK
+
+PPLUS_LOGO  = PPLUS AND  LOGOMK
+PPLUS_N_LOGO= PPLUS NOT  LOGOMK
+
+SAB_LOGO    = SAB   AND  LOGOMK
+SAB_N_LOGO  = SAB   NOT  LOGOMK
+
+CONT_LOGO   = CONT  AND  LOGOMK
+CONT_N_LOGO = CONT  NOT  LOGOMK
+    
+ME1_LOGO    = ME1   AND  LOGOMK
+ME1_N_LOGO  = ME1   NOT  LOGOMK
+	    
+ME2_LOGO    = ME2   AND  LOGOMK
+ME2_N_LOGO  = ME2   NOT  LOGOMK
+	    
+ME3_LOGO    = ME3   AND  LOGOMK
+ME3_N_LOGO  = ME3   NOT  LOGOMK
+	    
+ME4_LOGO    = ME4   AND  LOGOMK
+ME4_N_LOGO  = ME4   NOT  LOGOMK
+	    
+ME5_LOGO    = ME5   AND  LOGOMK
+ME5NL       = ME5   NOT  IND
+ME5_N_LOGO  = ME5NL NOT  LOGOMK
+	    
+ME6_LOGO    = ME6   AND  LOGOMK
+ME6NL       = ME6   NOT  IND
+ME6_N_LOGO  = ME6NL NOT  LOGOMK
+	    
+VI1_LOGO    = VI1   AND  LOGOMK
+VI1_N_LOGO  = VI1   NOT  LOGOMK
+	    
+VI2_LOGO    = VI2   AND  LOGOMK
+VI2_N_LOGO  = VI2   NOT  LOGOMK
+	    
+VI3_LOGO    = VI3   AND  LOGOMK
+VI3_N_LOGO  = VI3   NOT  LOGOMK
+	    
+VI4_LOGO    = VI4   AND  LOGOMK
+VI4_N_LOGO  = VI4   NOT  LOGOMK
+	    
+VI5_LOGO    = VI5   AND  LOGOMK
+VI5_N_LOGO  = VI5   NOT  LOGOMK
+	    
+
+MMC_LOGO    = MMC AND  LOGOMK
+MMC_N_LOGO  = MMC NOT  LOGOMK
+
+PAD_LOGO    = PAD AND  LOGOMK
+PAD_N_LOGO  = PAD NOT  LOGOMK
+
+//AL_RDL_LOGO     = AL_RDL  AND  LOGOMK
+//AL_RDL_N_LOGO   = AL_RDL  NOT  LOGOMK
+
+//PASV_RDL_LOGO   = PASV_RDL AND LOGOMK
+//PASV_RDL_N_LOGO = PASV_RDL NOT LOGOMK
+
+TWEL_LOGO    =  TWEL   AND  LOGOMK
+TWEL_N_LOGO  =  TWEL   NOT  LOGOMK
+HR_LOGO      =  HR     AND  LOGOMK
+HR_N_LOGO    =  HR     NOT  LOGOMK
+PESD_LOGO    =  PESD   AND  LOGOMK
+PESD_N_LOGO  =  PESD   NOT  LOGOMK
+
+    
+//============================
+//===  Diffusion Rule   ===
+//============================
+LOGO_5.1A_LOGO_5.1C_suggested {@ Minimum width of DIFF region is 0.3um
+    INT DIFF_LOGO < 0.3 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.1B {@ Minimum space between DIFF regions is 0.4um
+    EXT DIFF_LOGO < 0.4 ABUT>0<90 REGION
+}
+
+//============================
+//===  NWEL Rule   ===
+//============================
+LOGO_5.2A_LOGO_5.2C_suggested {@ Minimum width of NW region is 1.2um
+    INT NWEL_LOGO < 1.2 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.2B {@ Minimum space between NW regions is 2um
+    EXT NWEL_LOGO < 2 ABUT>0<90 REGION
+}
+
+//============================
+//===  TG Rule   ===
+//============================
+LOGO_5.3A_LOGO_5.3C_suggested {@ Minimum width of TG region is 0.6um
+    INT TG_LOGO < 0.6 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.3B {@ Minimum space between TG regions is 0.6um
+    EXT TG_LOGO < 0.6 ABUT>0<90 REGION
+}
+
+//============================
+//===  PO1 Rule   ===
+//============================
+LOGO_5.4A_LOGO_5.4C_suggested {@ Minimum width of PO1 region is 0.24um
+    INT PO1_LOGO < 0.24 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.4B {@ Minimum space between PO1 regions is 0.32um
+    EXT PO1_LOGO < 0.32 ABUT>0<90 REGION
+}
+
+//============================
+//===  NPLUS Rule   ===
+//============================
+LOGO_5.5A_LOGO_5.5C_suggested {@ Minimum width of NPLUS region is 0.42um
+    INT NPLUS_LOGO < 0.42 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.5B {@ Minimum space between NPLUS regions is 0.42um
+    EXT NPLUS_LOGO < 0.42 ABUT>0<90 REGION
+}
+
+//============================
+//===  PPLUS Rule   ===
+//============================
+LOGO_5.6A_LOGO_5.6C_suggested {@ Minimum width of PPLUS region is 0.42um
+    INT PPLUS_LOGO < 0.42 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.6B {@ Minimum space between PPLUS regions is 0.42um
+    EXT PPLUS_LOGO < 0.42 ABUT>0<90 REGION
+}
+
+
+//============================
+//===  SAB Rule   ===
+//============================
+LOGO_5.7A_LOGO_5.7C_suggested {@ Minimum width of SAB region is 0.6um
+    INT SAB_LOGO < 0.6 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.7B {@ Minimum space between SAB regions is 0.6um
+    EXT SAB_LOGO < 0.6 ABUT>0<90 REGION
+}
+
+
+//============================
+//===  CONT Rule   ===
+//============================
+LOGO_5.8A_LOGO_5.8C_suggested {@ Minimum width of CONT region is 0.32um
+    INT CONT_LOGO < 0.32 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.8B {@ Minimum space between CONT regions is 0.4um
+    EXT CONT_LOGO < 0.4 ABUT>0<90 REGION
+}
+
+LOGO_5.8Da {@ Minimum PO1 enclosure of CONT is 0.14um
+    CONT_PO1_LOGO = CONT_LOGO INTERACT PO1_LOGO
+    ENC CONT_PO1_LOGO PO1_LOGO <0.14 ABUT SINGULAR OUTSIDE ALSO REGION
+}
+
+LOGO_5.8Db {@ Minimum DIFFUSION enclosure of CONT is 0.14um
+    CONT_PO1_LOGO = CONT_LOGO INTERACT PO1_LOGO
+    CONT_DIFF_LOGO = CONT_LOGO NOT CONT_PO1_LOGO
+    ENC CONT_DIFF_LOGO DIFF_LOGO <0.14 ABUT SINGULAR OUTSIDE ALSO REGION
+}
+
+//============================
+//===  Metal-1 Rule (P60)  ===
+//============================
+LOGO_5.9A_LOGO_5.9C_suggested {@ Minimum width of ME1 region is 0.32um
+    INT ME1_LOGO < 0.32 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.9B {@ Minimum space between ME1 regions is 0.32um
+    EXT ME1_LOGO < 0.32 ABUT>0<90 REGION
+}
+
+LOGO_5.9D {@ Minimum ME1 overlap contac is 0.3um, no CONT outside ME1
+    ENC CONT_LOGO ME1_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT CONT_LOGO ME1_LOGO
+}     
+//=========================
+//===  Via1 Rule (P66)  ===
+//=========================
+
+LOGO_5.10A_V1_LOGO_5.10C_V1_suggested {@ Minimum width of a VI1 region is 0.40um
+    INT VI1_LOGO <0.4 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.10B_V1 {@ Minimum space between two VI1 regions  is 0.36um
+    EXT VI1_LOGO < 0.36 ABUT>0<90 SINGULAR REGION  
+}
+
+LOGO_5.10Da_V1 {@ Minimum ME1 overlap VIA1 is 0.3um, no VIA1 outside ME1
+    ENC VI1_LOGO ME1_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT VI1_LOGO ME1_LOGO
+} 
+
+LOGO_5.10Db_V1 {@ Minimum ME2 overlap VIA1 is 0.4um, no VIA1 outside ME2
+    ENC VI1_LOGO ME2_LOGO < 0.4 ABUT<90 SINGULAR REGION
+    NOT VI1_LOGO ME2_LOGO
+} 
+	
+//=========================
+//===  Via2 Rule (P66)  ===
+//=========================
+
+LOGO_5.10A_V2_LOGO_5.10C_V2_suggested {@ Minimum width of a VI2 region is 0.40um
+    INT VI2_LOGO <0.4 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.10B_V2 {@ Minimum space between two VI2 regions  is 0.36um
+    EXT VI2_LOGO < 0.36 ABUT>0<90 SINGULAR REGION  
+}
+
+LOGO_5.10Da_V2 {@ Minimum ME2 overlap VIA2 is 0.3um, no VIA2 outside ME2
+    ENC VI2_LOGO ME2_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT VI2_LOGO ME2_LOGO
+} 
+
+LOGO_5.10Db_V2 {@ Minimum ME3 overlap VIA2 is 0.4um, no VIA2 outside ME3
+    ENC VI2_LOGO ME3_LOGO < 0.4 ABUT<90 SINGULAR REGION
+    NOT VI2_LOGO ME3_LOGO
+} 
+	
+//=========================
+//===  Via3 Rule (P66)  ===
+//=========================
+
+LOGO_5.10A_V3_LOGO_5.10C_V3_suggested {@ Minimum width of a VI3 region is 0.40um
+    INT VI3_LOGO <0.4 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.10B_V3 {@ Minimum space between two VI3 regions  is 0.36um
+    EXT VI3_LOGO < 0.36 ABUT>0<90 SINGULAR REGION  
+}
+
+LOGO_5.10Da_V3 {@ Minimum ME3 overlap VIA3 is 0.3um, no VIA3 outside ME3
+    ENC VI3_LOGO ME3_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT VI3_LOGO ME3_LOGO
+} 
+
+LOGO_5.10Db_V3 {@ Minimum ME4 overlap VIA3 is 0.4um, no VIA3 outside ME4
+    ENC VI3_LOGO ME4_LOGO < 0.4 ABUT<90 SINGULAR REGION
+    NOT VI3_LOGO ME4_LOGO
+} 
+	
+//=========================
+//===  Via4 Rule (P66)  ===
+//=========================
+
+LOGO_5.10A_V4_LOGO_5.10C_V4_suggested {@ Minimum width of a VI4 region is 0.40um
+    INT VI4_LOGO <0.4 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.10B_V4 {@ Minimum space between two VI4 regions  is 0.36um
+    EXT VI4_LOGO < 0.36 ABUT>0<90 SINGULAR REGION  
+}
+
+LOGO_5.10Da_V4 {@ Minimum ME4 overlap VIA4 is 0.3um, no VIA4 outside ME4
+    ENC VI4_LOGO ME4_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT VI4_LOGO ME4_LOGO
+} 
+
+LOGO_5.10Db_V4 {@ Minimum ME5 overlap VIA4 is 0.4um, no VIA4 outside ME5
+    ENC VI4_LOGO ME5_LOGO < 0.4 ABUT<90 SINGULAR REGION
+    NOT VI4_LOGO ME5_LOGO
+} 
+	
+//=========================
+//===  Via5 Rule (P66)  ===
+//=========================
+
+LOGO_5.10A_V5_LOGO_5.10C_V5_suggested {@ Minimum width of a VI5 region is 0.40um
+    INT VI5_LOGO <0.4 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.10B_V5 {@ Minimum space between two VI5 regions  is 0.36um
+    EXT VI5_LOGO < 0.36 ABUT>0<90 SINGULAR REGION  
+}
+
+LOGO_5.10Da_V5 {@ Minimum ME5 overlap VIA5 is 0.3um, no VIA5 outside ME5
+    ENC VI5_LOGO ME5_LOGO < 0.3 ABUT<90 SINGULAR REGION
+    NOT VI5_LOGO ME5_LOGO
+} 
+
+LOGO_5.10Db_V5 {@ Minimum ME6 overlap VIA5 is 0.4um, no VIA5 outside ME6
+    ENC VI5_LOGO ME6_LOGO < 0.4 ABUT<90 SINGULAR REGION
+    NOT VI5_LOGO ME6_LOGO
+} 
+	
+//============================
+//===  Metal-2 Rule   ===
+//============================
+LOGO_5.11A_M2_LOGO_5.11C_M2_suggested {@ Minimum width of ME2 region is 0.4 um
+    INT ME2_LOGO < 0.4 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.11B_M2 {@ Minimum space between ME2 regions is 0.4 um
+    EXT ME2_LOGO < 0.4 ABUT>0<90 REGION
+}
+	
+//============================
+//===  Metal-3 Rule   ===
+//============================
+LOGO_5.11A_M3_LOGO_5.11C_M3_suggested {@ Minimum width of ME3 region is 0.4 um
+    INT ME3_LOGO < 0.4 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.11B_M3 {@ Minimum space between ME3 regions is 0.4 um
+    EXT ME3_LOGO < 0.4 ABUT>0<90 REGION
+}
+	
+//============================
+//===  Metal-4 Rule   ===
+//============================
+LOGO_5.11A_M4_LOGO_5.11C_M4_suggested {@ Minimum width of ME4 region is 0.4 um
+    INT ME4_LOGO < 0.4 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.11B_M4 {@ Minimum space between ME4 regions is 0.4 um
+    EXT ME4_LOGO < 0.4 ABUT>0<90 REGION
+}
+	
+//============================
+//===  Metal-5 Rule   ===
+//============================
+LOGO_5.11A_M5_LOGO_5.11C_M5_suggested {@ Minimum width of ME5 region is 0.4 um
+    INT ME5_LOGO < 0.4 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.11B_M5 {@ Minimum space between ME5 regions is 0.4 um
+    EXT ME5_LOGO < 0.4 ABUT>0<90 REGION
+}
+	
+//============================
+//===  Metal-6 Rule   ===
+//============================
+LOGO_5.12A_M6_LOGO_5.11C_M6_suggested {@ Minimum width of ME6 region is 2.22 um
+    INT ME6_LOGO < 2.22 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.12B_M6 {@ Minimum space between ME6 regions is 2.22 um
+    EXT ME6_LOGO < 2.22 ABUT>0<90 REGION
+}
+	
+//=========================
+//===  Metal_CAP Rule   ===
+//=========================
+
+LOGO_5.13A_LOGO_5.13C_suggested {@ Minimum width of a MMC region is 3.9um
+   INT MMC_LOGO <3.9 ABUT>0<90 SINGULAR REGION
+}
+LOGO_5.13B {@ Minimum space between two MMC regions  is 1um
+   EXT MMC_LOGO < 1 ABUT>0<90 SINGULAR REGION  
+}
+
+//LOGO_5.13D {@ Minimum MIMBP enclosure Metal_CAP is 0.6
+//    ENC MMC_LOGO MMCBP_LOGO <0.6 ABUT<90 SINGULAR REGION
+//}
+ 
+//=========================
+//===  MIMBP Rule   ===
+//=========================
+
+//LOGO_5.14A_LOGO_5.14C_suggested {@ Minimum width of a MMCBP region is 5.1um
+//   INT MMCBP_LOGO <5.1 ABUT>0<90 SINGULAR REGION
+//}
+//LOGO_5.14B {@ Minimum space between two VI1 regions  is 1um
+//   EXT MMCBP_LOGO < 1 ABUT>0<90 SINGULAR REGION  
+//}
+
+//LOGO_5.14D {@ Minimum MIMBP enclosure TMV_RDL is 0.45
+//    ENC TMV_RDL_LOGO MMCBP_LOGO <0.45 ABUT<90 SINGULAR REGION
+//}
+ 
+//=========================
+//===  TMV_RDL Rule   ===
+//=========================
+
+//LOGO_5.15A refer to related TLR
+
+//LOGO_5.15B_LOGO_5.15C_suggested {@ TMV_RDL should be enclosed by AL_RDL
+    //TMV_RDL_LOGO NOT AL_RDL_LOGO
+//}
+LOGO_5.15C_suggested {@ Acute angle is suggested to avoid in the drawing of logo layout.
+   INT PAD_LOGO <0.5 ABUT>0<90 SINGULAR REGION
+}
+
+//=========================
+//===  AL_RDL Rule   ===
+//=========================
+
+//LOGO_5.16A refer to related TLR
+//LOGO_5.16B {@ AL_RDL enclosure of TMV_RDL is 2um
+    //ENC TMV_RDL_LOGO AL_RDL_LOGO <2 ABUT OUTSIDE ALSO REGION
+//}
+//LOGO_5.16C_suggested {@ Acute angle is suggested to avoid in the drawing of logo layout.
+   //INT AL_RDL_LOGO <0.5 ABUT>0<90 SINGULAR REGION
+//}
+
+//=========================
+//===  PASV_RDL Rule   ===
+//=========================
+
+//LOGO_5.17A refer to related TLR
+//LOGO_5.17B {@ AL_RDL ENCLOSURE of PASV_RDL is 2um
+//    ENC PASV_RDL_LOGO AL_RDL_LOGO <2 ABUT OUTSIDE ALSO REGION
+//}
+//LOGO_5.17C_suggested {@ Acute angle is suggested to avoid in the drawing of logo layout.
+//   INT AL_RDL_LOGO <0.5 ABUT>0<90 SINGULAR REGION
+//}
+
+
+//=========================
+//===  T_WELL Rule   ===
+//=========================
+
+LOGO_5.18A_LOGO_5.18C_suggested {@ Minimum T_WELL width is 1.5um
+   INT TWEL_LOGO < 1.5 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.18B {@ Minimum T_WELL to T_WELL spacing is 2um
+   EXT TWEL_LOGO < 2 ABUT>0<90 SINGULAR REGION
+}
+
+//=========================
+//===  HR Rule   ===
+//=========================
+
+LOGO_5.19A_LOGO_5.19C_suggested {@ Minimum HR width is 0.8um
+   INT HR_LOGO < 0.8 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.19B {@ Minimum HR to HR spacing is 0.8um
+   EXT HR_LOGO < 0.8 ABUT>0<90 SINGULAR REGION
+}
+
+//=========================
+//===  PESD Rule   ===
+//=========================
+
+LOGO_5.20A_LOGO_5.20C_suggested {@ Minimum PESD width is 0.8um
+   INT PESD_LOGO < 0.8 ABUT>0<90 SINGULAR REGION
+}
+
+LOGO_5.20B {@ Minimum PESD to PESD spacing is 0.8um
+   EXT PESD_LOGO < 0.8 ABUT>0<90 SINGULAR REGION
+}
+
+
+    

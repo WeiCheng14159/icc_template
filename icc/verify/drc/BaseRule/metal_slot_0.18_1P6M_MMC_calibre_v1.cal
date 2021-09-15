@@ -1,0 +1,394 @@
+// For the DRC purpose,just marker the MXSLMK on the metal region with slotting to
+// avoid false violation.
+// Revision : V1
+
+//
+//*******************
+//***  DRC Rules  ***
+//*******************
+
+//
+//  =============================
+//  ====== METAL SLOT RULE ======
+//  =============================
+//
+
+// 
+//METAL 1 SLOT rules check 
+//
+
+PADML = (PAD OR MMC) OR IND
+
+MET1_BLOCK_SLOT = ME1 AND M1SLMK
+MET1_SLOT_TEMP  = (HOLES MET1_BLOCK_SLOT) NOT  ME1
+MET1_SLOT       = MET1_SLOT_TEMP INSIDE M1SLMK
+MET1_SLOT_ALL   = MET1_BLOCK_SLOT OR MET1_SLOT
+
+6.1A.M1 {@ Maximum metal_1 width without slotting when length is greater than 30um is 20um except,
+    @ between metal edge and slots
+    @ spacing between slots
+    @ bonding Pad areas
+   MET1_NOT_PAD = ME1 NOT PAD
+   MET1_EDGE    = MET1_NOT_PAD COINCIDENT INSIDE EDGE ME1 
+   LONG_MET1    = MET1_EDGE LENGTH > 30
+   X = MET1_NOT_PAD WITH EDGE LONG_MET1
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0 
+}
+
+6.1B.M1 {@ Minimum ME1 slot width is 2um
+         @ Maximum ME1 slot width is 5um
+    INT  MET1_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET1_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M1 {@ Minimum ME1 slot length is  10um
+         @ Maximum ME1 slot length is 250um
+
+  SQR_M1SLOT = VERTEX MET1_SLOT == 4
+  SQR_M1SLOT NOT WITH EDGE (LENGTH SQR_M1SLOT >= 10 <= 250)
+
+  POLYGON_M1SLOT = MET1_SLOT NOT SQR_M1SLOT
+
+  M1SLOT_LINE_END1 = CONVEX EDGE POLYGON_M1SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M1SLOT > 5
+  M1SLOT_LINE_END2 = INT [M1SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M1SLOT_LINE_END = M1SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M1SLOT_LINE_END1 NOT COIN INSIDE EDGE M1SLOT_LINE_END2)
+  M1SLOT_LEG = POLYGON_M1SLOT NOT COIN INSIDE EDGE M1SLOT_LINE_END
+
+  PATH LENGTH M1SLOT_LEG < 10 
+  PATH LENGTH M1SLOT_LEG > 250 
+  
+  POLYGON_M1SLOT NOT (POLYGON_M1SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test  
+} 
+
+
+6.1D.a.M1  {@ Minimum slot  spacing is 9um
+   EXT MET1_SLOT < 9.0 ABUT>0<90 SINGULAR REGION
+}
+
+6.1D.b.M1  {@ Maximun slot spacing is 20um
+   SIZE (SIZE MET1_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0
+}
+
+6.1E.a.M1  {@ Minimum slot to Metal edge spacing 9 um  
+   ENC MET1_SLOT MET1_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+}
+
+//6.1E.b.M1 check by 6.1d.b.M1
+
+//
+//METAL 2 SLOT rules check
+//
+
+MET2_BLOCK_SLOT = ME2 AND M2SLMK
+MET2_SLOT_TEMP  = (HOLES MET2_BLOCK_SLOT)  NOT  ME2
+MET2_SLOT       = MET2_SLOT_TEMP INSIDE M2SLMK
+MET2_SLOT_ALL   = MET2_BLOCK_SLOT OR MET2_SLOT
+ 
+6.1A.M2 {@ Maximum metal_2 width without slotting when length is greater than 30um is 20um except,
+    @ between metal edge and slots
+    @ spacing between slots
+    @ bonding Pad areas
+   MET2_NOT_PAD = ME2 NOT PAD
+   MET2_EDGE    = MET2_NOT_PAD COINCIDENT INSIDE EDGE ME2 
+   LONG_MET2    = MET2_EDGE LENGTH > 30
+   X = MET2_NOT_PAD WITH EDGE LONG_MET2
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0
+}
+ 
+6.1B.M2 {@ Minimum ME2 slot width is 2um
+         @ Maximum ME2 slot width is 5um
+  
+    INT  MET2_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET2_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M2 {@ Minimum ME2 slot length is  10um
+         @ Maximum ME2 slot length is 250um
+
+  SQR_M2SLOT = VERTEX MET2_SLOT == 4
+  SQR_M2SLOT NOT WITH EDGE (LENGTH SQR_M2SLOT >= 10 <= 250)
+
+  POLYGON_M2SLOT = MET2_SLOT NOT SQR_M2SLOT
+
+  M2SLOT_LINE_END1 = CONVEX EDGE POLYGON_M2SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M2SLOT > 5
+  M2SLOT_LINE_END2 = INT [M2SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M2SLOT_LINE_END = M2SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M2SLOT_LINE_END1 NOT COIN INSIDE EDGE M2SLOT_LINE_END2)
+  M2SLOT_LEG = POLYGON_M2SLOT NOT COIN INSIDE EDGE M2SLOT_LINE_END
+
+  PATH LENGTH M2SLOT_LEG < 10 
+  PATH LENGTH M2SLOT_LEG > 250 
+  
+ POLYGON_M2SLOT NOT (POLYGON_M2SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test    
+ 
+} 
+
+ 
+6.1D.a.M2  {@ Minimum slot spacing is 9 um
+   EXT MET2_SLOT < 9.0 ABUT>0<90 SINGULAR REGION
+}
+ 
+6.1D.b.M2  {@ Maximun slot spacing is 20 um
+   SIZE (SIZE MET2_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0
+}
+ 
+6.1E.a.M2  {@ Minimum slot to Metal edge spacing 9 um
+   ENC MET2_SLOT MET2_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+}
+ 
+//6.1E.b.M2 check by 6.1d.b.M2
+
+//
+//METAL 3 SLOT rules check
+//
+
+MET3_BLOCK_SLOT = ME3 AND M3SLMK 
+MET3_SLOT_TEMP  = (HOLES MET3_BLOCK_SLOT) NOT ME3 
+MET3_SLOT       = MET3_SLOT_TEMP INSIDE M3SLMK 
+MET3_SLOT_ALL   = MET3_BLOCK_SLOT OR MET3_SLOT 
+  
+6.1A.M3 {@ Maximum metal_3 width without slotting when length is greater than 30um is 20um except,   
+    @ between metal edge and slots 
+    @ spacing between slots 
+    @ bonding Pad areas 
+   MET3_NOT_PAD = ME3 NOT PAD 
+   MET3_EDGE    = MET3_NOT_PAD COINCIDENT INSIDE EDGE ME3 
+   LONG_MET3    = MET3_EDGE LENGTH > 30 
+   X = MET3_NOT_PAD WITH EDGE LONG_MET3
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0
+}
+  
+6.1B.M3 {@ Minimum ME3 slot width is 2um
+         @ Maximum ME3 slot width is 5um
+  
+    INT  MET3_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET3_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M3 {@ Minimum ME3 slot length is  10um
+         @ Maximum ME3 slot length is 250um
+
+ SQR_M3SLOT = VERTEX MET3_SLOT == 4
+  SQR_M3SLOT NOT WITH EDGE (LENGTH SQR_M3SLOT >= 10 <= 250)
+
+  POLYGON_M3SLOT = MET3_SLOT NOT SQR_M3SLOT
+
+  M3SLOT_LINE_END1 = CONVEX EDGE POLYGON_M3SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M3SLOT > 5
+  M3SLOT_LINE_END2 = INT [M3SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M3SLOT_LINE_END = M3SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M3SLOT_LINE_END1 NOT COIN INSIDE EDGE M3SLOT_LINE_END2)
+  M3SLOT_LEG = POLYGON_M3SLOT NOT COIN INSIDE EDGE M3SLOT_LINE_END
+
+  PATH LENGTH M3SLOT_LEG < 10 
+  PATH LENGTH M3SLOT_LEG > 250 
+  
+  POLYGON_M3SLOT NOT (POLYGON_M3SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test   
+
+} 
+  
+6.1D.a.M3  {@ Minimum slot spacing is 9 um 
+   EXT MET3_SLOT < 9.0 ABUT>0<90 SINGULAR REGION 
+} 
+  
+6.1D.b.M3  {@ Maximun slot spacing is 20 um 
+   SIZE (SIZE MET3_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0 
+} 
+  
+6.1E.a.M3  {@ Minimum slot to Metal edge spacing 9 um 
+   ENC MET3_SLOT MET3_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION 
+} 
+  
+//6.1E.b.M3 check by 6.1d.b.M3
+
+//
+//METAL 4 SLOT rules check
+//
+ 
+MET4_BLOCK_SLOT = ME4 AND M4SLMK
+MET4_SLOT_TEMP  = (HOLES MET4_BLOCK_SLOT)  NOT  ME4
+MET4_SLOT       = MET4_SLOT_TEMP INSIDE M4SLMK
+MET4_SLOT_ALL   = MET4_BLOCK_SLOT OR MET4_SLOT
+ 
+6.1A.M4 {@ Maximum metal_4 width without slotting when length is greater than 30um is 20um except,
+    @ between metal edge and slots
+    @ spacing between slots
+    @ bonding Pad areas
+   MET4_NOT_PAD = ME4 NOT PAD
+   MET4_EDGE    = MET4_NOT_PAD COINCIDENT INSIDE EDGE ME4 
+   LONG_MET4    = MET4_EDGE LENGTH > 30
+   X = MET4_NOT_PAD WITH EDGE LONG_MET4
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0
+}
+ 
+6.1B.M4 {@ Minimum ME4 slot width is 2um
+         @ Maximum ME4 slot width is 5um
+  
+    INT  MET4_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET4_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M4 {@ Minimum ME4 slot length is  10um
+         @ Maximum ME4 slot length is 250um
+
+  SQR_M4SLOT = VERTEX MET4_SLOT == 4
+  SQR_M4SLOT NOT WITH EDGE (LENGTH SQR_M4SLOT >= 10 <= 250)
+
+  POLYGON_M4SLOT = MET4_SLOT NOT SQR_M4SLOT
+
+  M4SLOT_LINE_END1 = CONVEX EDGE POLYGON_M4SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M4SLOT > 5
+  M4SLOT_LINE_END2 = INT [M4SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M4SLOT_LINE_END = M4SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M4SLOT_LINE_END1 NOT COIN INSIDE EDGE M4SLOT_LINE_END2)
+  M4SLOT_LEG = POLYGON_M4SLOT NOT COIN INSIDE EDGE M4SLOT_LINE_END
+
+  PATH LENGTH M4SLOT_LEG < 10 
+  PATH LENGTH M4SLOT_LEG > 250 
+  
+  POLYGON_M4SLOT NOT (POLYGON_M4SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test  
+  
+} 
+  
+6.1D.a.M4  {@ Minimum slot to Metal edge spacing 9 um
+   EXT MET4_SLOT < 9.0 ABUT>0<90 SINGULAR REGION
+}
+  
+6.1D.b.M4  {@ Maximun slot spacing is 20 um
+   SIZE (SIZE MET4_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0
+}
+  
+6.1E.a.M4  {@ Minimum slot to Metal edge spacing 9 um
+   ENC MET4_SLOT MET4_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION
+}
+  
+//6.1E.b.M4 check by 6.1d.b.M4
+
+//
+//METAL 5 SLOT rules check
+//
+  
+MET5_BLOCK_SLOT = ME5 AND M5SLMK
+MET5_SLOT_TEMP  = (HOLES MET5_BLOCK_SLOT) NOT ME5 
+MET5_SLOT       = MET5_SLOT_TEMP INSIDE M5SLMK 
+MET5_SLOT_ALL   = MET5_BLOCK_SLOT OR MET5_SLOT 
+  
+6.1A.M5 {@ Maximum metal_5 width without slotting when length is greater than 30um is 20um except,                
+    @ between metal edge and slots 
+    @ spacing between slots 
+    @ bonding Pad areas 
+   MET5_NOT_PAD = ME5 NOT PADML 
+   MET5_EDGE    = MET5_NOT_PAD COINCIDENT INSIDE EDGE ME5 
+   LONG_MET5    = MET5_EDGE LENGTH > 30 
+   X = MET5_NOT_PAD WITH EDGE LONG_MET5
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0 
+} 
+  
+6.1B.M5 {@ Minimum ME5 slot width is 2um
+         @ Maximum ME5 slot width is 5um
+  
+    INT  MET5_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET5_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M5 {@ Minimum ME5 slot length is  10um
+         @ Maximum ME5 slot length is 250um
+
+  SQR_M5SLOT = VERTEX MET5_SLOT == 4
+  SQR_M5SLOT NOT WITH EDGE (LENGTH SQR_M5SLOT >= 10 <= 250)
+
+  POLYGON_M5SLOT = MET5_SLOT NOT SQR_M5SLOT
+
+  M5SLOT_LINE_END1 = CONVEX EDGE POLYGON_M5SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M5SLOT > 5
+  M5SLOT_LINE_END2 = INT [M5SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M5SLOT_LINE_END = M5SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M5SLOT_LINE_END1 NOT COIN INSIDE EDGE M5SLOT_LINE_END2)
+  M5SLOT_LEG = POLYGON_M5SLOT NOT COIN INSIDE EDGE M5SLOT_LINE_END
+
+  PATH LENGTH M5SLOT_LEG < 10 
+  PATH LENGTH M5SLOT_LEG > 250 
+  
+  POLYGON_M5SLOT NOT (POLYGON_M5SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test   
+  
+}  
+   
+6.1D.a.M5  {@ Minimum slot spacing is 9um 
+   EXT MET5_SLOT < 9.0 ABUT>0<90 SINGULAR REGION 
+} 
+   
+6.1D.b.M5  {@ Maximun slot spacing is 20um 
+   SIZE (SIZE MET5_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0 
+} 
+   
+6.1E.a.M5  {@ Minimum slot to Metal edge spacing is 9um 
+   ENC MET5_SLOT MET5_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION 
+} 
+   
+//6.1E.b.M5 check by 6.1d.b.M5
+
+//
+//METAL 6 SLOT rules check
+//
+  
+MET6_BLOCK_SLOT = ME6 AND M6SLMK 
+MET6_SLOT_TEMP  = (HOLES MET6_BLOCK_SLOT) NOT  ME6 
+MET6_SLOT       = MET6_SLOT_TEMP INSIDE M6SLMK  
+MET6_SLOT_ALL   = MET6_BLOCK_SLOT OR MET6_SLOT  
+   
+6.1A.M6 {@ Maximum metal_6 width without slotting when length is greater than 30um is 20um except,                 
+    @ between metal edge and slots  
+    @ spacing between slots  
+    @ bonding Pad areas 
+    @ MMC areas 
+    @ IND areas
+   MET6_NOT_PAD = ME6 NOT PADML  
+   MET6_EDGE    = MET6_NOT_PAD COINCIDENT INSIDE EDGE ME6 
+   LONG_MET6    = MET6_EDGE LENGTH > 30  
+   X = MET6_NOT_PAD WITH EDGE LONG_MET6  
+   SIZE ( SIZE X BY -10 ) BY 10 TRUNCATE 10.0  
+}  
+   
+6.1B.M6 {@ Minimum ME6 slot width is 2um
+         @ Maximum ME6 slot width is 5um
+  
+    INT  MET6_SLOT < 2 ABUT<90  REGION
+    SIZE (SIZE MET6_SLOT BY -2.5) BY 2.5
+}
+       
+6.1C.M6 {@ Minimum ME6 slot length is  10um
+         @ Maximum ME6 slot length is 250um
+
+  SQR_M6SLOT = VERTEX MET6_SLOT == 4
+  SQR_M6SLOT NOT WITH EDGE (LENGTH SQR_M6SLOT >= 10 <= 250)
+
+  POLYGON_M6SLOT = MET6_SLOT NOT SQR_M6SLOT
+
+  M6SLOT_LINE_END1 = CONVEX EDGE POLYGON_M6SLOT ==2 WITH LENGTH >=2 <= 5
+  LINE_END_TEST = LENGTH POLYGON_M6SLOT > 5
+  M6SLOT_LINE_END2 = INT [M6SLOT_LINE_END1] LINE_END_TEST <= 5 ABUT==90 PERP ONLY
+  M6SLOT_LINE_END = M6SLOT_LINE_END1 NOT TOUCH INSIDE EDGE (M6SLOT_LINE_END1 NOT COIN INSIDE EDGE M6SLOT_LINE_END2)
+  M6SLOT_LEG = POLYGON_M6SLOT NOT COIN INSIDE EDGE M6SLOT_LINE_END
+
+  PATH LENGTH M6SLOT_LEG < 10 
+  PATH LENGTH M6SLOT_LEG > 250 
+  
+  POLYGON_M6SLOT NOT (POLYGON_M6SLOT WITH EDGE LINE_END_TEST)	// Sanity check for line end test   
+  
+}   
+    
+6.1D.a.M6  {@ Minimum slot  spacing is 9um  
+   EXT MET6_SLOT < 9.0 ABUT>0<90 SINGULAR REGION  
+}  
+    
+6.1D.b.M6  {@ Maximun slot spacing is 20um  
+   SIZE (SIZE MET6_BLOCK_SLOT BY -10.00) BY 10.0 TRUNCATE 10.0  
+}  
+    
+6.1E.a.M6  {@ Minimum slot to Metal edge spacing 9um  
+   ENC MET6_SLOT MET6_SLOT_ALL < 9.0 ABUT<90 SINGULAR OUTSIDE ALSO REGION  
+}  
+    
+//6.1E.b.M6 check by 6.1d.b.M6
+
+
+// END OF FILE
+

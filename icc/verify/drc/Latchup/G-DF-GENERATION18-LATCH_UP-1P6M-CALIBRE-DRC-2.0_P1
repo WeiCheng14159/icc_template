@@ -1,0 +1,472 @@
+
+////////////////////////////////////////////////////////////////////////////////
+//This DRC command file contains of UMC proprietory information and  	      //
+//intellectual property that is patent pending.                               //
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+//     Title      : DRC (Calibre) of 0.18um Process 1P6M                    //
+//                  Latch-up Design Guideline                                 //
+//     Parent Doc.: G-03L-GENERATION18-TLR/LATCH_UP  Ver.2.0_P1               //
+//     DRC Version: 2.0_P1                                           	      //
+//                                                                            //
+//     Copyright (c) United Microelectronics Corporation, 1980-2010           //
+//     All Right Reserved.                                                    //
+//                                                                            //
+//     LIMITATION OF LIABILITY:                                               //
+//        United Microelectronics Corp. is not  liable  for  any              //
+//        property damage, personal  injury,  loss  of  profits,              //
+//        interruption of business,  or  for  any other special,              //
+//        consequential or incidental  damages, however  caused,              //
+//        whether for breach of warranty,contract tort(including              //
+//        negligence),strict liability or otherwise.                          //
+//                                                                            //
+//     This runset is validated with Calibre 2008.4.1914                      //
+////////////////////////////////////////////////////////////////////////////////
+// revision  date       who                       changes                     //
+//========= ========== =========  ============================================//
+//  2.0_P1  2010/08/02  Y.C Lee    New create                                 //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)
+// =================================
+// (1) This document provides the latch-up guideline for UMC 0.15um CMOS technology.
+//     If customers follow these design guidelines and have any question,please feedback
+//     to your UMC contact window first. Then,we can discuss and figure out a better
+//     way to avoid latch-up problems
+// (2) This deck suits to CMOS Mode process.
+// (3) In order to separate an ESD device from I/O circuits, customer should use IOID
+//     Mark layer to define ESD device region.
+// (4) In order to separate I/O circuits source and drain
+//     customer should mark TEXT "?VDD?" "?VCC?" "?VSS?" "?GND?"
+// (5) Short Notice ! Default setup is "LAYOUT DEPTH PRIMARY"
+// (6) The document includes 6 files.
+//     G-DF-GENERATION18-LATCH_UP-1P3M-CALIBRE-DRC-2.0_P1
+//     G-DF-GENERATION18-LATCH_UP-1P4M-CALIBRE-DRC-2.0_P1
+//     G-DF-GENERATION18-LATCH_UP-1P5M-CALIBRE-DRC-2.0_P1
+//     G-DF-GENERATION18-LATCH_UP-1P6M-CALIBRE-DRC-2.0_P1
+//     check_list.list
+//     release_note
+//////////////////////////////////////////////////////////////////////
+
+
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+DRC RESULTS DATABASE "../Latchup.db" ASCII
+DRC SUMMARY REPORT   "../Latchup.sum"
+
+DRC CHECK TEXT       COMMENTS RFI
+DRC KEEP EMPTY       NO
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+
+DRC TOLERANCE FACTOR .003
+
+//=============================
+// Define power and ground name
+//=============================
+
+VARIABLE POWER_NAME   "?VDD?"  "?VCC?"
+VARIABLE GROUND_NAME  "?VSS?"  "?GND?"
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+
+RESOLUTION  5
+PRECISION  1000
+
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+
+FLAG ACUTE   YES
+FLAG OFFGRID YES
+FLAG SKEW    YES
+
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER MAP	1	DATATYPE	0	1001
+LAYER DIFF		    1001		// Diffusion
+
+LAYER MAP	3	DATATYPE	0	1002
+LAYER NWEL		    1002		// N-well
+
+LAYER MAP	6	DATATYPE	0	1003
+LAYER TWEL		    1003		// T-well for Triple Well Process
+
+LAYER MAP	11	DATATYPE	0	1009
+LAYER PPLUS		    1009		// P+ Imp
+
+LAYER MAP	36	DATATYPE	0	1025
+LAYER SAB		    1025		// Salicide Block
+
+LAYER MAP	39	DATATYPE	0	1028
+LAYER CONT		    1028		// Contact
+
+LAYER MAP	41	DATATYPE	0	1030
+LAYER PO1		    1030		// Poly1
+
+LAYER MAP	46	DATATYPE	0	1036
+LAYER ME1		    1036		// Metal1
+
+LAYER MAP	47	DATATYPE	0	1037
+LAYER VI1		    1037		// Mvia1
+
+LAYER MAP	48	DATATYPE	0	1039
+LAYER ME2		    1039		// Metal2
+
+LAYER MAP	49	DATATYPE	0	1040
+LAYER VI2		    1040		// Mvia2
+
+LAYER MAP	50	DATATYPE	0	1042
+LAYER ME3		    1042		// Metal3
+
+LAYER MAP	51	DATATYPE	0	1043
+LAYER VI3		    1043		// Mvia3
+
+LAYER MAP	52	DATATYPE	0	1045
+LAYER ME4		    1045		// Metal4
+
+LAYER MAP	53	DATATYPE	0	1046
+LAYER VI4		    1046		// Mvia4
+
+LAYER MAP	54	DATATYPE	0	1048
+LAYER ME5		    1048		// Metal5
+
+LAYER MAP	55	DATATYPE	0	1049
+LAYER VI5		    1049		// Mvia5
+
+LAYER MAP	56	DATATYPE	0	1051
+LAYER ME6		    1051		// Metal6
+
+LAYER MAP	57	DATATYPE	0	1052
+LAYER VI6		    1052		// Mvia6
+
+LAYER MAP	58	DATATYPE	0	1054
+LAYER ME7		    1054		// Metal7
+
+LAYER MAP	65	DATATYPE	0	1060
+LAYER MMC		    1060		// Metal Cap (top Plate)
+
+LAYER MAP	66	DATATYPE	0	1061
+LAYER PAD		    1061		// L1(PAD)
+
+LAYER MAP	86	DATATYPE	36	1138
+LAYER SEALRMARK		    1138		// Seal Ring mark layer (0.13)
+
+LAYER MAP	100	TEXTTYPE	0	1162
+LAYER PO_TEXT		    1162		// Poly Text
+
+LAYER MAP	101	TEXTTYPE	0	1163
+LAYER M1_TEXT		    1163		// Metal1 Text
+
+LAYER MAP	102	TEXTTYPE	0	1164
+LAYER M2_TEXT		    1164		// Metal2 Text
+
+LAYER MAP	103	TEXTTYPE	0	1165
+LAYER M3_TEXT		    1165		// Metal3 Text
+
+LAYER MAP	104	TEXTTYPE	0	1166
+LAYER M4_TEXT		    1166		// Metal4 Text
+
+LAYER MAP	105	TEXTTYPE	0	1167
+LAYER M5_TEXT		    1167		// Metal5 Text
+
+LAYER MAP	106	TEXTTYPE	0	1168
+LAYER M6_TEXT		    1168		// Metal6 Text
+
+LAYER MAP	107	TEXTTYPE	0	1169
+LAYER M7_TEXT		    1169		// Metal7 Text
+
+LAYER MAP	 40	DATATYPE	0	1194
+LAYER NWR		    1194		// Nwell Resistor
+
+
+
+
+//======================================
+//===  Map TEXT layer to port names  ===
+//======================================
+//
+ TEXT DEPTH PRIMARY
+ TEXT LAYER PO_TEXT M1_TEXT ME1 M2_TEXT ME2 M3_TEXT ME3 M4_TEXT ME4 M5_TEXT ME5 M6_TEXT ME6  
+ ATTACH M1_TEXT ME1  
+ ATTACH M2_TEXT ME2  
+ ATTACH M3_TEXT ME3  
+ ATTACH M4_TEXT ME4  
+ ATTACH M5_TEXT ME5  
+ ATTACH M6_TEXT ME6 
+
+ VIRTUAL CONNECT NAME ?GND? ?VCC? ?VSS? ?VDD?
+
+//===================================================================
+//===  Defined types from combinations of layers (DO NOT MODIFY)  ===
+//===================================================================
+
+  DRC:1     = EXTENT
+  BULK      = SIZE DRC:1 BY 1.0
+
+//   Define NWELL and NWELL RESISTOR
+
+  NWELL_T    = NWEL          NOT        TWEL    // there is no TWEL for logic process
+  RNWELL     = NWEL        INTERACT     NWR
+  NWELL      = NWEL      NOT INTERACT   NWR
+
+
+//   Define MOS S/D AND P/N WELL TAP
+
+  ACTIVE_NW  = DIFF      NOT OUTSIDE    NWELL_T
+  ACTIVE_PS  = DIFF        OUTSIDE      NWEL
+  ACTIVE_TW  = DIFF          AND        TWEL
+  ACTIVE_PTW = ACTIVE_PS     OR         ACTIVE_TW
+
+  TTAP	     = ACTIVE_TW     AND        PPLUS
+  PTAP       = PPLUS         AND        ACTIVE_PS
+  PWTAP	     = PPLUS         AND        ACTIVE_PTW
+  NDIF       = ACTIVE_PTW    NOT        PPLUS
+  PDIF       = PPLUS         AND        ACTIVE_NW
+  NTAP       = ACTIVE_NW     NOT        PPLUS
+  NDIF_TW    = NDIF          AND        TWEL
+
+  PSD        = PDIF          NOT        PO1
+  NSD        = NDIF          NOT        PO1
+  PGATE      = PO1           AND        PDIF
+  NGATE      = PO1           AND        NDIF
+  GATE       = PO1           AND        DIFF
+  PWEL       = BULK          NOT        (NWEL OR TWEL)
+
+
+//   Define Guard Ring regions
+
+  IO_PTAP_H = (HOLES (PTAP NOT SEALRMARK)) INTERACT IOGATE
+  IO_NTAP_H = (HOLES (NTAP NOT SEALRMARK)) INTERACT IOGATE
+  IO_PTAP   = PTAP INTERACT IO_PTAP_H
+  IO_NTAP   = NTAP INTERACT IO_NTAP_H
+
+  NGUARD      = IO_NTAP INTERACT (IO_NTAP_H INTERACT (IONSD INTERACT IOGATE))  //define N+ guard ring
+  PGUARD      = IO_PTAP INTERACT (IO_PTAP_H INTERACT (IOPSD INTERACT IOGATE))  //define P+ guard ring
+  IO_NGUARD_H = HOLES NGUARD
+  IO_PGUARD_H = HOLES PGUARD
+
+//   Define I/O circuits and internal circuits
+
+//   Notice : this deck will not define I/O P+ source if cutsomer dose not use text ?VDD? ?VCC?
+//                                      I/O N+ source if customer dose not use text ?VSS? ?GND?
+
+  IOPSD      = PSD INTERACT (PDIF INTERACT SAB)                     //define IO circuits P+ source/drain
+  IONSD      = NSD INTERACT (NDIF INTERACT SAB)                     //define IO circuits N+ source/drain
+
+//   Define I/O GATE
+//   TLR defines : If source or a drain is directly connected to the pads.
+//                 then the guidelines for I/O circuits should be used
+
+  IOPGATE    = PGATE    INTERACT  IOPSD
+  IONGATE    = NGATE    INTERACT  IONSD
+  IOGATE     = IOPGATE      OR          IONGATE
+
+  INPSD      = PSD NOT IOPSD                                        //define internal circuits P+ source/drain
+  INNSD      = NSD NOT IONSD                                        //define internal circuits N+ source/drain
+
+// Define IO Drain and Source
+
+  IOPSRC     = IOPSD AND (IOPSD TOUCH PGATE == 1)                   //define IO circuits P+ source
+  IONSRC     = IONSD AND (IONSD TOUCH NGATE == 1)                   //define IO circuits N+ source
+
+  IO_NS      = (NET AREA RATIO IONSD IONSRC > 0)    INTERACT IOGATE //define IO circuits N+ source
+  IO_ND      = ((IONSD  NOT  IO_NS) INTERACT IOGATE) INTERACT SAB
+
+  IO_PS      = (NET AREA RATIO IOPSD IOPSRC > 0)    INTERACT IOGATE //define IO circuits P+ source
+  IO_PD      = ((IOPSD  NOT  IO_PS) INTERACT IOGATE) INTERACT SAB
+
+  IO_DRAIN1  = IO_PD OR IO_ND
+
+
+  IO_MOS     = (DIFF INTERACT IOGATE) NOT INTERACT IO_DRAIN1
+  IO_DRAIN2  = (IO_MOS NOT PO1)     INTERACT SAB
+
+  IO_DRAIN   = IO_DRAIN1  OR  IO_DRAIN2                             //define IO circuits drain
+  IO_SOURCE  = ((DIFF INTERACT IOGATE) NOT PO1) NOT IO_DRAIN        //define IO circuits source
+
+//==================================================
+//===  Establish Layer Connectivity for DRC Only ===
+//==================================================
+//
+    CONNECT PAD ME6
+ CONNECT ME6 MMC ME5 BY VI5 
+ CONNECT ME5 ME4 BY VI4 
+ CONNECT ME4 ME3 BY VI3 
+ CONNECT ME3 ME2 BY VI2 
+ CONNECT ME2 ME1 BY VI1 
+
+ CONNECT ME1 NTAP BY CONT
+ CONNECT ME1 PTAP BY CONT
+ CONNECT ME1 TTAP BY CONT
+ CONNECT ME1 PSD  NSD  BY CONT
+
+ SCONNECT NTAP NWELL
+ SCONNECT PTAP PWEL
+ SCONNECT TTAP TWEL
+
+ 
+//==================
+//===  DRC Rules ===
+//==================
+
+
+Latch.4.1 {@ The source of each P-channel device must use metal line directly connected to VDD
+    X = IOPSD AND IO_SOURCE
+    NOT NET  X  POWER_NAME
+}
+
+Latch.4.2 {@ The source of each N-channel device must use metal line directly connected to VSS
+    X = IONSD AND IO_SOURCE
+    NOT NET  X  GROUND_NAME
+}
+
+//Latch.4.3 {@ The drain sides of both P/N-channel output devices must use metal line directly
+//           @ connected to output pads without any cross under tunnels
+//}
+
+Latch.4.4 {@ Each P-channel device which has a source/drain tied to the pad must have a N+ diffusion
+           @ isolator (pick up) surrounding it (in the same N-well) and the pick up must
+           @ use metal line directly tie to VDD
+    X = NET AREA RATIO IOPSD PAD > 0
+    X NOT IO_NTAP_H                                  // P-channel dose not have a isolator pick up surrounding it
+}
+
+Latch.4.4.pick {@ the N+ diffusion isolater (pick up) must use metal line directly tie to VDD
+    X = NET AREA RATIO IOPSD PAD > 0
+    Y = NOT  NET  NTAP POWER_NAME
+    Y AND (IO_NTAP INTERACT (IO_NTAP_H INTERACT X))  // the pick up must use metal line directly tie to VDD
+}
+
+Latch.4.5 {@ Each N-channel device which has a source/drain tied to the pad must have a P+ diffusion
+           @ isolator (pick up) surrounding it (in the same P-well) and the pick up must
+           @ use metal line directly tie to VSS
+    X = NET AREA RATIO IONSD PAD > 0
+    X NOT IO_PTAP_H                                  // N-channel dose not have a isolator pick up surrounding it
+}
+
+Latch.4.5.pick {@ the P+ diffusion isolater (pick up) must use metal line directly tie to VSS
+    X = NET AREA RATIO IONSD PAD > 0
+    Y = NOT NET PTAP GROUND_NAME
+    Y AND (IO_PTAP INTERACT (IO_PTAP_H INTERACT X))  // the pick up must use metal line directly tie to VSS
+}
+
+Latch.4.6 {@ Each P-channel device which has a source/drain tied to the pad must have a P+ diffusion
+           @ isolator (guard ring) surrounding it (outside the pick up ,in a P-well) and the guard ring must
+           @ use metal line directly tie to VSS
+    X = NET AREA RATIO IOPSD PAD > 0
+    X NOT IO_PGUARD_H                                // P-channel dose not have a isolator pick up surrounding it
+}
+
+Latch.4.6.guard {@ the P+ diffusion isolater (guard ring_ must use metal line directly tie to VSS
+    X = NET AREA RATIO IOPSD PAD > 0
+    Y = NOT NET PTAP GROUND_NAME
+    Y AND (PGUARD INTERACT (IO_PGUARD_H INTERACT X))
+}
+
+Latch.4.7 {@ Each N-channel device which has a source/drain tied to the pad must have a N+ diffusion
+           @ isolator (guard ring) surrounding it (outside the pick up ,in a N-well) and the guard ring must
+           @ use metal line directly tie to VDD
+    X = NET AREA RATIO IONSD PAD > 0
+    X NOT IO_NGUARD_H                                // N-channel dose not have a isolator pick up surrounding it
+}
+
+Latch.4.7.guard {@ the N+ diffusion isolater (guard ring) must use metal line directly tie to VDD
+    X = NET AREA RATIO IONSD PAD > 0
+    Y = NOT NET NTAP POWER_NAME
+    Y AND (NGUARD INTERACT (IO_NGUARD_H INTERACT X))
+}
+
+Latch.4.8__Latch.4.9__Latch.5.2 {@ Minimum width of pick up is 3m (for IO circuits)
+                                 @ Minimum width of guard ring is 3um
+    INT IO_PTAP < 3.0 ABUT>0<90 SINGULAR REGION
+    INT IO_NTAP < 3.0 ABUT>0<90 SINGULAR REGION
+    INT NGUARD  < 3.0 ABUT>0<90 SINGULAR REGION
+    INT PGUARD  < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+Latch.4.10 {@ Minimum spacing between the source side front edge of NMOS in the IO circuit
+            @ and the source front edge of PMOS in the IO circuit is 20um
+    X = IO_SOURCE AND NDIF
+    Y = IO_SOURCE AND PDIF
+    EXT X Y < 20 ABUT SINGULAR REGION
+    AND X Y
+}
+
+Latch.5.1 {@ The internal circuits must be separated from IO circuits by double-guard-ing
+           @ structure.(Use N+ guard ring in N-well tied to VDD and P+ guard ring in P-well
+           @ tied to VSS)
+    X = (BULK  INTERACT  IOGATE) INTERACT (GATE NOT INTERACT (DIFF INTERACT SAB))
+
+    NTAP_RING = DONUT  NTAP
+    PTAP_RING = DONUT  PTAP
+
+    DOUBLE_RING_H1 = (HOLES  NTAP_RING) ENCLOSE PTAP_RING
+    DOUBLE_RING_H2 = (HOLES  PTAP_RING) ENCLOSE NTAP_RING
+    DOUBLE_RING_H  =  DOUBLE_RING_H1  OR  DOUBLE_RING_H2
+
+    ((GATE NOT INTERACT (DIFF INTERACT SAB))  NOT  DOUBLE_RING_H)  AND  X
+}
+
+//Latch.5.2 is covered by Latch.4.8__Latch.4.9__Latch.5.2
+
+Latch.5.3 {@ In an N-well ,the maximum spacing between N-well contact and far edge of
+           @ PMOS is 20um. Use as many N-well contacts as possible
+    EXP_NTAP = SIZE NTAP BY 20 INSIDE OF NWELL_T STEP 0.8
+    ((PDIF INTERACT PO1) NOT INTERACT SAB) NOT EXP_NTAP
+}
+
+Latch.5.4 {@ In a P-well ,the maximum spacing between P-well contact and far edge of
+           @ NMOS is 20um. Use as many N-well contacts as possible
+    EXP_PTAP1 = SIZE PTAP BY 20 OUTSIDE OF NWEL STEP 1.0
+    EXP_PTAP2 = SIZE TTAP BY 20 INSIDE  OF TWEL STEP 1.0
+    EXP_PTAP  = EXP_PTAP1  OR  EXP_PTAP2
+    ((NDIF INTERACT PO1) NOT INTERACT SAB) NOT EXP_PTAP
+}
+
+Latch.5.5 {@ Minimum spacing between the front edge of NMOS in the IO circuits
+           @ and the internal circuits is 80um
+   X = SIZE (NDIF INTERACT IOGATE) BY 80 INSIDE OF BULK STEP 2.5
+   X AND (NDIF NOT INTERACT IOGATE)
+   X AND (PDIF NOT INTERACT IOGATE)
+}
+
+Latch.5.6 {@ Minimum spacing between the front edge of PMOS in the IO circuits
+           @ and the internal circuits is 50um
+   X = SIZE (PDIF INTERACT IOGATE) BY 50 INSIDE OF BULK STEP 2.5
+   X AND (NDIF NOT INTERACT IOGATE)
+   X AND (PDIF NOT INTERACT IOGATE)
+}
+
+//Recommend.IOID {@ Layer CAD_IO_ID_MARK (IOID, GDS layer 91 datatype 0) must be drawn on the ESD protection devices
+//                @ in order to compare I/O circuits and ESD devices , (ESD device follow ESD rules)
+//   BULK NOT INTERACT IOID
+//}
+// If customer dose not use IOID , ESD device ( ex: casecode structure ) will be selected erroneously.
+
+//Recommend.FLOATING_NTAP{@ Check N+ Pick up without TEXT ?VDD? ?VCC? ?VSS? ?GND? except DIODE
+//   (NOT NET NTAP ?VDD? ?VCC? ?VSS? ?GND?) NOT INTERACT DSYMBOL
+//}
+
+//Recommend.FLOATING_PTAP{@ Check P+ Pick up without TEXT ?VDD? ?VCC? ?VSS? ?GND? except DIODE
+//                    (NOT NET PTAP ?VSS? ?GND? ?VDD? ?VCC?) NOT INTERACT DSYMBOL
+//}
+
+
+
+// END OF FILE
+

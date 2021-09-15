@@ -1,0 +1,109 @@
+////////////////////////////////////////////////////////////////////////
+//                                                                    //
+//     Title      : Calibre DRC of 0.15um Above POLY1 Dummy Rule      //
+//                                                                    //
+//     Parent Doc : G-03D-GENERATION15_ABOVE-POLY1-TLR/DUMMY          //
+//                  Ver 2.1-P1                                        //
+//     DRC Version: 2.1-P1                                            //
+//                                                                    //
+//     Copyright (c) United Microelectronics Corporation, 1980-2006   //
+//     All Rights Reserved                                            //
+//                                                                    //
+//     This source file is proprietary information of United          //
+//     Microelectronics Corporation.  It may not be distributed,      //
+//     in whole or in any part without prior written permission.      //
+//                                                                    //
+//     LIMITATION OF LIABILITY:                                       //
+//        United Microelectronics Corp. is not  liable  for  any      //
+//        property damage, personal  injury,  loss  of  profits,      //
+//        interruption of business,  or  for  any other special,      //
+//        consequential or incidental  damages, however  caused,      //
+//        whether for breach of warranty,contract tort(including      //
+//        negligence),strict liability or otherwise.                  //
+//                                                                    //
+//      This runset is validated with Calibre 2004.3.                 //
+////////////////////////////////////////////////////////////////////////
+// revision    date         who              changes                  //
+//========= ============ ========== ==================================//
+// 2.1 p1    05/25/2009   Y.C Lee    New create                       //
+//                                                                    //
+////////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)                                  //
+// ================================================================== //
+// (1) Please set up RESOLUTION,LAYOUT PATH,LAYOUT PRIMARY            //
+//     according to your design before run CALIBRE drc.               //
+//                                                                    //
+// (2) This Document includes 2 files                                 //
+//     G-DF-GENERATION15_ABOVE-POLY1_DUMMY-Calibre-DRC-2.1-P1         //
+//     ReleaseNote.txt                                                //
+////////////////////////////////////////////////////////////////////////
+
+
+// 
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+
+
+DRC CHECK TEXT       COMMENTS RFI   
+DRC KEEP EMPTY       NO
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+DRC RESULTS DATABASE "../POLY.db" ASCII
+DRC SUMMARY REPORT   "../PLOY.sum"
+DRC TOLERANCE FACTOR .003
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+ 
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+ 
+RESOLUTION  1
+PRECISION  1000
+ 
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+ 
+FLAG ACUTE   YES
+FLAG OFFGRID YES
+FLAG SKEW    YES
+
+
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+
+LAYER	MAP	41	DATATYPE	0	1001
+LAYER	PO1		1001			//Poly1
+
+LAYER	MAP	71	DATATYPE	8	1002
+LAYER	PO1DUMY		1002			//POLY1 dummy creation by customer
+
+
+
+//
+//==================
+//=== DRC Rules  ===
+//==================
+//
+
+
+7.1A {@ Minimum POLY1_CUSTOMER_DUMMY to POLY1 spacing is 1.0um
+   EXT PO1DUMY PO1 < 1.0  ABUT<90 OVERLAP SINGULAR REGION
+   AND PO1DUMY PO1
+}
+
+
+
+//END

@@ -1,0 +1,3835 @@
+ TITLE "LVS of UMC 0.18um 1.8V/3.3V 1P6M MMC Mixed Mode/RFCMOS Process"
+
+/* UMC Proprietary Data
+   Title     : LVS(Calibre) of 0.18um 1.8V/3.3V 1P4M/1P5M/1P6M MMC Mixed Mode Process
+   Ref. Document  :
+      G-02-MIXEDMODE/RFCMOS18-1.8V/3.3V-1P6M-MMC-EDR			Ver:2.1_P1
+      G-03-MIXEDMODE/RFCMOS18-1.8V/3.3V-1P6M-MMC-TLR			Ver:2.11_P1
+      G-05-MIXED_MODE/RFCMOS18-1.8V/3.3V-TRI_WELL/MMC-SPICE-8C		Ver:1.6-P1
+      G-05-MIXED_MODE/RFCMOS18-1.8V/3.3V-TWIN_WELL/MMC-SPICE-8C		Ver:1.8-P2
+      G-06-MIXED_MODE/RFCMOS18-1.8V/3.3V-1P6M-MMC-MASKTOOL-8C		Ver:2.8-P1
+
+   Copyright (c) United Microelectronics Corporation, 1980-2014
+   All Rights Reserved
+
+   This source file is proprietary information of United
+   Microelectronics Corporation.  It may not be distributed,
+   in whole or in any part without prior written permission.
+
+ DISCLAIMER OF WARRANTY
+
+   Mentor Graphics, United Microelectronics Corporation software
+   and associated files are provided "as is" and without warranty.
+   United Microelectronics Corporation has no obligation to support
+   or otherwise maintain software. United Microelectronics
+   Corporation makes no warranties, express or implied with
+   respect to software including any warranty of merchantability
+   or fitness for a particular purpose.
+
+ LIMITATION OF LIABILITY
+
+   Mentor Graphics, United Microelectronics Corporation is not
+   liable for any property damage, personal injury, loss of
+   profits, interruption of business, or for any other special,
+   consequential or incidental damages, however caused, whether
+   for breach of warranty, contract tort (including negligence),
+   strict liability or otherwise. United Microelectronics
+   Corporation further assumes no responsibility for any errors
+   that may appear within this set of files for any damages,
+   direct or indirect, that may result from using this document.
+
+ HISTORY
+====================================================================
+ 2.1-P8  03/05/2014	Nancy SC Chen/UMC	IPDS-DF-LVS
+	1. Modify MIMCAPS coding for extract resistor of TOP_VIA_MMC.
+	2. Add notice for limiting RF components are supported for 1P6M ONLY.
+	3. Modify QCI mapping file layer setting:
+	   from "pro_layer=MMC" to "pro_layer=MMCTP_C"
+	   from "pro_cont=MMCvia" to "pro_cont=VIATP"	 
+
+ 2.1-P7  02/12/2014	Nancy SC Chen/UMC	IPDS-DF-LVS
+	1. Support CALIBRE LVS+QRC LPE flow and add switch "#DEFINE RCFLOW_QCI"		
+
+ 2.1-P6  08/26/2011	Eric Chang/UMC	IPDS-DF-LVS
+			Modified DMACRO MOSPROP to extract AD/AS/PD/PS of
+MOS in CCI flow. Other contents are unchanged. 
+ 2.1-P5  06/18/2010	Jacob Huang/UMC	IPDS-DVS-LVS
+			1. Modified ME6 connection for METAL option settings.
+
+ 2.1-P4  06/30/2009	Sophia SH Chang/UMC	IPDS-DVS-LVS
+			1. Add following two statement in TOP_METAL_ME4 definition:
+				ATTACH M2_TEXT ME2_C
+				ATTACH M2_TEXT ME2_I
+			2. Modify (NEG) layer of VARMIS_18_RF in normal switch (not RCFLOW_CCI or PEXRUN)
+			   from NSD_I to WEL
+ 2.1-P3  04/15/2009 	Johnny Li/UMC 	IPDS-DVS-LVS
+			1. Add option: LVS REDUCE C(MIMCAPM_RF) PARALLEL  NO
+			2. Add option: LVS SPICE REPLICATE DEVICES YES
+			3. Add Metal-option switch: 1P3M 
+
+ 2.1-P2  11/26/2008 	Johnny Li/UMC 	IPDS-DVS-LVS
+			1. Add RCFLOW_CCI option (note15).
+			2. Modify ALL device in accordance with SPICE model.
+
+ 2.1-P1  11/03/2008 	Johnny Li/UMC 	DS-DVS-LVS
+			1. DSM remove GT-DBT-030922-007 Ver:B.B1PB.
+			2. Remove RSND_MM/RSPD_MM/RSNPO_MM/RSPPO_MM/RNND_MM/RNPD_MM device.
+			3. Add  //drc results database "drc.db"
+				//drc summary report "drc.rep"
+ 2.0-P3  05/03/2007   Momo Chang
+			1.Modify IO and CORE MOS device type in PEXRUN
+  			(N_PO7W500_18_RF,P_PO7W500_18_RF,N_PO7W500_33_RF,P_PO7W500_33_RF,N_L18W500_18_RF,P_L18W500_18_RF,N_L34W500_33_RF,P_L34W500_33_RF)
+			2.Add Case sensitivity option: "LAYOUT CASE NO","SOURCE CASE NO"
+ 2.0-P2  11/30/2006   Deborah Huang
+                      1.Modify MOSPROP
+			2.Modify ERC SELECT CHECK
+			3.Modify RSPD_MM RSND_MM extraction for parameter
+ 2.0-P1  11/13/2006   Deborah Huang
+                      1. Align version to EDR 2.0-P1
+                      2. The content unchanged
+ 1.5-P1  08/16/2006   Deborah Huang
+			1. Align version to EDR 1.5-P1
+ 1.4-P3  07/11/2006   Deborah Huang
+			1. Modify MOSPROP 
+			2. Modify 4.0um 6T SRAM marker layer setting
+ 1.4-P2  04/12/2006   H B Lin/UMC   
+			1. Add stop running LVS softchk option -->note14
+			2. Modify the DIODE device operation definition.
+			3. Add the BJT device to compare area parameter.
+			4. Add top Meatl thickness 12K option.
+ 1.4-P1  02/20/2006   Eric Chang/UMC   
+			1. Modify the following statements
+			#IFDEF ARTISAN_LIB
+				RAMCELL = (BLSP_ID1 OR DP_ID) OR BLSP_1A
+			#ELSE
+				RAMCELL = BLSP_ID1 OR DP_ID
+			#ENDIF
+			to
+			RAMCELL = (BLSP_ID1 OR DP_ID) OR BLSP_1A
+			2. Add the following commands to check if improper butting contacts exist.    
+			NNBDIF  = NSD_C    TOUCH  PSD_C
+			PPBDIF  = PSD_C    TOUCH  NSD_C
+			NPBDIF  = NNBDIF OR PPBDIF
+			SCONNECT NSD NPBDIF BY NNBDIF
+			SCONNECT PSD NPBDIF BY PPBDIF
+			LVS SOFTCHK NPBDIF CONTACT
+			3. Modify the following command from PTAP    = PSD AND PSUB
+								to PTAP    = (PSD NOT SEALRMARK) AND PSUB
+ 1.3-P3  10/12/2005   Deborah Huang/UMC
+		1. Modify devices pin name
+		2. Modify RSNPO_MM and RSPPO_MM to 3 terminals
+ 1.3-P2  08/26/2005   Deborah Huang/UMC
+		1. Add
+		- 1.8V 6T 4.0um^2      RAM CELL(MARKER LAYER 95(50),95(50))
+			P LOAD          (P_L400_G2)
+			N PASS GATE     (N_PG400_G2)
+			N PULL DOWN     (N_PD400_G2)
+		2. Add
+		- 1.8V 8T 10.20um^2      RAM CELL(MARKER LAYER 94(20))
+			P LOAD          (P_L1020_G2)
+			N PASS GATE     (N_PG1020_G2)
+			N PULL DOWN     (N_PD1020_G2)
+		3. Add note1
+ 1.3-P1  07/06/2005   Deborah Huang/UMC
+              1.Rename LOGIC device (Please use GII to check LOGIC devices)
+                . 1.8V Logic MOS device (P/N) to (N_18_G2/P_18_G2)
+                . 3.3V Logic MOS device (PT/NT) (N_33_G2/P_33_G2)
+                . Diode
+                  . Logic P+/N-Well Diode (DP) to (DIOP_G2)
+                  . Logic N+/P-Well Diode (DN) to (DION_G2)
+                  . Logic NWELL/PSUB Diode (DIONW) to (DIONW_G2)
+                . BJT
+                  . Logic pnp Bipolar Transistor(5*5)        (PNP_V50X50) to (PNP_V50X50_G2)
+                  . Logic pnp Bipolar Transistor(10*10)      (PNP_V100X100) to (PNP_V100X100_G2)
+              2.add XRC + SPECTRE flow
+         03/30/2005   Deborah Huang/UMC
+              1.add
+                LVS SOFTCHK WELL                    CONTACT
+                CONNECT NSD_C WELL     BY  NTAP
+                SCONNECT NSD_I WELL     BY  NTAP
+              2.Remove
+                LVS SOFTCHK NWEL                    CONTACT
+                CONNECT NSD_C NWEL     BY  NTAP
+                SCONNECT NSD_I NWEL     BY  NTAP
+              3.Modify PNPBJT extraction method
+ 1.2-P13 01/31/2005 Deborah Huang/UMC
+              1.Base on SPICE 1.1P3 to add DIONW ,DIONW_MM
+              2.Update property of all devices to 3%
+ 1.2-P12 01/21/2005   Deborah Huang/UMC
+                      1.add
+                      LVS SOFTCHK NWEL                    CONTACT
+                      CONNECT NSD_C NWEL     BY  NTAP
+                      SCONNECT NSD_I NWEL     BY  NTAP
+ 1.2-P11 12/07/2004   Deborah Huang/UMC
+                      1.add wrong_tap and floating_tap check
+                      2.modify options setting
+                      3.add MMC_DUMMY for LPE
+ 1.2-P10 08/10/2004   James Yeh/UMC
+                      1.Update RF MOS device for extracted pin order.
+                      2.Change PLY to PLY_I,PLY_C;NSD to NSD_I,NSD_C;
+                      PSD to PSD_I,PSD_C; MMC to MMC_I,MMC_C
+                      3.Update the HISTORY for record order.
+ 1.2-P9 04/20/2004 1. Remove PEX RUN SETUP
+                   2. Update WSYMBOL to NWR
+ 1.2-P8 06/03/2003 Update poly resistor definition statement:
+                   APYRES = PYRES  NOT NSHRPYR  =>  APYRES = PYRES  NOT HRPYR
+                   Update "ply" definition to prohibit non-salicide poly
+                   without N+ and P+ implant
+ 1.2-P7 05/23/2003 Update AD,AS,PD,PS definitions of all logic and mixed mode devices
+                   Add W,L parameters to all diode devices
+                   Make optional square inductor and optional symmetric inductor
+                   statements as comments
+ 1.2-P6 04/15/2003 Update terminal definitions of square and circular inductor
+                   devices to prohibit pin swapping
+                   Add "index" parameter to RF pad device
+ 1.2-p5 03/31/2003 Update Inductor terminal IND_ME_TERM to TOP_M_C
+                   Update metal resistor terminal definitions
+                   Simplify recognition layer and pin layer definitions
+                      of all RF devices.
+                   Add optional square inductor and optional symmetric inductor
+                   Update netlisting parameters of RF devices:
+                   ------------------------------------------------
+                      Device                  Parameter
+                   ------------------------------------------------
+                      N_PO7W500_18_RF         NF,LF => L
+                      N_L18W500_18_RF         NF,LF => NF
+                      P_PO7W500_18_RF         NF,LF => L
+                      P_L18W500_18_RF         NF,LF => NF
+                      N_PO7W500_33_RF         NF,LF => L
+                      N_L34W500_33_RF         NF,LF => NF
+                      RNNPO_RF                NF    => W,L
+                      RNPPO_RF                NF    => W,L
+                      RNHR_RF                 NF    => W,L
+                      MIMCAPM_RF              NF    => NX,NY,W,L
+ 1.2-p4 02/27/2003 Update Mixed Mode Diode Definition
+ 1.2-P3 12/22/2002 Update TOP_VIA Assignment
+ 1.2-P2 11/26/2002 Update MIMCAPM_RF to a 3-terminal device
+        11/29/2002 Update capacitance parameters of VARDIOP_RF
+                   Ca = 1.136e-3      Cf = 1.56e-10
+                   Update inductor equation
+                   Add Top_Metal Options--1P4M and 1P5M
+ 1.2-P1 11/11/2002 - Removing Metal5 Single-squared RF MMC Capacitor
+                   - Adding MCAP layer as P-Well implant block in MMC capacitor
+                   - Instead of PWBLK layer, using IND layer as P-Well
+                      implant block layer in Inductor area
+                   - Changing N+/N-Well Varactor to a 3-terminals device
+                   - Updating resistance parameters
+                          Device                      Parameter
+                      ----------------------------------------------
+                      RNNPO,RNNPO_MM,RNNPO_RF         126  => 113
+                      RNPPO,RNPPO_MM                  360  => 352
+                      RNHR1000_MM,RNHR_RF             1000 => 1039
+                    - Updating Inductor formula
+                    - Adding two 3.3V MOS scalable with Finger Length
+                      (N_PO7W500_33_RF, P_PO7W500_33_RF)
+                    - Adding PAD_RF and RNPPO_RF devices
+                    - Adding 20K top metal option
+                    - Changing RF device names
+                        - Adding multi-ground feature
+                      P_PO5_18_RF  => P_PO7W500_18_RF
+                      N_PO5_18_RF  => N_PO7W500_18_RF
+                      P_PO13_18_RF => P_L18W500_18_RF
+                      N_PO13_18_RF => N_L18W500_18_RF
+                      P_PO13_33_RF => P_L34W500_33_RF
+                      N_PO13_33_RF => N_L34W500_33_RF
+                      VARMIS_RF    => VARMIS_18_RF
+                      L_SL20K_RF   => L_SLCR20K_RF
+ 1.1-p8 10/18/2002 - Updated VARMIS_RF capacitance calculation
+ 1.1-p7 09/09/2002 - Updated the inductor layer derivation.
+                   - Set option(#DEFINE PEXRUN) for RCX to fit UMC Spice models or subcircuits.
+ 1.1-p6 05/29/2002 - Updated layers derivation for MOS, resistor to include VST and Artisan
+                     0.18um logic libraries and IPs.
+                   - Added VST RAM cell devices (NB/PB).
+                   - Updated the model name according UMC device naming rule,
+                     except the (P/N), (P_3V/N_3V), (DP) and (DN) devices
+                     in order to fit the current logic libraries naming.
+                   - Updated XDIODE, BJTSYMBOL and LSYMBOL layer names/numbers
+                     according UMC layer mapping table.
+                   - Added MMSYMBOL, RFSYMBOL, MRSYMBOL, SIZE, CSYMBOL marker layers
+                   - Added RF MOS devices
+                   - Redefined 2 terminals logic process resistors and
+                     3 terminals mixed mode/RF process resistors
+                   - Added BJT, diode varactor, RF MIM capacitor and metal resistor devices
+ 1.1-p5 12/17/2001 Add optional width/temperature & voltage effect resistance equation
+                   Add 3.3V triple well NMOS device
+ 1.1-p4 11/09/2001 Updated diode, resistor devices.
+                   Add devices property tracing
+                   Updated device model name
+ 1.1-p3 07/18/2001 Updated inductor definition, MIM capacitor
+        08/01/2001 Updated N+/P+/HR poly resistor
+        08/07/2001 Fiexed problem that layer ISYMBOL have gap and
+                   let ME5L1 have wrong sape number by Mentor Graphics
+        08/08/2001 Improve inductor property accuracy
+        08/10/2001 Fixed inductor errors
+        09/21/2001 Add PNP transistor
+ 1.1-p2 02/26/2001 Add TWELL, update layer mapping
+ 1.1-p1 02/21/2001 Add inductor and varactor device
+ 1.1-p0 01/30/2001 Update to new version
+ 0.4-p0 10/12/2000 Update to new documents
+ 0.3-p0 08/30/2000 Provided by DS/CS
+==================================================================
+ NOTES (Important! Read Me First !!!)
+ =====================================
+ 1. LVS files are provided as working templates. Some modification
+    may be required for additional devices or recognition/construction
+    issues.
+ 2. This file is created by Calibre v2007.3-27.17
+ 3. For moscap, whose drain and source terminals are connected together, all properties,
+    including AD,PD, of drain terminals are 0 and source takes all(AS=AD+AS,PS=PD+PS).
+ 4. The parameter extraction of MIMCAPM_RF device doesn't work in UMC FDK Ver2.0 and
+    is fixed in UMC FDK Ver 2.1.
+ 5. The parameters of resistors have to be changed according to
+    their layout width. Designers can discuss this with product
+    engineers.
+ 6. 
+
+// Netlist elements //
+- MOS Devices :
+ @ Logic MOS
+	. 1.8V Logic NMOS device (N_18_G2)
+	. 1.8V Logic PMOS device (P_18_G2)
+	. 3.3V Logic NMOS device (N_33_G2)
+	. 3.3V Logic PMOS device (P_33_G2)
+ @ Mixed Mode MOS
+	. 1.8V Mixed Mode NMOS device (N_18_MM)
+	. 1.8V Mixed Mode PMOS device (P_18_MM)
+	. 1.8V Mixed Mode low Vt NMOS device (N_LV_18_MM)
+	. 1.8V Mixed Mode low Vt PMOS device (P_LV_18_MM)
+	. 1.8V Mixed Mode zero Vt NMOS device (N_ZERO_18_MM)
+	. 1.8V Mixed Mode NMOS devices in T-Well(N_BPW_18_MM)
+	. 3.3V Mixed Mode NMOS device (N_33_MM)
+	. 3.3V Mixed Mode PMOS device (P_33_MM)
+	. 3.3V Mixed Mode low Vt NMOS device (N_LV_33_MM)
+	. 3.3V Mixed Mode low Vt PMOS device (P_LV_33_MM)
+	. 3.3V Mixed Mode zero Vt NMOS device (N_ZERO_33_MM)
+	. 3.3V Mixed Mode NMOS devices in T-Well(N_BPW_33_MM)
+ @ RF MOS
+	. 1.8V RF NMOS device scalable with Finger Length (N_PO7W500_18_RF)
+	. 1.8V RF NMOS device scalable with Finger Number (N_L18W500_18_RF)
+	. 1.8V RF PMOS device scalable with Finger Length (P_PO7W500_18_RF)
+	. 1.8V RF PMOS device scalable with Finger Number (P_L18W500_18_RF)
+	. 3.3V RF NMOS device scalable with Finger Length (N_PO7W500_33_RF)
+	. 3.3V RF NMOS device scalable with Finger Number (N_L34W500_33_RF)
+	. 3.3V RF PMOS device scalable with Finger Length (P_PO7W500_33_RF)
+	. 3.3V RF PMOS device scalable with Finger Number (P_L34W500_33_RF)
+
+- SRAM Devices
+ @ 1.8V 6T 4.0um^2 RAM CELL(MARKER LAYER 95[0],95[50]
+	. P LOAD	(P_L400_G2)
+	. N PASS GATE 	(N_PG400_G2)
+	. N PULL DOWN	(N_PD400_G2)
+ @ 1.8V 8T 10.20um^2 RAM CELL(MARKER LAYER 94[20]
+	. P LOAD	(P_L1020_G2)  
+	. N PASS GATE	(N_PG1020_G2)
+	. N PULL DOWN	(N_PD1020_G2) 
+
+- Resistor Elements
+ @ N-Well Resistor
+	. 2 terminal Logic N-Well sheet resistor  (RSNWELL)		;;note1
+ @ Non-Salicide Resistors
+	. 2 terminal Mixed Mode N+ sheet resistor    (RNND)		;;note1
+	. 2 terminal Mixed Mode P+ sheet resistor    (RNPD)		;;note1
+	. 2 terminal Mixed Mode N+ Poly sheet resistor (RNNPO)		;;note1
+	. 2 terminal Mixed Mode P+ Poly sheet resistor (RNPPO)		;;note1
+	. 3 terminal Mixed Mode N+ Poly sheet resistor (RNNPO_MM)
+	. 3 terminal Mixed Mode P+ Poly sheet resistor (RNPPO_MM)
+	. 3 terminal Mixed Mode HR Ploy Sheet resistor (RNHR1000_MM)
+	. 3 terminal RF N+ Poly sheet resistor (RNNPO_RF)
+	. 3 terminal RF P+ Poly sheet resistor (RNPPO_RF)
+	. 3 terminal RF HR Ploy Sheet resistor (RNHR_RF)
+ @ Salicide Resistors
+	. 2 terminal Logic N+ sheet resistor (RSND)		;;note1
+	. 2 terminal Logic P+ sheet resistor (RSPD)		;;note1
+	. 2 terminal Logic N+ Poly sheet resistor (RSNPO)	;;note1
+	. 2 terminal Logic P+ Poly sheet resistor (RSPPO)	;;note1
+ @ Metal Resistors
+	. 2 terminal Metal 1 resistor (RM1_MM)		;;note1
+	. 2 terminal Metal 2 resistor (RM2_MM)		;;note1
+	. 2 terminal Metal 3 resistor (RM3_MM)		;;note1
+	. 2 terminal Metal 4 resistor (RM4_MM)		;;note1
+	. 2 terminal Metal 5 resistor (RM5_MM)		;;note1
+	. 2 terminal Metal 6 resistor (RM6_MM)		;;note1
+
+- MIM Capacitor
+	. Metal5 Mixed Mode MMC Capacitor (MIMCAPS_MM)		
+	. Metal5 Multi-squared RF MMC Capacitor (MIMCAPM_RF)
+
+- MIS Varactor
+	. 3 terminal N+/N-Well MIS Varactor (VARMIS_18_RF)
+
+- Diode Varactor
+	. P+/Nwell Diode Varactor (VARDIOP_RF)	
+
+- Diode
+	. Logic Mode P+/N-Well Diode 	(DIOP_G2)		;;note1
+	. Logic Mode N+/P-Well Diode 	(DION_G2)		;;note1
+	. Logic NWELL/PSUB Diode 	(DIONW_G2)		;;note1
+	. Mixed Mode P+/N-Well Diode 	(DIOP_MM)
+	. Mixed Mode N+/P-Well Diode 	(DION_MM)
+	. Mixed NWELL/PSUB Diode 	(DIONW_MM)
+
+- BJT
+ @ PNP Bipolar Transistor
+	. Logic pnp Bipolar Transistor 5X5         (PNP_V50X50_G2)
+	. Logic pnp Bipolar Transistor 10X10  	   (PNP_V100X100_G2)
+	. Mixed Mode pnp Bipolar Transistor 5X5    (PNP_V50X50_MM)
+	. Mixed Mode pnp Bipolar Transistor 10X10  (PNP_V100X100_MM)
+	
+- Inductor
+	. Circular Inductor(L_SLCR20K_RF)
+
+- PAD
+	. RF PAD Device (PAD_RF)
+// END //
+
+ 7. If devices dimension needed to be checked, uncomment the "//" in
+    TRACE PROPERTY statement.
+ 8. This LVS deck can be applied for SOC design with 0.18um logic VST and Artisan
+    libraries/IPs, and UMC mixed mode/RF FDK cells, except Artisan dual port SRAM
+    cell shouldn't be integrated with VST single port SRAM.
+ 9. It is not allowed that metal layer routing crosses a metal resistor.
+10. Since the model names for different process are different, this rule deck uses
+    MMSYMBOL and RFSYMBOL to distinguish the devices of topological similarity
+    but different process.
+11. Please refer the document(UMC_0.18um_SOC_LVS_layer_definition.doc)
+    for the device layer structures especially for the user who used rule deck
+    version 1.1_p5.
+12. Options:
+      - Top Metal Layer(Default: 1P6M):
+        a) To switch LVS to 1P5M, please removing double slashes ahead of
+           "#DEFINE TOP_METAL_ME5", and so on.
+        b) Do not turn on TOP_METAL_ME5 and TOP_METAL_ME4 options at the same time.
+           If do that, a fatal error occurs.
+      - Top Metal Thickness(Default: 20K)
+        To switch LVS to 8k, please adding double slashes ahead of
+          "#DEFINE TOP_METAL_THICKNESS_20K".
+13. If your CALIBRE Version can not be compatible with XRC, please modify SVDB output format 
+    from "XCALIBRE" to "XRC".
+    note : IF PROPERTY ERRORS with (reduced instance) please use as below:
+    LVS REDUCE PARALLEL CAPACITORS     NO
+    LVS REDUCE SERIES CAPACITORS       NO
+14. If customers want to stop running LVS check when LVS engine dectected soft 	
+    connection, please turn on the following option: "LVS ABORT ON SOFTCHK   YES"		
+15. If customers use CCI flow, please add the command as below in star command.
+	NETLIST_PASSIVE_PARAMS: YES
+	HN_NETLIST_SPICE_TYPE : RNNPO_MM	X
+	HN_NETLIST_SPICE_TYPE : RNPPO_MM 	X
+	HN_NETLIST_SPICE_TYPE : RNHR1000_MM 	X
+	HN_NETLIST_SPICE_TYPE : RNNPO_RF 	X
+	HN_NETLIST_SPICE_TYPE : RNPPO_RF 	X
+	HN_NETLIST_SPICE_TYPE : RNHR_RF 	X
+	HN_NETLIST_SPICE_TYPE : MIMCAPS_MM	X
+	HN_NETLIST_SPICE_TYPE : MIMCAPM_RF	X
+	HN_NETLIST_SPICE_TYPE : VARMIS_18_RF	X
+	HN_NETLIST_SPICE_TYPE : VARDIOP_RF	X
+	HN_NETLIST_SPICE_TYPE : L_SLCR20K_RF	X
+	HN_NETLIST_SPICE_TYPE : PAD_RF		X
+
+    note1 : Spice model is not ready
+
+*/
+
+//////////////////////////////////////////////////
+// SPECIFICATION STATEMENTS			//
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//If customer wants to change the tolerance.
+//Please modify the following parameters.
+//Ex: to change tolerance of resistance from 3% to 30%
+//	VARIABLE bjtAREA_Tol 3 --> VARIABLE bjtAREA_Tol 30
+//
+//	UMC default setting is 3%
+//////////////////////////////////////////////////////////////////////////
+VARIABLE mosW_Tol 		3 		// Mos Width Tolerance Percentage
+VARIABLE mosL_Tol 		3 		// Mos Length Tolerance Percentage
+VARIABLE ramW_Tol 		3 		// RAM Cell Width Tolerance Percentage
+VARIABLE ramL_Tol 		3 		// RAM Cell Length Tolerance Percentage
+VARIABLE resR_Tol 		3 		// Res Resistance Tolerance Percentage
+VARIABLE diodeAREA_Tol 		3 		// Diode Area Tolerance Percentage
+VARIABLE diodePJ_Tol 		3 		// Diode Perimeter Tolerance Percentage
+VARIABLE bjtAREA_Tol 		3 		// Bipolar Area Tolerance Percentage
+VARIABLE capC_Tol 		3 		// Cap Capacitance Tolerance Percentage
+VARIABLE capL_Tol 		3 		// Cap Length Tolerance Percentage
+VARIABLE capW_Tol 		3 		// Cap Width Tolerance Percentage
+VARIABLE capWF_Tol  		3   		// NCAP Finger Width Tolerance Percentage
+VARIABLE capLF_Tol  		3   		// NCAP Finger Length Tolerance Percentage
+VARIABLE capNF_Tol  		0   		// NCAP Finger Number Tolerance Percentage
+
+/////////////////////////////////////////////////////////////////////////////////
+// Warning!     (1)Do not turn on 2 or more metal options at the same          //
+//              time. If do that, a fatal error can occur.                     //
+//              (2)RF components in Model and FDK are supported for 1P6M ONLY  //
+/////////////////////////////////////////////////////////////////////////////////
+//#DEFINE TOP_METAL_ME3		// To switch LVS to 1P3M
+//#DEFINE TOP_METAL_ME4		// To switch LVS to 1P4M
+//#DEFINE TOP_METAL_ME5		// To switch LVS to 1P5M
+#DEFINE TOP_METAL_ME6		// To switch LVS to 1P6M
+
+//Top Metal Thickness Option( Default: 8K )
+#DEFINE TOP_METAL_THICKNESS_20K
+//#DEFINE TOP_METAL_THICKNESS_12K
+
+#DEFINE POST_OPC	// TO RUN POST OPC DATABASE
+//#DEFINE PRE_OPC	// TP RUN PRE OPC DATABASE
+
+
+///////////////////////// IMPORTANT NOTE ///////////////////////////////////
+// Please turn on the options if you use the following library /////////////
+////////////////////////////////////////////////////////////////////////////
+//#DEFINE LIB           //VST: SC,IO_INLINE,IO_Staggered,PLL
+                        //Artisan: IO
+                        //VIRAGE
+                        //LIBRARY GLOBAL SETTING
+//#DEFINE VST_LIB       //VST:2P
+//#DEFINE ARTISAN_LIB   //ARTISAN:IO(03q4V1),SC(03q4V2)
+//#DEFINE FARADAY_LIB   //FARADAY:IO(2003Q4V1.1),SP(2003Q4V1.2)
+//#DEFINE VIRAGE_LIB    //VIRAGE
+/////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// Warning !! 											//
+// 1. Do not turn on two or more switches related to RC extraction flow  at the same time.      //
+// 2. Users have to perform LVS comparison without turning on any switch to ensure that        	//
+//    each property of each device is checked. Property is not traced again as one switch is on //	
+//////////////////////////////////////////////////////////////////////////////////////////////////
+				//////////////////////////////////////////////////////////////////
+// #DEFINE PEXRUN               // TO RUN HSPICE with XRC, Please turn on it.			//
+// INCLUDE "./runset.tec"       // To RUN RC, Please include the tech file			//
+// #DEFINE RCFLOW_CCI		// To use CALIBRE LVS+STARRCXT, turn on it.			//
+// #DEFINE RCFLOW_QCI		// To use CALIBRE LVS+QRC, turn on it.		        	//
+				// PEXRUN and RCFLOW_CCI can not turn on at the same time.	//	
+LVS EXECUTE ERC YES              // If customers want to check "ERC PATHCHK", 			//
+				// please setup NO to YES.					//
+				//////////////////////////////////////////////////////////////////
+
+SOURCE PATH      "./source.spi"
+SOURCE PRIMARY   "CHIP"
+SOURCE SYSTEM    SPICE
+
+LAYOUT PATH      "./CHIP_merge.gds"
+LAYOUT PRIMARY   "CHIP"
+LAYOUT SYSTEM    GDSII
+
+LVS REPORT       lvs_test.rep
+
+//drc results database "drc.db"
+//drc summary report "drc.rep"
+
+UNIT LENGTH                        U
+UNIT CAPACITANCE                   FF
+UNIT RESISTANCE                    OHM
+UNIT TIME                          US
+
+PRECISION                          1000
+RESOLUTION                         1
+
+#IFDEF PEXRUN
+	#DEFINE XRC_or_CCI_or_QCI
+#ENDIF	
+
+#IFDEF RCFLOW_CCI
+	#DEFINE XRC_or_CCI_or_QCI
+	#DEFINE CCI_or_QCI
+#ENDIF
+	
+#IFDEF RCFLOW_QCI
+	#DEFINE XRC_or_CCI_or_QCI
+	#DEFINE CCI_or_QCI
+#ENDIF	
+
+#IFDEF PEXRUN
+	MASK SVDB DIRECTORY svdb XRC
+	ALLGATES = DIFF AND PO1
+	CONNECT ALLGATES PLY_C
+	MMC_DUMMY = COPY CMMC_MM
+	CONNECT MMC_DUMMY CMMC_MM
+#ELSE
+	#IFDEF CCI_or_QCI
+		MASK SVDB DIRECTORY svdb CCI
+	#ELSE // For RVE Purpose 
+		MASK SVDB DIRECTORY svdb QUERY 
+	#ENDIF
+#ENDIF
+
+////////////////////////////////////////
+//   Map TEXT layer to port names  
+////////////////////////////////////////
+TEXT DEPTH PRIMARY
+//TEXT LAYER    85
+//LABEL ORDER TOP_M SEC_LAST_MET ME5 ME4 ME3 ME2 ME1 PLY //for top meal is ME6
+
+// Please change following ground and power name as in your design
+#IFDEF LIB
+	VIRTUAL CONNECT COLON YES
+	VIRTUAL CONNECT NAME ?VSS? ?VDD? V3IO V0IO VAS VAD  GND VCC
+#ELSE
+	//VIRTUAL CONNECT COLON YES
+	//VIRTUAL CONNECT NAME ?VSS? ?VDD? V3IO V0IO VAS VAD  GND VCC
+#ENDIF
+
+LVS POWER  NAME                  ?VDD? ?VCC?
+LVS GROUND NAME                  ?VSS? ?GND?
+
+//////////////////////////////////
+//  LVS Setup Options
+//////////////////////////////////
+LVS SPICE REPLICATE DEVICES 	   YES
+LVS ALL CAPACITOR PINS SWAPPABLE   NO
+#IFDEF LIB
+	LVS IGNORE PORTS                   YES
+#ELSE
+	LVS IGNORE PORTS                   NO
+#ENDIF
+
+LVS RECOGNIZE GATES                NONE //CALIBRE tool default is ALL
+LVS REDUCE SPLIT GATES             YES
+LVS CHECK PORT NAMES               YES //CALIBRE tool default is NO
+LVS COMPARE CASE                   NO
+LAYOUT CASE 			   YES	// If customers want to use the CASE sensitive for Layout text,please setup NO to YES
+SOURCE CASE 			   YES	// If customers want to use the CASE sensitive for source text,please setup NO to YES
+LVS REPORT OPTION                  A B C D S
+LVS REPORT MAXIMUM                 1000
+LVS REDUCE PARALLEL BIPOLAR        YES
+LVS REDUCE PARALLEL CAPACITORS     YES
+LVS REDUCE C(MIMCAPM_RF) PARALLEL  NO
+
+LVS REDUCE PARALLEL DIODES         YES
+LVS REDUCE PARALLEL MOS            YES
+LVS REDUCE PARALLEL RESISTORS      YES
+LVS REDUCE SERIES CAPACITORS       YES
+LVS REDUCE SERIES RESISTORS        YES
+LVS ABORT ON SUPPLY ERROR          NO
+//LVS ABORT ON SOFTCHK             YES
+
+//LVS FILTER UNUSED OPTION           AB RC RE RG RB YB // Calibre tool default is NO
+//LVS FILTER UNUSED MOS              YES  // Calibre tool default is NO
+//LVS FILTER UNUSED BIPOLAR          YES  // Calibre tool default is NO
+//LVS FILTER UNUSED CAPACITORS       YES  // Calibre tool default is NO
+
+#IFDEF VIRAGE_LIB
+	LVS FILTER UNUSED DIODES           YES  // Calibre tool default is NO
+#ELSE
+	#IFDEF VST_LIB
+		LVS FILTER UNUSED DIODES           YES  // Calibre tool default is NO
+	#ELSE
+		LVS FILTER UNUSED DIODES           NO  // Calibre tool default is NO
+	#ENDIF
+#ENDIF
+//LVS FILTER UNUSED RESISTORS        YES  // Calibre tool default is NO
+
+LVS EXPAND UNBALANCED CELLS        YES
+LVS EXPAND SEED PROMOTIONS	YES
+
+//FLAG NONSIMPLE                     YES
+//FLAG ACUTE                         YES
+//FLAG OFFGRID                       YES
+//FLAG SKEW                          YES
+///////////////////////////
+// ERC
+///////////////////////////
+ERC RESULTS DATABASE  "calibre_erc.db" ASCII
+ERC SUMMARY REPORT "erc_test.rep"
+ERC MAXIMUM RESULTS 1000
+
+ERC SELECT CHECK WRONG_NTAP WRONG_PTAP WRONG_TTAP WRONG_FLOATING_NTAP WRONG_FLOATING_PTAP WRONG_FLOATING_TTAP WRONG_FLOATING_WEL PATHCHK_GND PATHCHK_PWR PATHCHK_NPWRGND PATHCHK_NLABELED
+
+WRONG_NTAP{@Check NTAP WITH WRONG TEXT ?VSS? ?GND? EXCEPT DIODE and BJT
+        (NET NTAP ?VSS? ?GND?) NOT INTERACT ((DSYMBOL OR BJTSYMBOL) OR NWR)
+}
+WRONG_PTAP{@Check PTAP WITH WRONG TEXT ?VDD? ?VCC? EXCEPT DIODE and BJT
+        (NET PTAP ?VDD? ?VCC?) NOT INTERACT (DSYMBOL OR BJTSYMBOL)
+}
+WRONG_TTAP{@Check TTAP WITH WRONG TEXT ?VDD? ?VCC? EXCEPT DIODE and BJT
+        (NET TTAP ?VDD? ?VCC?) NOT INTERACT ((DSYMBOL OR BJTSYMBOL) OR NWR)
+}
+
+WRONG_FLOATING_NTAP{@Check NTAP WITHOUT TEXT ?VDD? ?VCC? ?VSS? ?GND? EXCEPT DIODE and BJT
+        (NOT NET NTAP ?VDD? ?VCC? ?VSS? ?GND?) NOT INTERACT ((DSYMBOL OR BJTSYMBOL) OR NWR)
+}
+WRONG_FLOATING_PTAP{@Check PTAP WITHOUT TEXT ?VDD? ?VCC? ?VSS? ?GND? EXCEPT DIODE and BJT
+        (NOT NET PTAP ?VSS? ?GND? ?VDD? ?VCC?) NOT INTERACT (DSYMBOL OR BJTSYMBOL)
+}
+WRONG_FLOATING_TTAP{@Check TTAP WITHOUT TEXT ?VDD? ?VCC? ?VSS? ?GND? EXCEPT DIODE and BJT
+        (NOT NET TTAP ?VSS? ?GND? ?VDD? ?VCC?) NOT INTERACT ((DSYMBOL OR BJTSYMBOL) OR NWR)
+}
+
+WRONG_FLOATING_WEL{@Check WEL WITHOUT TEXT ?VDD? ?VCC? ?VSS? ?GND? EXCEPT DIODE and BJT
+        (NOT NET WEL ?VDD? ?VCC? ?VSS? ?GND?) NOT INTERACT ((DSYMBOL OR BJTSYMBOL) OR NWR )
+}
+
+PATHCHK_GND{@To check nets with a path to ground not power
+        PATHCHK GROUND && !POWER
+}
+PATHCHK_PWR{@To check nets with a path to power not ground
+        PATHCHK POWER  && !GROUND
+}
+PATHCHK_NPWRGND{@To check nets with no path to power and ground
+        PATHCHK !POWER  && !GROUND NOFLOAT
+}
+PATHCHK_NLABELED{@To check nets with no path to any labeled net
+        PATHCHK !LABELED NOFLOAT
+}
+
+//output short information xxx.shorts
+LVS ISOLATE SHORTS                 YES
+
+// Result of LVS soft check go to <svdb.dir>/topcell.softchk
+LVS SOFTCHK WELL	CONTACT
+LVS SOFTCHK WEL		CONTACT
+LVS SOFTCHK PSUB	CONTACT
+LVS SOFTCHK TWEL	CONTACT
+LVS SOFTCHK NPBDIF	CONTACT
+
+#IFDEF PEXRUN
+DMACRO MOSPROP DEVICELAYER PIN AUXLAYER{
+[
+	Property W,L,AD,AS,PD,PS,PS_S,PD_S
+	W=PERIMETER_COINCIDE(DEVICELAYER,PIN)/2
+	L=AREA(DEVICELAYER)/W
+	IN_D=PERIMETER_INSIDE(D,AUXLAYER)
+	IN_S=PERIMETER_INSIDE(S,AUXLAYER)
+	S=enclosure_vector(AUXLAYER,10)
+	IN_D1 = IN_D/W - (TRUNC(IN_D/W/2))*2
+	IN_S1 = IN_S/W - (TRUNC(IN_S/W/2))*2
+
+	IF(IN_S==0){
+		IF(IN_D1!=0){
+			IN_D = IN_D1*W+IN_D
+			AD=AREA(D)*((IN_D/W-IN_D1)*W)/IN_D/2
+			PD=2*AD/W+W/2
+			PD_S=W+2*AD/W+W/2
+		}ELSE{
+			AD=AREA(D)*W/IN_D
+			PD=2*W+2*AD/W-2*W
+			PD_S=W+2*AD/W
+		}
+		AS=AD
+		PS=PD
+		PS_S=PD_S
+	}ELSE{
+		IF(IN_D==0){
+			IF(IN_S1!=0){
+				IN_S = IN_S1*W+IN_S
+				AS=AREA(S)*((IN_S/W-IN_S1)*W)/IN_S/2
+				PS=2*AS/W+W/2
+				PS_S=W+2*AS/W+W/2
+			}ELSE{
+				AS=AREA(S)*W/IN_S
+				PS=2*W+2*AS/W-2*W
+				PS_S=W+2*AS/W
+		}
+		AD=AS
+		PD=PS
+		PD_S=PS_S
+		}ELSE{
+			IF(IN_S1!=0){
+				AS=AREA(S)*W/IN_S
+				PS=PERIMETER(S) *W/IN_S -W
+				PS_S=PERIMETER(S) *W/IN_S
+				AD=AREA(D) *W/IN_D
+				PD=PERIMETER(D) *W/IN_D-W
+				PD_S=PERIMETER(D) *W/IN_D
+			}ELSE{
+				IF(IN_D1!=0){
+					AD=AREA(D)*W/IN_D
+					PD=PERIMETER(D) *W/IN_D-W
+					PD_S=PERIMETER(D) *W/IN_D
+					AS=AREA(S)*W/IN_S
+					PS=PERIMETER(S) *W/IN_S-W
+					PS_S=PERIMETER(S) *W/IN_S
+				}ELSE{
+					AD=AREA(D)*W/IN_D
+					PD=PERIMETER(D) *W/IN_D-W
+					PD_S=PERIMETER(D) *W/IN_D
+					AS=AREA(S)*W/IN_S
+					PS=PERIMETER(S) *W/IN_S-W
+					PS_S=PERIMETER(S) *W/IN_S
+				}
+			}
+		}
+	}
+]
+}
+#ELSE
+#IFDEF CCI_or_QCI 
+DMACRO MOSPROP DEVICELAYER PIN AUXLAYER{
+[
+	Property W,L,AD,AS,PD,PS,PS_S,PD_S
+	W=PERIMETER_COINCIDE(DEVICELAYER,PIN)/2
+	L=AREA(DEVICELAYER)/W
+	IN_D=PERIMETER_INSIDE(D,AUXLAYER)
+	IN_S=PERIMETER_INSIDE(S,AUXLAYER)
+	S=enclosure_vector(AUXLAYER,10)
+	IN_D1 = IN_D/W - (TRUNC(IN_D/W/2))*2
+	IN_S1 = IN_S/W - (TRUNC(IN_S/W/2))*2
+
+	IF(IN_S==0){
+		IF(IN_D1!=0){
+			IN_D = IN_D1*W+IN_D
+			AD=AREA(D)*((IN_D/W-IN_D1)*W)/IN_D/2
+			PD=2*AD/W+W/2
+			PD_S=W+2*AD/W+W/2
+		}ELSE{
+			AD=AREA(D)*W/IN_D
+			PD=2*W+2*AD/W-2*W
+			PD_S=W+2*AD/W
+		}
+		AS=AD
+		PS=PD
+		PS_S=PD_S
+	}ELSE{
+		IF(IN_D==0){
+			IF(IN_S1!=0){
+				IN_S = IN_S1*W+IN_S
+				AS=AREA(S)*((IN_S/W-IN_S1)*W)/IN_S/2
+				PS=2*AS/W+W/2
+				PS_S=W+2*AS/W+W/2
+			}ELSE{
+				AS=AREA(S)*W/IN_S
+				PS=2*W+2*AS/W-2*W
+				PS_S=W+2*AS/W
+		}
+		AD=AS
+		PD=PS
+		PD_S=PS_S
+		}ELSE{
+			IF(IN_S1!=0){
+				AS=AREA(S)*W/IN_S
+				PS=PERIMETER(S) *W/IN_S -W
+				PS_S=PERIMETER(S) *W/IN_S
+				AD=AREA(D) *W/IN_D
+				PD=PERIMETER(D) *W/IN_D-W
+				PD_S=PERIMETER(D) *W/IN_D
+			}ELSE{
+				IF(IN_D1!=0){
+					AD=AREA(D)*W/IN_D
+					PD=PERIMETER(D) *W/IN_D-W
+					PD_S=PERIMETER(D) *W/IN_D
+					AS=AREA(S)*W/IN_S
+					PS=PERIMETER(S) *W/IN_S-W
+					PS_S=PERIMETER(S) *W/IN_S
+				}ELSE{
+					AD=AREA(D)*W/IN_D
+					PD=PERIMETER(D) *W/IN_D-W
+					PD_S=PERIMETER(D) *W/IN_D
+					AS=AREA(S)*W/IN_S
+					PS=PERIMETER(S) *W/IN_S-W
+					PS_S=PERIMETER(S) *W/IN_S
+				}
+			}
+		}
+	}
+]
+}
+#ELSE
+DMACRO MOSPROP DEVICELAYER PIN AUXLAYER{
+[
+	Property W,L
+	W=PERIMETER_COINCIDE(DEVICELAYER,PIN)/2
+	L=AREA(DEVICELAYER)/W
+]
+}
+#ENDIF
+#ENDIF
+
+//////////////////////////////////////////////
+//   INPUT LAYER STATEMENTS
+//////////////////////////////////////////////
+#IFDEF FARADAY_LIB
+	BULK = EXTENT
+#ELSE
+	DRC:1 = EXTENT
+	BULK = SIZE DRC:1 BY 1.0
+#ENDIF
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+LAYER MAP	1	DATATYPE	0	1001
+LAYER DIFF		1001		// Diffusion
+LAYER MAP	1	DATATYPE	26	1002
+LAYER DIFFRAM		1002		// Diffusion in EDRAM Area
+LAYER MAP	3	DATATYPE	0	1003
+LAYER NWEL		1003		// N-well
+LAYER MAP	4	DATATYPE	0	1004
+LAYER DNW		1004		// Deep Nwell
+LAYER MAP	5	DATATYPE	0	1005
+LAYER BPW		1005		// Buried Pwell
+LAYER MAP	6	DATATYPE	0	1006
+LAYER TWEL		1006		// T-well for Triple Well Process
+LAYER MAP	9	DATATYPE	0	1007
+LAYER VTP_MM		1007		// Standard Performance VTP
+LAYER MAP	10	DATATYPE	0	1008
+LAYER VTN_MM		1008		// Standard Performance VTN
+LAYER MAP	11	DATATYPE	0	1009
+LAYER PPLUS		1009		// P+ Imp
+LAYER MAP	12	DATATYPE	0	1010
+LAYER NPLUS		1010		// N+ Imp
+LAYER MAP	12	DATATYPE	26	1011
+LAYER NPLUSRAM		1011		// NPLUS in EDRAM Area
+LAYER MAP	13	DATATYPE	0	1012
+LAYER VTP		1012		// Vtp
+LAYER MAP	14	DATATYPE	0	1013
+LAYER VTN		1013		// Vtn
+LAYER MAP	15	DATATYPE	0	1014
+LAYER VTPH		1014		// High Vt PMOS
+LAYER MAP	16	DATATYPE	0	1015
+LAYER VTNH		1015		// High Vt NMOS
+LAYER MAP	17	DATATYPE	0	1016
+LAYER PMINUS		1016		// P-
+LAYER MAP	18	DATATYPE	0	1017
+LAYER NMINUS		1017		// N-
+LAYER MAP	19	DATATYPE	0	1018
+LAYER LVT		1018		// Low Vt
+LAYER MAP	20	DATATYPE	0	1019
+LAYER VTPL		1019		// Low Vt PMOS
+LAYER MAP	21	DATATYPE	0	1020
+LAYER VTPHL		1020		// Thick gate Low Vt PMOS
+LAYER MAP	22	DATATYPE	0	1021
+LAYER VTNL		1021		// Low Vt NMOS; Thick gate Low Vt NMOS
+LAYER MAP	23	DATATYPE	0	1022
+LAYER VTNI		1022		// Zero Vt NMOS
+LAYER MAP	24	DATATYPE	0	1023
+LAYER VTNHL		1023		// Thick gate Low Vt NMOS
+LAYER MAP	25	DATATYPE	0	1024
+LAYER CELL_VTP		1024		// SRAM cell Vtp
+LAYER MAP	26	DATATYPE	0	1025
+LAYER CELL_VTN		1025		// SRAM cell Vtn
+LAYER MAP	27	DATATYPE	0	1026
+LAYER RESISTOR		1026		// 0.25 RFCMOS Resistor Marker
+LAYER MAP	28	DATATYPE	0	1027
+LAYER VTNHH		1027		// Thick gate High Vt NMOS
+LAYER MAP	29	DATATYPE	0	1028
+LAYER NPOLY		1028		// N+ Poly1 Imp
+LAYER MAP	31	DATATYPE	0	1029
+LAYER ESD		1029		// ESD Imp
+LAYER MAP	32	DATATYPE	0	1030
+LAYER PESD		1030		// P+ ESD Imp
+LAYER MAP	33	DATATYPE	0	1031
+LAYER CELLEX		1031		// DRAM CELL LDD
+LAYER MAP	34	DATATYPE	0	1032
+LAYER DT		1032		// Deep Trench
+LAYER MAP	35	DATATYPE	0	1033
+LAYER TG2		1033		// Triple Gate Oxide
+LAYER MAP	36	DATATYPE	0	1034
+LAYER SAB		1034		// Salicide Block
+LAYER MAP	37	DATATYPE	0	1035
+LAYER TG		1035		// Thick Oxide
+LAYER MAP	38	DATATYPE	0	1036
+LAYER HR		1036		// High Resistor
+LAYER MAP	39	DATATYPE	0	1037
+LAYER CONT		1037		// Contact
+LAYER MAP	39	DATATYPE	3	1038
+LAYER CONTBAR		1038		// Contact Bar
+LAYER MAP	40	DATATYPE	0	1039
+LAYER NWR		1039		// N-well Resistor
+LAYER MAP	41	DATATYPE	0	1040
+LAYER PO1		1040		// Poly1
+LAYER MAP	41	DATATYPE	3	1041
+LAYER PO1BAR		1041		// Poly Bar
+LAYER MAP	41	DATATYPE	10	1042
+LAYER PO_LVS		1042		// 0.13 Virage SRAM excluding Layer
+LAYER MAP	41	DATATYPE	26	1043
+LAYER POLYRAM		1043		// Poly1 in DRAM area
+LAYER MAP	42	DATATYPE	0	1044
+LAYER LIL		1044		// Local Interconn lay
+LAYER MAP	46	DATATYPE	0	1045
+LAYER ME1		1045		// Metal1
+LAYER MAP	47	DATATYPE	0	1046
+LAYER VI1		1046		// Mvia1
+LAYER MAP	47	DATATYPE	3	1047
+LAYER VI1BAR		1047		// Mvia1 Bar
+LAYER MAP	48	DATATYPE	0	1048
+LAYER ME2		1048		// Metal2
+LAYER MAP	49	DATATYPE	0	1049
+LAYER VI2		1049		// Mvia2
+LAYER MAP	49	DATATYPE	3	1050
+LAYER VI2BAR		1050		// Mvia2 Bar
+LAYER MAP	50	DATATYPE	0	1051
+LAYER ME3		1051		// Metal3
+LAYER MAP	51	DATATYPE	0	1052
+LAYER VI3		1052		// Mvia3
+LAYER MAP	51	DATATYPE	3	1053
+LAYER VI3BAR		1053		// Mvia3 Bar
+LAYER MAP	52	DATATYPE	0	1054
+LAYER ME4		1054		// Metal4
+LAYER MAP	53	DATATYPE	0	1055
+LAYER VI4		1055		// Mvia4
+LAYER MAP	53	DATATYPE	3	1056
+LAYER VI4BAR		1056		// Mvia4 Bar
+LAYER MAP	54	DATATYPE	0	1057
+LAYER ME5		1057		// Metal5
+LAYER MAP	55	DATATYPE	0	1058
+LAYER VI5		1058		// Mvia5
+LAYER MAP	55	DATATYPE	3	1059
+LAYER VI5BAR		1059		// Mvia5 Bar
+LAYER MAP	56	DATATYPE	0	1060
+LAYER ME6		1060		// Metal6
+LAYER MAP	57	DATATYPE	0	1061
+LAYER VI6		1061		// Mvia6
+LAYER MAP	57	DATATYPE	3	1062
+LAYER VI6BAR		1062		// Mvia6 Bar
+LAYER MAP	58	DATATYPE	0	1063
+LAYER ME7		1063		// Metal7
+LAYER MAP	59	DATATYPE	0	1064
+LAYER VI7		1064		// Mvia7
+LAYER MAP	59	DATATYPE	3	1065
+LAYER VI7BAR		1065		// Mvia7 Bar
+LAYER MAP	60	DATATYPE	0	1066
+LAYER ME8		1066		// Metal8
+LAYER MAP	61	DATATYPE	0	1067
+LAYER VI8		1067		// Mvia8
+LAYER MAP	61	DATATYPE	3	1068
+LAYER VI8BAR		1068		// Mvia8 Bar
+LAYER MAP	62	DATATYPE	0	1069
+LAYER ME9		1069		// Metal9
+LAYER MAP	64	DATATYPE	0	1070
+LAYER MMCBP		1070		// Bottom plate of MMC
+LAYER MAP	65	DATATYPE	0	1071
+LAYER MMC		1071		// Metal Cap (top Plate)
+LAYER MAP	66	DATATYPE	0	1072
+LAYER PAD		1072		// Pad
+LAYER MAP	70	DATATYPE	1	1073
+LAYER DIFDMBK		1073		// Diffusion Dummy Block
+LAYER MAP	70	DATATYPE	8	1074
+LAYER DIFFDUMY		1074		// Diffusion Dummy
+LAYER MAP	71	DATATYPE	1	1075
+LAYER PLYDMBK		1075		// Poly Dummy Block
+LAYER MAP	71	DATATYPE	8	1076
+LAYER PO1DUMY		1076		// Poly1 Dummy
+LAYER MAP	72	DATATYPE	1	1077
+LAYER M1DMBK		1077		// Metal1 Dummy Block
+LAYER MAP	72	DATATYPE	2	1078
+LAYER M1SLBK		1078		// Metal1 Slot Block
+LAYER MAP	72	DATATYPE	8	1079
+LAYER M1DUMY		1079		// Metal1 Dummy
+LAYER MAP	72	DATATYPE	9	1080
+LAYER M1SLOT		1080		// Metal1 Slot
+LAYER MAP	73	DATATYPE	1	1081
+LAYER M2DMBK		1081		// Metal2 Dummy Block
+LAYER MAP	73	DATATYPE	2	1082
+LAYER M2SLBK		1082		// Metal2 Slot Block
+LAYER MAP	73	DATATYPE	8	1083
+LAYER M2DUMY		1083		// Metal2 Dummy
+LAYER MAP	73	DATATYPE	9	1084
+LAYER M2SLOT		1084		// Metal2 Slot
+LAYER MAP	74	DATATYPE	1	1085
+LAYER M3DMBK		1085		// Metal3 Dummy Block
+LAYER MAP	74	DATATYPE	2	1086
+LAYER M3SLBK		1086		// Metal3 Slot Block
+LAYER MAP	74	DATATYPE	8	1087
+LAYER M3DUMY		1087		// Metal3 Dummy
+LAYER MAP	74	DATATYPE	9	1088
+LAYER M3SLOT		1088		// Metal3 Slot
+LAYER MAP	75	DATATYPE	1	1089
+LAYER M4DMBK		1089		// Metal4 Dummy Block
+LAYER MAP	75	DATATYPE	2	1090
+LAYER M4SLBK		1090		// Metal4 Slot Block
+LAYER MAP	75	DATATYPE	8	1091
+LAYER M4DUMY		1091		// Metal4 Dummy
+LAYER MAP	75	DATATYPE	9	1092
+LAYER M4SLOT		1092		// Metal4 Slot
+LAYER MAP	76	DATATYPE	1	1093
+LAYER M5DMBK		1093		// Metal5 Dummy Block
+LAYER MAP	76	DATATYPE	2	1094
+LAYER M5SLBK		1094		// Metal5 Slot Block
+LAYER MAP	76	DATATYPE	8	1095
+LAYER M5DUMY		1095		// Metal5 Dummy
+LAYER MAP	76	DATATYPE	9	1096
+LAYER M5SLOT		1096		// Metal5 Slot
+LAYER MAP	77	DATATYPE	1	1097
+LAYER M6DMBK		1097		// Metal6 Dummy Block
+LAYER MAP	77	DATATYPE	2	1098
+LAYER M6SLBK		1098		// Metal6 Slot Block
+LAYER MAP	77	DATATYPE	8	1099
+LAYER M6DUMY		1099		// Metal6 Dummy
+LAYER MAP	77	DATATYPE	9	1100
+LAYER M6SLOT		1100		// Metal6 Slot
+LAYER MAP	78	DATATYPE	1	1101
+LAYER M7DMBK		1101		// Metal7 Dummy Block
+LAYER MAP	78	DATATYPE	2	1102
+LAYER M7SLBK		1102		// Metal7 Slot Block
+LAYER MAP	78	DATATYPE	8	1103
+LAYER M7DUMY		1103		// Metal7 Dummy
+LAYER MAP	78	DATATYPE	9	1104
+LAYER M7SLOT		1104		// Metal7 Slot
+LAYER MAP	79	DATATYPE	1	1105
+LAYER M8DMBK		1105		// Metal8 Dummy Block
+LAYER MAP	79	DATATYPE	2	1106
+LAYER M8SLBK		1106		// Metal8 Slot Block
+LAYER MAP	79	DATATYPE	8	1107
+LAYER M8DUMY		1107		// Metal8 Dummy
+LAYER MAP	79	DATATYPE	9	1108
+LAYER M8SLOT		1108		// Metal8 Slot
+LAYER MAP	80	DATATYPE	1	1109
+LAYER M9DMBK		1109		// Metal9 Dummy Block
+LAYER MAP	80	DATATYPE	2	1110
+LAYER M9SLBK		1110		// Metal9 Slot Block
+LAYER MAP	80	DATATYPE	8	1111
+LAYER M9DUMY		1111		// Metal9 Dummy
+LAYER MAP	80	DATATYPE	9	1112
+LAYER M9SLOT		1112		// Metal9 Slot
+LAYER MAP	81	DATATYPE	0	1113
+LAYER RSYMBOL		1113		// Duffusion Resistor Marker
+LAYER MAP	82	DATATYPE	0	1114
+LAYER PSYMBOL		1114		// Poly-Resistor Marker
+LAYER MAP	85	TEXTTYPE	0	1116
+LAYER GTEXT		1116		// Generic LVS text
+LAYER MAP	86	DATATYPE	0	1117
+LAYER RSMARK		1117		// non-salicide POLY1 and Diff Resistor
+LAYER MAP	88	DATATYPE	0	1119
+LAYER FUSEMARK		1119		// Fuse Area Marker
+LAYER MAP	89	DATATYPE	0	1120
+LAYER FLPMARK		1120		// Flip Chip Bump Pad Area Marker
+LAYER MAP	90	DATATYPE	0	1121
+LAYER PADMARK		1121		// PAD Area Marker
+LAYER MAP	91	DATATYPE	0	1122
+LAYER IOID		1122		// Marker for ESD protection
+LAYER MAP	93	DATATYPE	0	1123
+LAYER ROM_ID		1123		// ROM Marker
+LAYER MAP	94	DATATYPE	20	1124
+LAYER DP_ID		1124		// Dual Port SRAM Marker
+LAYER MAP	94	DATATYPE	21	1125
+LAYER DP_ID1		1125		// Dual Port SRAM Marker
+LAYER MAP	95	DATATYPE	0	1126
+LAYER BLSP_ID1		1126		// Borderless Single Port SRAM Marker
+LAYER MAP	95	DATATYPE	20	1127
+LAYER BLSP_ID2		1127		// Borderless Single Port SRAM Marker
+LAYER MAP	96	DATATYPE	0	1128
+LAYER XDIODE		1128		// Ignore Diode Device Marker
+LAYER MAP	97	DATATYPE	0	1129
+LAYER IRAM		1129		// SRAM Cell Array Marker
+LAYER MAP	98	DATATYPE	0	1130
+LAYER BDSP_ID		1130		// Bordered Single Port
+LAYER MAP	99	DATATYPE	0	1131
+LAYER SEPGND		1131		// For LVS Purpose
+LAYER MAP	100	TEXTTYPE	0	1132
+LAYER PO_TEXT		1132		// Poly Text
+LAYER MAP	100	TEXTTYPE	37	1133
+LAYER VINST_B		1133		// For LVS Prupose
+LAYER MAP	101	TEXTTYPE	0	1134
+LAYER M1_TEXT		1134		// Metal1 Text
+LAYER MAP	102	TEXTTYPE	0	1135
+LAYER M2_TEXT		1135		// Metal2 Text
+LAYER MAP	103	TEXTTYPE	0	1136
+LAYER M3_TEXT		1136		// Metal3 Text
+LAYER MAP	104	TEXTTYPE	0	1137
+LAYER M4_TEXT		1137		// Metal4 Text
+LAYER MAP	105	TEXTTYPE	0	1138
+LAYER M5_TEXT		1138		// Metal5 Text
+LAYER MAP	106	TEXTTYPE	0	1139
+LAYER M6_TEXT		1139		// Metal6 Text
+LAYER MAP	107	TEXTTYPE	0	1140
+LAYER M7_TEXT		1140		// Metal7 Text
+LAYER MAP	108	TEXTTYPE	0	1141
+LAYER M8_TEXT		1141		// Metal8 Text
+LAYER MAP	111	DATATYPE	30	1142
+LAYER MRSYMBOL		1142		// Metal Resistor Marker layer
+LAYER MAP	111	DATATYPE	33	1143
+LAYER SIZE1		1143		// Mark layer for device mapping
+LAYER MAP	111	DATATYPE	34	1144
+LAYER SIZE10		1144		// Mark layer for device mapping
+LAYER MAP	112	DATATYPE	30	1145
+LAYER CSYMBOL		1145		// Capacitor Marker layer
+LAYER MAP	112	DATATYPE	33	1146
+LAYER SIZE2		1146		// Mark layer for device mapping
+LAYER MAP	112	DATATYPE	34	1147
+LAYER SIZE11		1147		// Mark layer for device mapping
+LAYER MAP	113	DATATYPE	30	1148
+LAYER BJTSYMBOL		1148		// BJT Bipolar Transistor Marker layer
+LAYER MAP	113	DATATYPE	33	1149
+LAYER SIZE3		1149		// Mark layer for device mapping
+LAYER MAP	113	DATATYPE	34	1150
+LAYER SIZE12		1150		// Mark layer for device mapping
+LAYER MAP	114	DATATYPE	0	1151
+LAYER DIODEID		1151		// For LVS Prupose
+LAYER MAP	114	DATATYPE	30	1152
+LAYER DSYMBOL		1152		// Diode Marker layer
+LAYER MAP	114	DATATYPE	33	1153
+LAYER SIZE4		1153		// Mark layer for device mapping
+LAYER MAP	115	DATATYPE	33	1154
+LAYER SIZE5		1154		// Mark layer for device mapping
+LAYER MAP	116	DATATYPE	33	1155
+LAYER SIZE6		1155		// Mark layer for device mapping
+LAYER MAP	117	DATATYPE	33	1156
+LAYER SIZE7		1156		// Mark layer for device mapping
+LAYER MAP	117	DATATYPE	30	1157
+LAYER LSYMBOL		1157		// Inductor Marker layer
+LAYER MAP	118	DATATYPE	30	1158
+LAYER MMSYMBOL		1158		// Mixed Mode Device Marker layer
+LAYER MAP	118	DATATYPE	33	1159
+LAYER SIZE8		1159		// Mark layer for device mapping
+LAYER MAP	119	DATATYPE	30	1160
+LAYER RFSYMBOL		1160		// RF Device Marker layer
+LAYER MAP	119	DATATYPE	33	1161
+LAYER SIZE9		1161		// Mark layer for device mapping
+LAYER MAP	141	DATATYPE	0	1162
+LAYER HTNW		1162		// For DRC Purpose
+LAYER MAP	 95	DATATYPE	21	1164
+LAYER BLSPLP		1164		// Cell size: 4.0 SRAM Mark Layer; LP
+LAYER MAP	 94	DATATYPE	22	1165
+LAYER DP_ID2		1165		// Cell size: 5.6 SRAM Mark Layer; 2PRF
+LAYER MAP	117	DATATYPE	36	1166
+LAYER IND		1166		// Define Inductor Region
+LAYER MAP	112	DATATYPE	36	1167
+LAYER MCAP		1167		// Define Metal_Cap Region
+LAYER MAP	 43	DATATYPE	0	1168
+LAYER VARACT		1168		// Varactor Layer for VTN Operation
+LAYER MAP	115	DATATYPE	30	1169
+LAYER DIOBLK		1169		// DRC Diode Block Layer
+LAYER MAP	 70	DATATYPE	0	1170
+LAYER XOPCD		1170		// Diff OPC Block
+LAYER MAP	 71	DATATYPE	0	1171
+LAYER XOPCP		1171		// Poly OPC Block
+LAYER MAP	 72	DATATYPE	0	1172
+LAYER XOPCM1		1172		// Metal1 OPC Block
+LAYER MAP	 72	DATATYPE	7	1173
+LAYER M1SLMK		1173		// Metal1 Slot Marking Layer
+LAYER MAP	 73	DATATYPE	7	1174
+LAYER M2SLMK		1174		// Metal2 Slot Marking Layer
+LAYER MAP	 74	DATATYPE	7	1175
+LAYER M3SLMK		1175		// Metal3 Slot Marking Layer
+LAYER MAP	 75	DATATYPE	7	1176
+LAYER M4SLMK		1176		// Metal4 Slot Marking Layer
+LAYER MAP	 76	DATATYPE	7	1177
+LAYER M5SLMK		1177		// Metal5 Slot Marking Layer
+LAYER MAP	 77	DATATYPE	7	1178
+LAYER M6SLMK		1178		// Metal6 Slot Marking Layer
+LAYER MAP	 78	DATATYPE	7	1179
+LAYER M7SLMK		1179		// Metal7 Slot Marking Layer
+LAYER MAP	  2	DATATYPE	4	1180
+LAYER PFIELD		1180		// CMOS Sensor Layer: as Pwell
+LAYER MAP	 18	DATATYPE	2	1181
+LAYER SENSOR		1181		// CMOS Sensor Layer: P/N junction imp
+LAYER MAP	 66	DATATYPE	20	1182
+LAYER RED		1182		// CMOS Sensor Layer: RED pixel layer
+LAYER MAP	 66	DATATYPE	21	1183
+LAYER GREEN		1183		// CMOS Sensor Layer: GREEN pixel layer
+LAYER MAP	 66	DATATYPE	22	1184
+LAYER BLUE		1184		// CMOS Sensor Layer: BLUE pixel layer
+LAYER MAP	 66	DATATYPE	23	1185
+LAYER BLACK		1185		// CMOS Sensor Layer: BLACK pixel layer
+LAYER MAP	 66	DATATYPE	24	1186
+LAYER PLANAR		1186		// CMOS Sensor Layer: for PLANARIZATION
+LAYER MAP	 66	DATATYPE	25	1187
+LAYER ULENS		1187		// CMOS Sensor Layer: MICRO_LEN
+LAYER MAP	 122	DATATYPE	30	1188
+LAYER PIXELMK		1188		// Pixel Array Mark Layer
+LAYER MAP	 123	DATATYPE	30	1189
+LAYER DECODER		1189		// Decoder Mark Layer
+LAYER MAP	 4	DATATYPE	2	1190
+LAYER DNW_LV		1190		// For Creating DNW by boolean
+LAYER MAP	 4	DATATYPE	1	1191
+LAYER ISODNW		1191		// Define Isolated HV-NMOS triwell Imp Region.
+LAYER MAP	 2	DATATYPE	3	1192
+LAYER ISOHVPW		1192		// Define Isolated High Voltage P_well Imp Region.
+LAYER MAP	 3	DATATYPE	2	1193
+LAYER HVNW		1193		// Define HV N-well Imp Region.
+LAYER MAP	 2	DATATYPE	2	1194
+LAYER HVPW		1194		// Define HV P-well Imp Region.
+LAYER MAP	 12	DATATYPE	4	1195
+LAYER HV		1195		// Define HV device S/D & Pickup Region.
+LAYER MAP	 12	DATATYPE	3	1196
+LAYER HVNF		1196		// Define HVN device Drift and HVP device Isolation Imp.
+LAYER MAP	 11	DATATYPE	1	1197
+LAYER HVPF		1197		// Define HVP device Drift and HVN device Isolation Imp.
+LAYER MAP	 37	DATATYPE	9	1198
+LAYER HVG		1198		// Define HV device Region.
+LAYER MAP	 7	DATATYPE	6	1199
+LAYER MVG		1199		// Define 5V/5.5V device Region(Option Layer)
+LAYER MAP	 40	DATATYPE	2	1200
+LAYER PWR		1200		// P-well Resistor Mark Layer
+LAYER MAP	86	DATATYPE	1	1201
+LAYER M1RESMK		1201		//Metal1 Resistor Marker Layer 
+LAYER MAP	86	DATATYPE	2	1202
+LAYER M2RESMK		1202		//Metal2 Resistor Marker Layer 
+LAYER MAP	86	DATATYPE	3	1203
+LAYER M3RESMK		1203		//Metal3 Resistor Marker Layer 
+LAYER MAP	86	DATATYPE	4	1204
+LAYER M4RESMK		1204		//Metal4 Resistor Marker Layer 
+LAYER MAP	86	DATATYPE	5	1205
+LAYER M5RESMK		1205		//Metal5 Resistor Marker Layer 
+LAYER MAP	86	DATATYPE	6	1206
+LAYER M6RESMK		1206		//Metal6 Resistor Marker Layer 
+LAYER MAP	12	DATATYPE	1	1207 
+LAYER CELLSD		1207		// Define Cell VT Imp 
+LAYER MAP	41	DATATYPE	8	1208 
+LAYER FG		1208		// Define FLOATING GATE
+LAYER MAP	19	DATATYPE	2	1209 
+LAYER LVG		1209		// Define LV GATE 
+LAYER MAP	37	DATATYPE	1	1211 
+LAYER CELLC		1211		// Define Cell CLEAR REGION
+LAYER MAP	15	DATATYPE	71	1212 
+LAYER HVNLDD		1212		// Define HV-NLDD Imp 
+LAYER MAP	17	DATATYPE	1       1213  
+LAYER HVPLDD		1213		// Define HV-NLDD Imp 
+LAYER MAP	41	DATATYPE	2	1214 
+LAYER CELLG		1214		// Define Cell AND HV STACK GATE
+LAYER MAP	37	DATATYPE	2	1215 
+LAYER ONO		1215		// Define BLOCK IN EFLASH AREA
+LAYER MAP	41	DATATYPE	1	1216 
+LAYER PO0		1216		// Define POLY0 FLOATING GATE HOLE
+LAYER MAP	37	DATATYPE	3	1217 
+LAYER HVMARK		1217		// Define HV_MARK
+LAYER MAP	37	DATATYPE	4	1218 
+LAYER MVMARK		1218		// Define MV_MARK
+LAYER MAP	37	DATATYPE	7	1219 
+LAYER MVCMARK		1219		// Define MVC_MARK
+LAYER MAP	37	DATATYPE	8	1220 
+LAYER NTMARK		1220		// Define NT_MARK
+LAYER MAP	39	DATATYPE	1	1221 
+LAYER FGCMARK		1221		// Define FG_CONTACT_MARK
+LAYER MAP	112	DATATYPE	31	1222 
+LAYER ONOCAP		1222		// Define ONO_CAP
+LAYER MAP	95	DATATYPE	1	1223 
+LAYER CELLMARK		1223		// Define CELL_MARK
+LAYER MAP	95	DATATYPE	50	1224
+LAYER BLSP_1A		1224		// Borderless Single Port SRAM Marker(Ver:A)
+LAYER MAP	7	DATATYPE	0	1225 
+LAYER PWBLK		1225		// P well block
+LAYER MAP	90	DATATYPE	4	1226
+LAYER RFMMCMK		1226		// MMC Area of RF Marker
+LAYER MAP	86	DATATYPE	36	1227
+LAYER SEALRMARK		1227		// Seal Ring Marker
+LAYER MAP	18	DATATYPE	3	1228
+LAYER CELLISO		1228		// CELL ISO Imp
+LAYER MAP	29	DATATYPE	1	1229
+LAYER N_DMOS		1229		// DMOS capacitor
+LAYER MAP	41	DATATYPE	12	1230
+LAYER PO1SBK		1230		// POLY SHRINK BLOCK(L180 90%)
+LAYER MAP	72	DATATYPE	19	1231
+LAYER XOPCV1		1231		// MVIA1_OPC_BLOCK
+LAYER MAP	73	DATATYPE	19	1232
+LAYER XOPCV2		1232		// MVIA2_OPC_BLOCK
+LAYER MAP	74	DATATYPE	19	1233
+LAYER XOPCV3		1233		// MVIA3_OPC_BLOCK
+LAYER MAP	75	DATATYPE	19	1234
+LAYER XOPCV4		1234		// MVIA4_OPC_BLOCK
+LAYER MAP	76	DATATYPE	19	1235
+LAYER XOPCV5		1235		// MVIA5_OPC_BLOCK
+LAYER MAP	77	DATATYPE	19	1236
+LAYER XOPCV6		1236		// MVIA6_OPC_BLOCK
+LAYER MAP	37	DATATYPE	10	1237
+LAYER HVP_VT		1237		// HV_LVT PMOS VT IMP
+LAYER MAP	12	DATATYPE	7	1238
+LAYER TIM		1238		// TUNNEL IMP
+LAYER MAP	12	DATATYPE	19	1239
+LAYER CELLD		1239		// CELL CONTROL GATE SOURCE AND DRAIN
+LAYER MAP	7	DATATYPE	7	1240
+LAYER ARB		1240		// ARB ETCHING
+LAYER MAP	43	DATATYPE	15	1241
+LAYER PVIA0		1241		// POLY0 PICK UP
+LAYER MAP	37	DATATYPE	6	1242
+LAYER VTNZH		1242		// VTNI NMOS DEVICE
+LAYER MAP	7	DATATYPE	36	1243
+LAYER NATIVE		1243		// NATIVE  
+LAYER MAP	0	DATATYPE	0	1244
+LAYER SUB		1244		// SUBSTRATE 
+LAYER MAP       117     DATATYPE        17      1255
+LAYER WELLBODY          1255            //
+LAYER MAP       86      DATATYPE        21      1256
+LAYER MOMSYM            1256            // MOM CAP marker layer
+LAYER MAP       119     DATATYPE        31      1257
+LAYER RFMOS_S           1257
+LAYER MAP       92      DATATYPE        0       1258
+LAYER VSTRES            1258
+
+LAYOUT TOP LAYER PAD VI6 ME6 VI5 ME5 VI4 ME4 VI3 ME3 VI2 ME2 VI1 ME1
+TEXT LAYER PO_TEXT M1_TEXT M2_TEXT M3_TEXT M4_TEXT M5_TEXT M6_TEXT 
+PORT LAYER TEXT PO_TEXT M1_TEXT M2_TEXT M3_TEXT M4_TEXT M5_TEXT M6_TEXT 
+
+ATTACH PO_TEXT PLY_C
+ATTACH PO_TEXT PLY_I
+ATTACH M1_TEXT ME1_C
+ATTACH M1_TEXT ME1_I
+CONNECT ME1_C ME1_I
+
+#IFDEF TOP_METAL_ME3
+	TOP_M			= COPY ME3
+	SEC_LAST_MET		= COPY ME2
+	TOP_M_C			= COPY ME3_C
+	SEC_LAST_MET_C		= COPY ME2_C
+	TOP_VIA 		= COPY VI2
+	TOP_VIA_MMC		= VI2 AND (MMC_C OR MMC_I) 
+	TOP_VIA_SLM		= VI2 NOT TOP_VIA_MMC
+	TOP_M_I 		= COPY ME3_I
+	SEC_LAST_MET_I		= COPY ME2_I
+	ATTACH M2_TEXT SEC_LAST_MET_C
+	ATTACH M2_TEXT SEC_LAST_MET_I
+	ATTACH M3_TEXT TOP_M_C
+	ATTACH M3_TEXT TOP_M_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME4
+	TOP_M			= COPY ME4
+	SEC_LAST_MET		= COPY ME3
+	TOP_M_C			= COPY ME4_C
+	SEC_LAST_MET_C		= COPY ME3_C
+	TOP_VIA 		= COPY VI3
+	TOP_VIA_MMC		= VI3 AND (MMC_C OR MMC_I)
+	TOP_VIA_SLM		= VI3 NOT TOP_VIA_MMC
+	TOP_M_I 		= COPY ME4_I
+	SEC_LAST_MET_I		= COPY ME3_I
+	ATTACH M3_TEXT SEC_LAST_MET_C
+	ATTACH M3_TEXT SEC_LAST_MET_I
+	ATTACH M4_TEXT TOP_M_C
+	ATTACH M4_TEXT TOP_M_I
+	ATTACH M2_TEXT ME2_C
+	ATTACH M2_TEXT ME2_I
+	CONNECT ME2_C ME2_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME5
+	TOP_M			= COPY ME5
+	SEC_LAST_MET		= COPY ME4
+	TOP_M_C			= COPY ME5_C
+	TOP_M_I			= COPY ME5_I
+	SEC_LAST_MET_C		= COPY ME4_C
+	SEC_LAST_MET_I		= COPY ME4_I
+	TOP_VIA 		= COPY VI4
+	TOP_VIA_MMC		= VI4 AND (MMC_C OR MMC_I)
+	TOP_VIA_SLM		= VI4 NOT TOP_VIA_MMC
+	ATTACH M5_TEXT TOP_M_I
+	ATTACH M5_TEXT TOP_M_C
+	ATTACH M4_TEXT SEC_LAST_MET_I
+	ATTACH M4_TEXT SEC_LAST_MET_C
+	ATTACH M3_TEXT ME3_I
+	ATTACH M3_TEXT ME3_C
+	ATTACH M2_TEXT ME2_C
+	ATTACH M2_TEXT ME2_I
+	CONNECT ME2_C ME2_I
+	CONNECT ME3_C ME3_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME6
+	TOP_M 		= COPY ME6
+	SEC_LAST_MET	= COPY ME5
+	TOP_M_C 	= COPY ME6_C
+	TOP_M_I 	= COPY ME6_I
+	SEC_LAST_MET_C	= COPY ME5_C
+	SEC_LAST_MET_I	= COPY ME5_I
+	TOP_VIA		= COPY VI5
+	TOP_VIA_MMC	= VI5 AND (MMC_C OR MMC_I)
+	TOP_VIA_SLM	= VI5 NOT TOP_VIA_MMC
+	ATTACH M6_TEXT TOP_M_C
+	ATTACH M6_TEXT TOP_M_I
+	ATTACH M5_TEXT SEC_LAST_MET_C
+	ATTACH M5_TEXT SEC_LAST_MET_I
+	ATTACH M4_TEXT ME4_C
+	ATTACH M4_TEXT ME4_I
+	ATTACH M3_TEXT ME3_C
+	ATTACH M3_TEXT ME3_I
+	ATTACH M2_TEXT ME2_C
+	ATTACH M2_TEXT ME2_I
+	CONNECT ME2_C ME2_I
+	CONNECT ME3_C ME3_I
+	CONNECT ME4_C ME4_I
+#ENDIF
+
+MMC_C = MMC NOT RFSYMBOL
+MMC_I = MMC AND RFSYMBOL
+
+CONNECT PLY_C PLY_I
+CONNECT NSD_C NSD_I
+CONNECT PSD_C PSD_I
+CONNECT MMC_C MMC_I
+
+CONNECT TOP_M_I TOP_M_C
+CONNECT SEC_LAST_MET_I SEC_LAST_MET_C
+
+//////////////////////////////////////////////
+// LAYER DERIVATIONS AND OPERATIONS
+//////////////////////////////////////////////
+SEPGND:1  = SIZE SEPGND BY 0.01
+SEPGND:2  = SEPGND:1 NOT  SEPGND
+PSUBALL	  = (BULK NOT NWEL) NOT TWEL
+PSUB      = PSUBALL  NOT  SEPGND:2
+NWELL	  = NWEL NOT TWEL
+
+BPDIFF  = DIFF   AND PPLUS
+BNDIFF  = DIFF   AND NPLUS
+PGATE   = (BPDIFF AND PO1) NOT PO_LVS
+NGATE   = (BNDIFF AND PO1) NOT PO_LVS
+
+PGATE_G2_1 = (( BPDIFF AND PO1 ) NOT PO_LVS ) NOT (RFSYMBOL OR MMSYMBOL)
+NGATE_G2_1 = (( BNDIFF AND PO1 ) NOT PO_LVS ) NOT (RFSYMBOL OR MMSYMBOL)
+
+PGATE_G2 = SIZE ( SIZE PGATE_G2_1 BY -0.03 ) BY 0.03
+NGATE_G2 = SIZE ( SIZE NGATE_G2_1 BY -0.03 ) BY 0.03
+
+PGATE_MM = (( BPDIFF AND PO1 ) NOT PO_LVS ) AND MMSYMBOL
+NGATE_MM = (( BNDIFF AND PO1 ) NOT PO_LVS ) AND MMSYMBOL
+
+PGATE_RF = (( BPDIFF AND PO1 ) NOT PO_LVS ) AND RFSYMBOL
+NGATE_RF = (( BNDIFF AND PO1 ) NOT PO_LVS ) AND RFSYMBOL
+//-------------------------------
+// Define  P+ diffusion resistor
+//-------------------------------
+#IFDEF LIB
+	PDRES    = BPDIFF AND (RSYMBOL OR VSTRES)
+#ELSE
+	PDRES    = BPDIFF AND RSYMBOL  
+#ENDIF
+//NSPSRES  = ((PDRES  AND SAB) INSIDE NWELL) NOT (MMSYMBOL OR RFSYMBOL)
+//NSPSRES_MM  = ((PDRES  AND SAB) INSIDE NWELL) AND MMSYMBOL
+NSPSRES  =  (PDRES  AND SAB) INSIDE NWELL 
+
+SPSRES:1 = (PDRES  NOT NSPSRES) NOT INTERACT SAB
+
+//SPSRES   = (SPSRES:1 INSIDE NWELL ) NOT (MMSYMBOL OR RFSYMBOL)
+//SPSRES_MM   = (SPSRES:1 INSIDE NWELL ) AND MMSYMBOL
+SPSRES   =  SPSRES:1 INSIDE NWELL 
+
+RPDS     = BPDIFF NOT PDRES
+PSD      = RPDS   NOT PGATE
+PSD_C    = PSD NOT RFSYMBOL
+PSD_C_RES = EXTENTS(PSD_C INTERACT RSYMBOL)
+PSD_I    = PSD AND RFSYMBOL
+//PLY_C      = ((PO1 NOT PYRES) NOT PO_LVS) NOT RFSYMBOL 
+	
+//-----------------------------
+// Define N+ diffusion resistor
+//-----------------------------
+NDRES    = BNDIFF AND RSYMBOL  
+//NSNSRES  = ((NDRES AND SAB) NOT INSIDE  NWELL) NOT ( MMSYMBOL OR RFSYMBOL)
+//NSNSRES_MM  = ((NDRES AND SAB) NOT INSIDE  NWELL) AND MMSYMBOL
+NSNSRES  =  (NDRES AND SAB) NOT INSIDE  NWELL 
+
+SNSRES:1 = (NDRES    NOT NSNSRES) NOT INTERACT SAB   
+//SNSRES   = (SNSRES:1  NOT INTERACT NWELL ) NOT (MMSYMBOL OR RFSYMBOL)
+//SNSRES_MM   = (SNSRES:1  NOT INTERACT NWELL ) AND MMSYMBOL
+SNSRES   =  SNSRES:1  NOT INTERACT NWELL 
+
+RNDS     = BNDIFF  NOT NDRES
+NSD      = RNDS    NOT NGATE
+NSD_I    = NSD AND RFSYMBOL
+NSD_C    = NSD NOT RFSYMBOL
+NSD_C_RES = EXTENTS(NSD_C INTERACT RSYMBOL)
+
+//-------------------------------
+// Define Poly resistor
+//-------------------------------
+#IFDEF LIB
+	PYRES      = PO1   AND ((PSYMBOL OR VSTRES) OR RSYMBOL)
+#ELSE
+	PYRES      = PO1   AND PSYMBOL
+#ENDIF
+SPYRES     = PYRES  AND SAB
+HRPYR      = (SPYRES AND HR) INTERACT PPLUS
+NSHRPYR    = (HRPYR  AND NWELL) NOT (RFSYMBOL OR MMSYMBOL)
+NSHRPYR_MM = (HRPYR  AND NWELL) AND MMSYMBOL
+NSHRPYR_RF = (HRPYR  AND NWELL) AND RFSYMBOL
+
+APYRES     = PYRES  NOT HRPYR
+PPYRES     = APYRES AND PPLUS
+NSAPYR     = PPYRES AND SAB 
+NSPPYR     = (NSAPYR AND NWELL) NOT (MMSYMBOL OR RFSYMBOL)
+NSPPYR_MM  = (NSAPYR AND NWELL) AND MMSYMBOL
+NSPPYR_RF  = (NSAPYR AND NWELL) AND RFSYMBOL
+//SPPYR    = (PPYRES NOT INTERACT SAB) NOT (MMSYMBOL OR RFSYMBOL)
+//SPPYR_MM = (PPYRES NOT INTERACT SAB) AND MMSYMBOL
+SPPYR   =  PPYRES NOT INTERACT SAB 
+
+NPYRES     = APYRES AND NPLUS
+NSBPYR     = NPYRES AND SAB
+NSNPYR     = ((NSBPYR NOT NWELL) NOT INTERACT RFSYMBOL) NOT (MMSYMBOL OR RFSYMBOL)
+NSNPYR_MM  = (NSBPYR NOT NWELL) AND MMSYMBOL
+NSNPYR_RF  = (NSBPYR NOT NWELL) INTERACT RFSYMBOL
+//SNPYR    = (NPYRES NOT INTERACT SAB) NOT (MMSYMBOL OR RFSYMBOL)
+//SNPYR_MM = (NPYRES NOT INTERACT SAB) AND MMSYMBOL
+SNPYR   =  NPYRES NOT INTERACT SAB 
+
+PLY1       = (PO1 NOT INTERACT PYRES) NOT INTERACT DIFF
+PLY        = (PO1  NOT  PYRES) NOT PLY1
+PLY_I      = PLY AND RFSYMBOL
+
+//-------------------------------
+// Define N-well resistor
+//-------------------------------
+//WRES    = (NWELL AND NWR ) NOT ( MMSYMBOL OR RFSYMBOL)
+//WRES_MM = (NWELL AND NWR) AND MMSYMBOL
+WRES    =  NWELL AND NWR  
+ 
+//WEL     = NWELL NOT ( WRES OR WRES_MM)
+//WELL     = NWEL NOT (WRES OR WRES_MM)
+WEL     = NWELL NOT WRES 
+WELL     = NWEL NOT WRES
+
+//-----------------------
+// Define Metal resistor
+//-----------------------
+ME1RES  = ME1  AND M1RESMK
+ME1_C   = (ME1 NOT ME1RES) NOT RFSYMBOL
+
+ME2RES  = ME2  AND M2RESMK
+ME2_C   = (ME2 NOT ME2RES) NOT RFSYMBOL
+
+ME3RES  = ME3  AND M3RESMK
+ME3_C   = (ME3 NOT ME3RES) NOT RFSYMBOL
+
+ME4RES  = ME4  AND M4RESMK
+ME4_C   = (ME4 NOT ME4RES) NOT RFSYMBOL
+
+ME5RES  = ME5  AND M5RESMK
+ME5_C   = (ME5 NOT ME5RES) NOT RFSYMBOL
+
+ME6RES  = ME6  AND M6RESMK
+ME6_C   = (ME6 NOT ME6RES) NOT RFSYMBOL
+
+ME1_I = (ME1 NOT ME1RES)AND RFSYMBOL
+ME2_I = (ME2 NOT ME2RES)AND RFSYMBOL
+ME3_I = (ME3 NOT ME3RES)AND RFSYMBOL
+ME4_I = (((ME4 NOT ME4RES)AND RFSYMBOL) NOT TOP_ML_R ) NOT TOP_ML_C
+ME5_I = (((ME5 NOT ME5RES)AND RFSYMBOL) NOT TOP_ML_R ) NOT TOP_ML_C
+ME6_I = (((ME6 NOT ME6RES)AND RFSYMBOL) NOT TOP_ML_R ) NOT TOP_ML_C
+
+//-------------------------------
+// Derive Transistor Device
+//-------------------------------
+RAMCELL = (BLSP_ID1 OR DP_ID) OR BLSP_1A
+
+RBPGAT_LV_MM  = (((((PGATE_MM NOT RAMCELL) NOT TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNI) AND VTPL
+RBNGAT_LV_MM  = (((((NGATE_MM NOT RAMCELL) NOT TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNI) AND VTNL
+
+RBPGAT_G2  = (((((PGATE_G2 NOT RAMCELL) NOT TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNI) NOT INTERACT VTPL
+RBNGAT_G2  = (((((NGATE_G2 NOT RAMCELL) NOT TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNI) NOT INTERACT VTNL
+
+RBPGAT_MM  = (((((PGATE_MM NOT RAMCELL) NOT TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNI) NOT INTERACT VTPL
+RBNGAT_MM  = (((((NGATE_MM NOT RAMCELL) NOT TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNI) NOT INTERACT VTNL
+
+TRBPGAT_LV_MM = (((((PGATE_MM NOT RAMCELL) AND TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNL) AND VTPHL
+TRBNGAT_LV_MM = (((((NGATE_MM NOT RAMCELL) AND TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNL) AND VTNHL
+
+TRBPGAT_G2 = (((((PGATE_G2 NOT RAMCELL) AND TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNL) NOT INTERACT VTPHL
+TRBNGAT_G2 = (((((NGATE_G2 NOT RAMCELL) AND TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNL) NOT INTERACT VTNHL
+
+TRBPGAT_MM = (((((PGATE_MM NOT RAMCELL) AND TG) NOT PSUB) NOT TWEL) NOT INTERACT VTNL) NOT INTERACT VTPHL
+TRBNGAT_MM = (((((NGATE_MM NOT RAMCELL) AND TG) NOT NWEL) NOT TWEL) NOT INTERACT VTNL) NOT INTERACT VTNHL
+
+BPWNGAT_MM = (((NGATE_MM NOT RAMCELL) NOT TG) AND TWEL) NOT INTERACT VTNI
+TBPWNGAT_MM =(((NGATE_MM NOT RAMCELL) AND TG) AND TWEL) NOT INTERACT VTNL
+
+NVTNGAT_MM = (((NGATE_MM NOT RAMCELL) NOT TG) NOT NWEL) INTERACT VTNI
+TNVTNGAT_MM =(((NGATE_MM NOT RAMCELL) AND TG) NOT NWEL) INTERACT VTNL
+
+PGATE_PO7W500_18_RF  = ((((PGATE_RF NOT RAMCELL) NOT TG) NOT PSUB) NOT TWEL) AND SIZE1
+NGATE_PO7W500_18_RF  = ((((NGATE_RF NOT RAMCELL) NOT TG) NOT NWEL) NOT TWEL) AND SIZE1
+
+PGATE_L18W500_18_RF  = ((((PGATE_RF NOT RAMCELL) NOT TG) NOT PSUB) NOT TWEL) AND SIZE2
+NGATE_L18W500_18_RF  = ((((NGATE_RF NOT RAMCELL) NOT TG) NOT NWEL) NOT TWEL) AND SIZE2
+
+TPGATE_PO7W500_33_RF  = ((((PGATE_RF NOT RAMCELL) AND TG) NOT PSUB) NOT TWEL) AND SIZE1
+TNGATE_PO7W500_33_RF  = ((((NGATE_RF NOT RAMCELL) AND TG) NOT NWEL) NOT TWEL) AND SIZE1
+
+TPGATE_L34W500_33_RF  = ((((PGATE_RF NOT RAMCELL) AND TG) NOT PSUB) NOT TWEL) AND SIZE2
+TNGATE_L34W500_33_RF  = ((((NGATE_RF NOT RAMCELL) AND TG) NOT NWEL) NOT TWEL) AND SIZE2
+
+NGATE_BPW_RF  = (((NGATE_RF NOT RAMCELL) NOT TG) AND TWEL) NOT INTERACT VTNI
+
+NGATE_TBPW_RF  = (((NGATE_RF NOT RAMCELL) AND TG) AND TWEL) NOT INTERACT VTNI
+
+RAM_PBIT = ((PGATE AND RAMCELL) INTERACT PSD ==2) NOT PSUB
+RAM_NBIT = ((NGATE AND RAMCELL) INTERACT NSD ==2) NOT NWEL
+
+#IFDEF POST_OPC
+RBPGAT_B6T400 = RAM_PBIT AND (BLSP_1A OR BLSP_ID1)
+RBNGAT_B6T400 = RAM_NBIT AND (BLSP_1A OR BLSP_ID1)
+RBNPD_B6T400 = AREA RBNGAT_B6T400 >0.0555               /* PD:0.056,PG:0.055*/
+RBNPG_B6T400 = RBNGAT_B6T400 NOT RBNPD_B6T400
+#ENDIF
+
+#IFDEF PRE_OPC
+RBPGAT_B6T400 = RAM_PBIT AND (BLSP_1A OR BLSP_ID1)
+RBNGAT_B6T400 = RAM_NBIT AND (BLSP_1A OR BLSP_ID1)
+RBNPD_B6T400 = AREA RBNGAT_B6T400 >0.0555               /* PD:0.0594,PG:0.0552 */
+RBNPG_B6T400 = RBNGAT_B6T400 NOT RBNPD_B6T400
+#ENDIF
+
+#IFDEF POST_OPC
+RBPGAT_B8T1020 = RAM_PBIT AND DP_ID
+RBNGAT_B8T1020 = RAM_NBIT AND DP_ID
+RBNPD_B8T1020 = AREA RBNGAT_B8T1020 >0.1                /* PD:0.1296,PG:0.0468*/
+RBNPG_B8T1020 = RBNGAT_B8T1020 NOT RBNPD_B8T1020
+#ENDIF
+
+#IFDEF PRE_OPC
+RBPGAT_B8T1020 = RAM_PBIT AND DP_ID
+RBNGAT_B8T1020 = RAM_NBIT AND DP_ID
+RBNPD_B8T1020 = AREA RBNGAT_B8T1020 >0.1                /* PD:0.1296,PG:0.0468*/
+RBNPG_B8T1020 = RBNGAT_B8T1020 NOT RBNPD_B8T1020
+#ENDIF
+
+PTAP    = (PSD NOT SEALRMARK) AND PSUB
+NTAP    = NSD AND WEL
+TTAP	= PSD AND TWEL
+//------------------------------
+// Define P+/N-Well Diode
+//------------------------------
+PACT      = PSD      AND  NWELL
+DPDIOD:1  = PACT     NOT  INTERACT PO1
+DPDIOD:2  = DPDIOD:1 NOT  INTERACT RSYMBOL  
+DPDIOD:3  = DPDIOD:2 NOT  INTERACT BJTSYMBOL
+DPDIOD:4  = DPDIOD:3 NOT  INTERACT XDIODE
+DPDIOD:5  = DPDIOD:4 NOT  INTERACT CSYMBOL
+//DPDIOD:6  = DPDIOD:5 NOT  TG
+DPDIOD    = DPDIOD:5 NOT  (MMSYMBOL OR RFSYMBOL)
+DPDIOD_MM = DPDIOD:5 AND  MMSYMBOL
+
+//DPDIOD_TG:1 = DPDIOD:5 AND  TG
+//DPDIOD_TG    = DPDIOD_TG:1 NOT  (MMSYMBOL OR RFSYMBOL)
+//DPDIOD_MM_TG = DPDIOD_TG:1 AND  MMSYMBOL
+
+PACTR     = PSD_I    AND  NWELL
+DPDIOD:1R = PACTR    NOT  INTERACT PO1
+DPDIOD:2R = DPDIOD:1R NOT  INTERACT RSYMBOL
+DPDIOD:3R = DPDIOD:2R NOT  INTERACT BJTSYMBOL
+
+DPDIOD_RF = ((DPDIOD:3R NOT CSYMBOL) AND RFSYMBOL) NOT INTERACT XDIODE
+PNVAR     = ((DPDIOD:3R AND CSYMBOL) AND RFSYMBOL) NOT INTERACT XDIODE
+
+//-----------------
+// Well diode 
+//-----------------
+NWNACT      = ((WEL  INTERACT  NSD) AND DSYMBOL) NOT (MMSYMBOL OR RFSYMBOL)
+NWNACT_MM      = ((WEL  INTERACT  NSD) AND DSYMBOL) AND MMSYMBOL
+
+//------------------------------
+// Define N+/P-well Diode
+//------------------------------
+NACT      = NSD  AND  PSUB
+DNDIOD:1  = NACT NOT INTERACT PO1
+DNDIOD:2  = DNDIOD:1 NOT INTERACT RSYMBOL
+DNDIOD:3  = DNDIOD:2 NOT INTERACT BJTSYMBOL
+DNDIOD:4  = DNDIOD:3 NOT INTERACT XDIODE
+DNDIOD:5  = DNDIOD:4 NOT INTERACT CSYMBOL
+//DNDIOD:6  = DNDIOD:5 NOT TG
+DNDIOD    = DNDIOD:5 NOT (MMSYMBOL OR RFSYMBOL)
+DNDIOD_MM = DNDIOD:5 AND MMSYMBOL
+
+//DNDIOD_TG:1 = DNDIOD:5 AND  TG
+//DNDIOD_TG    = DNDIOD_TG:1 NOT (MMSYMBOL OR RFSYMBOL)
+//DNDIOD_TG_MM    = DNDIOD_TG:1 AND MMSYMBOL
+
+//------------------------------
+// Define RF MIS N+ N-Well Varactor
+//------------------------------
+NCOMP_NORES = BNDIFF  NOT  NDRES
+VARGATE     = (NCOMP_NORES AND PLY) AND WEL
+
+//------------------------------
+//  Derive BJT Device
+//------------------------------
+PNPNWEL  = NWEL AND BJTSYMBOL
+BJTPOD   = (PSD_C INSIDE PNPNWEL) AND BJTSYMBOL
+PNPBJT   = (HOLES PTAP INNER ) ENCLOSE PNPNWEL
+
+PNP_E_50  = (RECTANGLE BJTPOD ==5 BY ==5) NOT (MMSYMBOL OR RFSYMBOL)
+ACTBJT5   = (PNPBJT ENCLOSE PNP_E_50) NOT (MMSYMBOL OR RFSYMBOL)
+PNP_E_100 = (RECTANGLE BJTPOD ==10 BY ==10) NOT (MMSYMBOL OR RFSYMBOL)
+ACTBJT10  = (PNPBJT ENCLOSE PNP_E_100) NOT (MMSYMBOL OR RFSYMBOL)
+
+PNP_E_50_MM  = (RECTANGLE BJTPOD ==5 BY ==5) AND MMSYMBOL
+ACTBJT5_MM   = (PNPBJT ENCLOSE PNP_E_50_MM) AND MMSYMBOL
+PNP_E_100_MM = (RECTANGLE BJTPOD ==10 BY ==10) AND MMSYMBOL
+ACTBJT10_MM  = (PNPBJT ENCLOSE PNP_E_100_MM) AND MMSYMBOL
+
+/////////////////////////
+// Define MIM Capacitor
+/////////////////////////
+CMMC_MM= ((MMC NOT INTERACT RFSYMBOL) INTERACT TOP_VIA_MMC) AND MMSYMBOL
+CMMC_MSQ = ((MMC AND SEC_LAST_MET_I) INTERACT RFSYMBOL) INSIDE MCAP
+CMMC_RF = SEC_LAST_MET_I INTERACT CMMC_MSQ
+CMMC_MSQ_X = CMMC_MSQ AND CSYMBOL
+
+CW1_MM = GROW CMMC_MM RIGHT BY 0.01
+CL1_MM = GROW CMMC_MM TOP   BY 0.01
+
+CW1_RF = GROW CMMC_RF RIGHT BY 0.01
+CL1_RF = GROW CMMC_RF TOP   BY 0.01
+
+//-----------------------
+// Define RF PAD device
+//-----------------------
+rf_pad  = ((TOP_M AND ME1) INTERACT PAD ) AND RFSYMBOL
+
+rf_2 = SIZE rf_1 BY 0.2
+rf_1 = (((((ME1 OR ME2) OR ME3) OR ME4) OR ME5) OR ME6) AND RFSYMBOL
+rf   = (SIZE PAD BY -0.3 ) NOT (SIZE PAD BY -0.5)
+
+type7   = COPY PAD
+type6   = ((ME6 NOT PAD)INTERACT type7) OR rf
+type5   = ((ME5 NOT PAD)INTERACT type7) OR rf
+type4   = ((ME4 NOT PAD)INTERACT type7) OR rf
+type3   = ((ME3 NOT PAD)INTERACT type7) OR rf
+type2   = ((ME2 NOT PAD)INTERACT type7) OR rf
+type1   = ((ME1 NOT PAD)INTERACT type7) OR rf
+
+//=============================
+// Define Inductor
+//=============================
+TOP_ML = TOP_M AND RFSYMBOL
+TOP_ML_R = TOP_ML INTERACT LSYMBOL
+TOP_MLRI = TOP_ML_R OR SEC_LAST_MET_A_R
+TOP_MLR_S1 = ((VERTEX  TOP_MLRI > 25) AND (VERTEX  TOP_MLRI < 200))AND SIZE1 //for octagonal
+TOP_MLR_S2 = ((VERTEX  TOP_MLRI > 25) AND (VERTEX  TOP_MLRI < 200))AND SIZE2 //for octagonal
+
+TOP_ML_C = (TOP_ML INTERACT LSYMBOL) NOT (SIZE1 OR SIZE2)
+TOP_MLCI = TOP_ML_C OR SEC_LAST_MET_A_C 
+TOP_MLC = VERTEX  TOP_MLCI > 200 // for circular
+
+SEC_LAST_MET_A_R = SEC_LAST_MET INTERACT TOP_ML_R
+SEC_LAST_MET_A_C = SEC_LAST_MET INTERACT TOP_ML_C
+TOP_MLS_R = TOP_ML_R OR SEC_LAST_MET_A_R
+TOP_MLS_C = TOP_ML_C OR SEC_LAST_MET_A_C
+
+SEC_LAST_MET_LT_R = (SEC_LAST_MET AND TOP_ML_R ) INTERACT  TOP_VIA_SLM
+SEC_LAST_MET_LT_C = (SEC_LAST_MET AND TOP_ML_C ) INTERACT  TOP_VIA_SLM
+
+// Calculate spiral inductor's outdiameter
+SEC_LAST_MET_L1_R = ((SEC_LAST_MET_A_R NOT SEC_LAST_MET_LT_R ) NOT TOP_ML_R) NOT INTERACT TOP_VIA_SLM
+SEC_LAST_MET_L2_R = (SEC_LAST_MET_A_R AND TOP_ML_R ) NOT SEC_LAST_MET_LT_R
+SEC_LAST_MET_L1_C = ((SEC_LAST_MET_A_C NOT SEC_LAST_MET_LT_C ) NOT TOP_ML_C) NOT INTERACT TOP_VIA_SLM
+SEC_LAST_MET_L2_C = (SEC_LAST_MET_A_C AND TOP_ML_C ) NOT SEC_LAST_MET_LT_C
+
+LDIMETER_R:0   = EXTENTS TOP_ML_R
+LDIMETER_R = LDIMETER_R:0 INTERACT SEC_LAST_MET_L2_R
+LDIMETER_C:0   = EXTENTS TOP_ML_C
+LDIMETER_C = LDIMETER_C:0 INTERACT SEC_LAST_MET_L2_C
+
+////////////////////////////////////////
+//   Establish Layer Connectivity
+////////////////////////////////////////
+#IFDEF TOP_METAL_ME3
+	CONNECT ME1_C SEC_LAST_MET_C	BY VI1
+	CONNECT ME1_I SEC_LAST_MET_I	BY VI1
+	CONNECT SEC_LAST_MET_C TOP_M_C	BY TOP_VIA_SLM
+	CONNECT SEC_LAST_MET_I TOP_M_I	BY TOP_VIA_SLM
+	CONNECT MMC_C TOP_M_C		BY TOP_VIA_MMC
+	CONNECT MMC_I TOP_M_I		BY TOP_VIA_MMC
+#ENDIF
+#IFDEF TOP_METAL_ME4
+	CONNECT ME1_C ME2_C   		BY VI1
+	CONNECT ME1_I ME2_I   		BY VI1
+	CONNECT ME2_C SEC_LAST_MET_C	BY VI2
+	CONNECT ME2_I SEC_LAST_MET_I	BY VI2
+	CONNECT SEC_LAST_MET_C TOP_M_C	BY TOP_VIA_SLM
+	CONNECT SEC_LAST_MET_I TOP_M_I	BY TOP_VIA_SLM
+	CONNECT MMC_C TOP_M_C		BY TOP_VIA_MMC
+	CONNECT MMC_I TOP_M_I		BY TOP_VIA_MMC
+#ENDIF
+#IFDEF TOP_METAL_ME5
+	CONNECT ME1_C ME2_C   		BY VI1
+	CONNECT ME1_I ME2_I   		BY VI1
+	CONNECT ME2_C ME3_C		BY VI2
+	CONNECT ME2_I ME3_I		BY VI2
+	CONNECT ME3_C SEC_LAST_MET_C	BY VI3
+	CONNECT ME3_I SEC_LAST_MET_I	BY VI3
+	CONNECT SEC_LAST_MET_C TOP_M_C 	BY TOP_VIA_SLM
+	CONNECT SEC_LAST_MET_I TOP_M_I 	BY TOP_VIA_SLM
+	CONNECT MMC_C TOP_M_C		BY TOP_VIA_MMC
+	CONNECT MMC_I TOP_M_I		BY TOP_VIA_MMC
+#ENDIF
+#IFDEF TOP_METAL_ME6
+	CONNECT ME1_C ME2_C   		BY VI1
+	CONNECT ME1_I ME2_I   		BY VI1
+    	CONNECT ME2_C ME3_C		BY VI2
+    	CONNECT ME2_I ME3_I		BY VI2
+    	CONNECT ME3_C ME4_C 		BY VI3
+    	CONNECT ME3_I ME4_I 		BY VI3
+	CONNECT ME4_C SEC_LAST_MET_C	BY VI4
+	CONNECT ME4_I SEC_LAST_MET_I	BY VI4
+	CONNECT SEC_LAST_MET_C TOP_M_C	BY TOP_VIA_SLM
+	CONNECT SEC_LAST_MET_I TOP_M_I	BY TOP_VIA_SLM
+	CONNECT MMC_C TOP_M_C		BY TOP_VIA_MMC
+	CONNECT MMC_I TOP_M_I		BY TOP_VIA_MMC
+#ENDIF
+
+PLYCONT = CONT AND PO1
+DIFCONT = (CONT AND DIFF) NOT PLYCONT
+
+CONNECT PLY_I ME1_I   BY PLYCONT
+CONNECT PSD_I ME1_I   BY DIFCONT
+CONNECT NSD_I ME1_I   BY DIFCONT
+CONNECT PLY_C ME1_C   BY PLYCONT
+CONNECT PSD_C ME1_C   BY DIFCONT
+CONNECT NSD_C ME1_C   BY DIFCONT
+
+CONNECT ME1_C PNP_E_50 		BY DIFCONT
+CONNECT ME1_C PNP_E_100 	BY DIFCONT
+CONNECT ME1_C PNP_E_50_MM 	BY DIFCONT
+CONNECT ME1_C PNP_E_100_MM 	BY DIFCONT
+
+SCONNECT NSD_I WELL  	BY NTAP
+SCONNECT NSD_I WEL  	BY NTAP
+SCONNECT PSD_I TWEL 	BY TTAP
+SCONNECT NSD_C WELL  	BY NTAP
+SCONNECT NSD_C WEL  	BY NTAP
+SCONNECT PSD_C PSUB 	BY PTAP
+SCONNECT PSD_C TWEL 	BY TTAP
+SCONNECT PSD_I PSUB 	BY PTAP
+
+NNBDIF  = NSD_C    TOUCH  PSD_C
+PPBDIF  = PSD_C    TOUCH  NSD_C
+NPBDIF  = NNBDIF OR PPBDIF
+SCONNECT NSD_C NPBDIF BY NNBDIF
+SCONNECT PSD_C NPBDIF BY PPBDIF
+
+//////////////////////////////////////// 
+//  PLY_I/PLY_C Operations
+////////////////////////////////////////
+
+#IFDEF CCI_or_QCI
+	RAM_GATE = RAM_PBIT OR RAM_NBIT
+	MOS_GATE_G2 = ((RBNGAT_G2 OR RBPGAT_G2) OR TRBNGAT_G2) OR TRBPGAT_G2
+	MOS_GATE_MM = ((((((((((RBNGAT_MM OR RBPGAT_MM) OR TRBNGAT_MM) OR TRBPGAT_MM) OR RBNGAT_LV_MM) OR RBPGAT_LV_MM) OR TRBNGAT_LV_MM) OR TRBPGAT_LV_MM) OR NVTNGAT_MM) OR TNVTNGAT_MM) OR BPWNGAT_MM) OR TBPWNGAT_MM
+	CCI_GATE = (RAM_GATE OR MOS_GATE_G2) OR MOS_GATE_MM
+	PLY_C      = (((PO1 NOT PYRES) NOT PO_LVS) NOT RFSYMBOL) NOT CCI_GATE
+
+	CONNECT RBNGAT_G2	PLY_C
+	CONNECT RBPGAT_G2	PLY_C
+	CONNECT RBNGAT_MM	PLY_C
+	CONNECT RBPGAT_MM	PLY_C
+	CONNECT RBNGAT_LV_MM	PLY_C
+	CONNECT RBPGAT_LV_MM	PLY_C
+	CONNECT TRBNGAT_G2	PLY_C
+	CONNECT TRBPGAT_G2	PLY_C
+	CONNECT TRBNGAT_MM	PLY_C
+	CONNECT TRBPGAT_MM	PLY_C
+	CONNECT TRBNGAT_LV_MM	PLY_C
+	CONNECT TRBPGAT_LV_MM	PLY_C
+	CONNECT NVTNGAT_MM	PLY_C
+	CONNECT TNVTNGAT_MM	PLY_C
+	CONNECT BPWNGAT_MM	PLY_C
+	CONNECT TBPWNGAT_MM	PLY_C
+
+	CONNECT RBNPD_B6T400	PLY_C
+	CONNECT RBNPG_B6T400 	PLY_C
+	CONNECT RBPGAT_B6T400 	PLY_C
+	CONNECT RBNPG_B8T1020	PLY_C	
+	CONNECT RBNPD_B8T1020 	PLY_C
+	CONNECT RBPGAT_B8T1020	PLY_C	
+
+#ELSE
+	PLY_C      = ((PO1 NOT PYRES) NOT PO_LVS) NOT RFSYMBOL 
+#ENDIF
+
+////////////////////////////////////////
+//   Transistor Devices (IO/CORE/ZERO)
+////////////////////////////////////////
+
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_18_G2)    RBNGAT_G2   RBNGAT_G2(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+	CMACRO MOSPROP RBNGAT_G2 NSD_C BNDIFF
+	#IFDEF ARTISAN_LIB
+	TRACE PROPERTY MN(N_18_G2) L L 7
+	TRACE PROPERTY MN(N_18_G2) W W 7
+	#ELSE
+	TRACE PROPERTY MN(N_18_G2) L L mosL_Tol
+	TRACE PROPERTY MN(N_18_G2) W W mosW_Tol
+	#ENDIF
+
+	DEVICE MP(P_18_G2)    RBPGAT_G2   RBPGAT_G2(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+	CMACRO MOSPROP RBPGAT_G2 PSD_C BPDIFF
+	#IFDEF ARTISAN_LIB
+	TRACE PROPERTY MP(P_18_G2) L L 7
+	TRACE PROPERTY MP(P_18_G2) W W 7
+	#ELSE
+	TRACE PROPERTY MP(P_18_G2) L L mosL_Tol
+	TRACE PROPERTY MP(P_18_G2) W W mosW_Tol
+	#ENDIF
+
+DEVICE MN(N_18_MM)    RBNGAT_MM   RBNGAT_MM(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP RBNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_18_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_18_MM) W W mosW_Tol
+
+DEVICE MP(P_18_MM)    RBPGAT_MM   RBPGAT_MM(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP RBPGAT_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_18_MM) L L mosL_Tol
+TRACE PROPERTY MP(P_18_MM) W W mosW_Tol
+
+DEVICE MN(N_LV_18_MM)    RBNGAT_LV_MM   RBNGAT_LV_MM(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP RBNGAT_LV_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_LV_18_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_LV_18_MM) W W mosW_Tol
+
+DEVICE MP(P_LV_18_MM)    RBPGAT_LV_MM   RBPGAT_LV_MM(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP RBPGAT_LV_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_LV_18_MM) L L mosL_Tol
+TRACE PROPERTY MP(P_LV_18_MM) W W mosW_Tol
+
+DEVICE MN(N_33_G2)   TRBNGAT_G2  TRBNGAT_G2(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_G2 NSD_C BNDIFF
+TRACE PROPERTY MN(N_33_G2) L L mosL_Tol
+TRACE PROPERTY MN(N_33_G2) W W mosW_Tol
+
+DEVICE MP(P_33_G2)   TRBPGAT_G2  TRBPGAT_G2(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_G2 PSD_C BPDIFF
+TRACE PROPERTY MP(P_33_G2) L L mosL_Tol
+TRACE PROPERTY MP(P_33_G2) W W mosW_Tol
+
+DEVICE MN(N_33_MM)   TRBNGAT_MM  TRBNGAT_MM(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_33_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_33_MM) W W mosW_Tol
+
+DEVICE MP(P_33_MM)   TRBPGAT_MM  TRBPGAT_MM(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_33_MM) L L mosL_Tol
+TRACE PROPERTY MP(P_33_MM) W W mosW_Tol
+
+DEVICE MN(N_LV_33_MM)   TRBNGAT_LV_MM  TRBNGAT_LV_MM(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_LV_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_LV_33_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_LV_33_MM) W W mosW_Tol
+
+DEVICE MP(P_LV_33_MM)   TRBPGAT_LV_MM  TRBPGAT_LV_MM(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_LV_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_LV_33_MM) L L mosL_Tol
+TRACE PROPERTY MP(P_LV_33_MM) W W mosW_Tol
+
+DEVICE MN(N_ZERO_18_MM) NVTNGAT_MM NVTNGAT_MM(G) NSD_C(S) NSD_C(D) PSUB(B) <BNDIFF><PLY_C>
+CMACRO MOSPROP NVTNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_ZERO_18_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_ZERO_18_MM) W W mosW_Tol
+
+DEVICE MN(N_ZERO_33_MM) TNVTNGAT_MM TNVTNGAT_MM(G) NSD_C(S) NSD_C(D) PSUB(B) <BNDIFF><PLY_C>
+CMACRO MOSPROP TNVTNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_ZERO_33_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_ZERO_33_MM) W W mosW_Tol
+
+DEVICE MN(N_BPW_18_MM) BPWNGAT_MM BPWNGAT_MM(G) NSD_C(S) NSD_C(D) TWEL(B) <BNDIFF><PLY_C>
+CMACRO MOSPROP BPWNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_BPW_18_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_BPW_18_MM) W W mosW_Tol
+
+DEVICE MN(N_BPW_33_MM) TBPWNGAT_MM TBPWNGAT_MM(G) NSD_C(S) NSD_C(D) TWEL(B) <BNDIFF><PLY_C>
+CMACRO MOSPROP TBPWNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_BPW_33_MM) L L mosL_Tol
+TRACE PROPERTY MN(N_BPW_33_MM) W W mosW_Tol
+
+#ELSE
+
+DEVICE MN(N_18_G2)    RBNGAT_G2   PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP RBNGAT_G2 NSD_C BNDIFF
+	#IFDEF ARTISAN_LIB
+		TRACE PROPERTY MN(N_18_G2) L L 7
+		TRACE PROPERTY MN(N_18_G2) W W 7
+	#ELSE
+		TRACE PROPERTY MN(N_18_G2) L L mosL_Tol
+		TRACE PROPERTY MN(N_18_G2) W W mosW_Tol
+	#ENDIF
+
+DEVICE MP(P_18_G2)    RBPGAT_G2   PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP RBPGAT_G2 PSD_C BPDIFF
+	#IFDEF ARTISAN_LIB
+		TRACE PROPERTY MP(P_18_G2) L L 7
+		TRACE PROPERTY MP(P_18_G2) W W 7
+	#ELSE
+		TRACE PROPERTY MP(P_18_G2) L L mosL_Tol
+		TRACE PROPERTY MP(P_18_G2) W W mosW_Tol
+	#ENDIF
+
+DEVICE MN(N_18_MM)    RBNGAT_MM   PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP RBNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_18_MM) L L  mosL_Tol 
+TRACE PROPERTY MN(N_18_MM) W W  mosW_Tol
+
+DEVICE MP(P_18_MM)    RBPGAT_MM   PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP RBPGAT_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_18_MM) L L  mosL_Tol
+TRACE PROPERTY MP(P_18_MM) W W  mosW_Tol
+
+DEVICE MN(N_LV_18_MM)    RBNGAT_LV_MM   PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP RBNGAT_LV_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_LV_18_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_LV_18_MM) W W  mosW_Tol
+
+DEVICE MP(P_LV_18_MM)    RBPGAT_LV_MM   PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP RBPGAT_LV_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_LV_18_MM) L L  mosL_Tol
+TRACE PROPERTY MP(P_LV_18_MM) W W  mosW_Tol
+
+DEVICE MN(N_33_G2)   TRBNGAT_G2  PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_G2 NSD_C BNDIFF
+TRACE PROPERTY MN(N_33_G2) L L  mosL_Tol
+TRACE PROPERTY MN(N_33_G2) W W  mosW_Tol
+
+DEVICE MP(P_33_G2)   TRBPGAT_G2  PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_G2 PSD_C BPDIFF
+TRACE PROPERTY MP(P_33_G2) L L  mosL_Tol
+TRACE PROPERTY MP(P_33_G2) W W  mosW_Tol
+
+DEVICE MN(N_33_MM)   TRBNGAT_MM  PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_33_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_33_MM) W W  mosW_Tol
+
+DEVICE MP(P_33_MM)   TRBPGAT_MM  PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_33_MM) L L  mosL_Tol
+TRACE PROPERTY MP(P_33_MM) W W  mosW_Tol
+
+DEVICE MN(N_LV_33_MM)   TRBNGAT_LV_MM  PLY_C(G)  NSD_C(S)  NSD_C(D)  PSUB(B) <BNDIFF>
+CMACRO MOSPROP TRBNGAT_LV_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_LV_33_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_LV_33_MM) W W  mosW_Tol
+
+DEVICE MP(P_LV_33_MM)   TRBPGAT_LV_MM  PLY_C(G)  PSD_C(S)  PSD_C(D)  WEL(B) <BPDIFF>
+CMACRO MOSPROP TRBPGAT_LV_MM PSD_C BPDIFF
+TRACE PROPERTY MP(P_LV_33_MM) L L  mosL_Tol
+TRACE PROPERTY MP(P_LV_33_MM) W W  mosW_Tol
+
+DEVICE MN(N_ZERO_18_MM) NVTNGAT_MM PLY_C(G) NSD_C(S) NSD_C(D) PSUB(B) <BNDIFF>
+CMACRO MOSPROP NVTNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_ZERO_18_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_ZERO_18_MM) W W  mosW_Tol
+
+DEVICE MN(N_ZERO_33_MM) TNVTNGAT_MM PLY_C(G) NSD_C(S) NSD_C(D) PSUB(B) <BNDIFF>
+CMACRO MOSPROP TNVTNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_ZERO_33_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_ZERO_33_MM) W W  mosW_Tol
+
+DEVICE MN(N_BPW_18_MM) BPWNGAT_MM PLY_C(G) NSD_C(S) NSD_C(D) TWEL(B) <BNDIFF>
+CMACRO MOSPROP BPWNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_BPW_18_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_BPW_18_MM) W W  mosW_Tol
+
+DEVICE MN(N_BPW_33_MM) TBPWNGAT_MM PLY_C(G) NSD_C(S) NSD_C(D) TWEL(B) <BNDIFF>
+CMACRO MOSPROP TBPWNGAT_MM NSD_C BNDIFF
+TRACE PROPERTY MN(N_BPW_33_MM) L L  mosL_Tol
+TRACE PROPERTY MN(N_BPW_33_MM) W W  mosW_Tol
+#ENDIF
+
+////////////////////////////////////////
+//   Transistor Devices (RF)
+////////////////////////////////////////
+
+DNGATE_PO7W500_18_RF = DIFF INTERACT NGATE_PO7W500_18_RF
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_PO7W500_18_RF)  DNGATE_PO7W500_18_RF  PLY_I(G) NSD_I(S) NSD_I(D) PSUB(B)  NETLIST MODEL "N_PO7W500_18_RF" NETLIST ELEMENT "X" <NGATE_PO7W500_18_RF>
+        [       PROPERTY L
+                NF = COUNT(NGATE_PO7W500_18_RF)
+                L = PERIMETER_INSIDE(NGATE_PO7W500_18_RF,PLY_I)/((2*NF))
+        ]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MN(N_PO7W500_18_RF)  DNGATE_PO7W500_18_RF  PLY_I(G) NSD_I(S) NSD_I(D) PSUB(B)  NETLIST MODEL "N_PO7W500_18_RF" NETLIST ELEMENT "X" <NGATE_PO7W500_18_RF>
+        [       PROPERTY L
+                NF = COUNT(NGATE_PO7W500_18_RF)
+                L = PERIMETER_INSIDE(NGATE_PO7W500_18_RF,PLY_I)/((2*NF))
+        ]
+    #ELSE
+	DEVICE MN(N_PO7W500_18_RF)  DNGATE_PO7W500_18_RF  PLY_I(G) NSD_I(S) NSD_I(D) PSUB(B) <BNDIFF><NGATE_PO7W500_18_RF>
+	CMACRO MOSPROP NGATE_PO7W500_18_RF NSD_I BNDIFF
+	TRACE PROPERTY MN(N_PO7W500_18_RF) L L  mosL_Tol
+	TRACE PROPERTY MN(N_PO7W500_18_RF) W W  mosW_Tol
+    #ENDIF
+#ENDIF
+
+
+WPGATE_PO7W500_18_RF = NWEL ENCLOSE PGATE_PO7W500_18_RF
+#IFDEF CCI_or_QCI
+	DEVICE MP(P_PO7W500_18_RF)    WPGATE_PO7W500_18_RF  PLY_I(G)  PSD_I(S) PSD_I(D)  WEL(B)  NETLIST MODEL "P_PO7W500_18_RF" NETLIST ELEMENT "X" <PGATE_PO7W500_18_RF>
+        [       PROPERTY L
+                NF = COUNT(PGATE_PO7W500_18_RF)
+                L = PERIMETER_INSIDE(PGATE_PO7W500_18_RF,PLY_I)/((2*NF))
+        ]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MP(P_PO7W500_18_RF)    WPGATE_PO7W500_18_RF  PLY_I(G)  PSD_I(S) PSD_I(D)  WEL(B)  NETLIST MODEL "P_PO7W500_18_RF" NETLIST ELEMENT "X" <PGATE_PO7W500_18_RF>
+        [       PROPERTY L
+                NF = COUNT(PGATE_PO7W500_18_RF)
+                L = PERIMETER_INSIDE(PGATE_PO7W500_18_RF,PLY_I)/((2*NF))
+        ]
+    #ELSE
+	DEVICE MP(P_PO7W500_18_RF)    WPGATE_PO7W500_18_RF  PLY_I(G)  PSD_I(S) PSD_I(D)  WEL(B) <BPDIFF> <PGATE_PO7W500_18_RF>
+	CMACRO MOSPROP PGATE_PO7W500_18_RF PSD_I BPDIFF
+	TRACE PROPERTY MP(P_PO7W500_18_RF) L L mosL_Tol
+	TRACE PROPERTY MP(P_PO7W500_18_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+DTNGATE_PO7W500_33_RF = DIFF INTERACT TNGATE_PO7W500_33_RF
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_PO7W500_33_RF)   DTNGATE_PO7W500_33_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_PO7W500_33_RF" NETLIST ELEMENT "X" <TNGATE_PO7W500_33_RF>
+        [       PROPERTY L
+                NF = COUNT(TNGATE_PO7W500_33_RF)
+                L = PERIMETER_INSIDE(TNGATE_PO7W500_33_RF,PLY_I)/((2*NF))
+        ]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MN(N_PO7W500_33_RF)   DTNGATE_PO7W500_33_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_PO7W500_33_RF" NETLIST ELEMENT "X" <TNGATE_PO7W500_33_RF>
+        [       PROPERTY L
+                NF = COUNT(TNGATE_PO7W500_33_RF)
+                L = PERIMETER_INSIDE(TNGATE_PO7W500_33_RF,PLY_I)/((2*NF))
+        ]
+    #ELSE
+	DEVICE MN(N_PO7W500_33_RF)   DTNGATE_PO7W500_33_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) <BNDIFF> <TNGATE_PO7W500_33_RF>
+	CMACRO MOSPROP TNGATE_PO7W500_33_RF NSD_I BNDIFF
+	TRACE PROPERTY MN(N_PO7W500_33_RF) L L mosL_Tol
+	TRACE PROPERTY MN(N_PO7W500_33_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+WTPGATE_PO7W500_33_RF = NWEL ENCLOSE TPGATE_PO7W500_33_RF
+#IFDEF CCI_or_QCI
+	DEVICE MP(P_PO7W500_33_RF)    WTPGATE_PO7W500_33_RF PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) NETLIST MODEL "P_PO7W500_33_RF" NETLIST ELEMENT "X" <TPGATE_PO7W500_33_RF>
+        [       PROPERTY L
+                NF = COUNT(TPGATE_PO7W500_33_RF)
+                L = PERIMETER_INSIDE(TPGATE_PO7W500_33_RF,PLY_I)/((2*NF))
+        ]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MP(P_PO7W500_33_RF)    WTPGATE_PO7W500_33_RF PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) NETLIST MODEL "P_PO7W500_33_RF" NETLIST ELEMENT "X" <TPGATE_PO7W500_33_RF>
+        [       PROPERTY L
+                NF = COUNT(TPGATE_PO7W500_33_RF)
+                L = PERIMETER_INSIDE(TPGATE_PO7W500_33_RF,PLY_I)/((2*NF))
+        ]
+    #ELSE
+	DEVICE MP(P_PO7W500_33_RF)  WTPGATE_PO7W500_33_RF  PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) <BPDIFF><TPGATE_PO7W500_33_RF>
+	CMACRO MOSPROP TPGATE_PO7W500_33_RF PSD_I BPDIFF
+	TRACE PROPERTY MP(P_PO7W500_33_RF) L L mosL_Tol
+	TRACE PROPERTY MP(P_PO7W500_33_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+DNGATE_L18W500_18_RF = DIFF INTERACT NGATE_L18W500_18_RF
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_L18W500_18_RF)  DNGATE_L18W500_18_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_L18W500_18_RF" NETLIST ELEMENT "X" <NGATE_L18W500_18_RF>
+	[       PROPERTY NF
+	        NF = COUNT(NGATE_L18W500_18_RF)
+	]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MN(N_L18W500_18_RF)  DNGATE_L18W500_18_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_L18W500_18_RF" NETLIST ELEMENT "X" <NGATE_L18W500_18_RF>
+	[       PROPERTY NF
+	        NF = COUNT(NGATE_L18W500_18_RF)
+	]
+    #ELSE
+	DEVICE MN(N_L18W500_18_RF)  DNGATE_L18W500_18_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) <BNDIFF><NGATE_L18W500_18_RF>
+	CMACRO MOSPROP NGATE_L18W500_18_RF NSD_I BNDIFF
+	TRACE PROPERTY MN(N_L18W500_18_RF) L L mosL_Tol
+	TRACE PROPERTY MN(N_L18W500_18_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+WPGATE_L18W500_18_RF = NWEL ENCLOSE PGATE_L18W500_18_RF
+#IFDEF CCI_or_QCI
+	DEVICE MP(P_L18W500_18_RF)  WPGATE_L18W500_18_RF PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) NETLIST MODEL "P_L18W500_18_RF" NETLIST ELEMENT "X" <PGATE_L18W500_18_RF>
+	[       PROPERTY NF
+	        NF = COUNT(PGATE_L18W500_18_RF)
+	]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MP(P_L18W500_18_RF)  WPGATE_L18W500_18_RF PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) NETLIST MODEL "P_L18W500_18_RF" NETLIST ELEMENT "X" <PGATE_L18W500_18_RF>
+	[       PROPERTY NF
+	        NF = COUNT(PGATE_L18W500_18_RF)
+	]
+    #ELSE
+	DEVICE MP(P_L18W500_18_RF)   WPGATE_L18W500_18_RF   PLY_I(G)  PSD_I(S) PSD_I(D) WEL(B) <BPDIFF><PGATE_L18W500_18_RF>
+	CMACRO MOSPROP PGATE_L18W500_18_RF PSD_I BPDIFF
+	TRACE PROPERTY MP(P_L18W500_18_RF) L L mosL_Tol
+	TRACE PROPERTY MP(P_L18W500_18_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+DTNGATE_L34W500_33_RF = DIFF INTERACT TNGATE_L34W500_33_RF
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_L34W500_33_RF)  DTNGATE_L34W500_33_RF PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_L34W500_33_RF" NETLIST ELEMENT "X" <TNGATE_L34W500_33_RF>
+	[       PROPERTY NF
+	        NF = COUNT(TNGATE_L34W500_33_RF)
+	]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MN(N_L34W500_33_RF)  DTNGATE_L34W500_33_RF PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) NETLIST MODEL "N_L34W500_33_RF" NETLIST ELEMENT "X" <TNGATE_L34W500_33_RF>
+	[       PROPERTY NF
+	        NF = COUNT(TNGATE_L34W500_33_RF)
+	]
+    #ELSE
+	DEVICE MN(N_L34W500_33_RF)   DTNGATE_L34W500_33_RF  PLY_I(G)  NSD_I(S) NSD_I(D) PSUB(B) <BNDIFF> <TNGATE_L34W500_33_RF>
+	CMACRO MOSPROP TNGATE_L34W500_33_RF NSD_I BNDIFF
+	TRACE PROPERTY MN(N_L34W500_33_RF) L L mosL_Tol
+	TRACE PROPERTY MN(N_L34W500_33_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+WTPGATE_L34W500_33_RF = NWEL ENCLOSE TPGATE_L34W500_33_RF
+#IFDEF CCI_or_QCI
+	DEVICE MP(P_L34W500_33_RF)  WTPGATE_L34W500_33_RF PLY_I(G)  PSD_I(S)  PSD_I(D) WEL(B) NETLIST MODEL "P_L34W500_33_RF" NETLIST ELEMENT "X" <TPGATE_L34W500_33_RF>
+	[       PROPERTY NF
+	        NF = COUNT(TPGATE_L34W500_33_RF)
+	]
+#ELSE
+    #IFDEF PEXRUN
+	DEVICE MP(P_L34W500_33_RF)  WTPGATE_L34W500_33_RF PLY_I(G)  PSD_I(S)  PSD_I(D) WEL(B) NETLIST MODEL "P_L34W500_33_RF" NETLIST ELEMENT "X" <TPGATE_L34W500_33_RF>
+	[       PROPERTY NF
+	        NF = COUNT(TPGATE_L34W500_33_RF)
+	]
+    #ELSE
+	DEVICE MP(P_L34W500_33_RF)   WTPGATE_L34W500_33_RF  PLY_I(G)  PSD_I(S)  PSD_I(D) WEL(B) <BPDIFF><TPGATE_L34W500_33_RF>
+	CMACRO MOSPROP TPGATE_L34W500_33_RF PSD_I BPDIFF
+	TRACE PROPERTY MP(P_L34W500_33_RF) L L mosL_Tol
+	TRACE PROPERTY MP(P_L34W500_33_RF) W W mosW_Tol
+    #ENDIF
+#ENDIF
+
+////////////////////////////////
+// RAM Cell definition
+////////////////////////////////
+#IFDEF CCI_or_QCI
+	DEVICE MN(N_PG400_G2) RBNPG_B6T400 RBNPG_B6T400 NSD_C NSD_C PSUB
+	DEVICE MN(N_PD400_G2) RBNPD_B6T400 RBNPD_B6T400 NSD_C NSD_C PSUB
+	DEVICE MP(P_L400_G2) RBPGAT_B6T400 RBPGAT_B6T400 PSD_C PSD_C WEL
+	DEVICE MN(N_PG1020_G2) RBNPG_B8T1020 RBNPG_B8T1020 NSD_C NSD_C PSUB
+	DEVICE MN(N_PD1020_G2) RBNPD_B8T1020 RBNPD_B8T1020 NSD_C NSD_C PSUB
+	DEVICE MP(P_L1020_G2) RBPGAT_B8T1020 RBPGAT_B8T1020 PSD_C PSD_C WEL
+#ELSE
+	DEVICE MN(N_PG400_G2) RBNPG_B6T400 PLY_C NSD_C NSD_C PSUB
+	DEVICE MN(N_PD400_G2) RBNPD_B6T400 PLY_C NSD_C NSD_C PSUB
+	DEVICE MP(P_L400_G2) RBPGAT_B6T400 PLY_C PSD_C PSD_C WEL
+	DEVICE MN(N_PG1020_G2) RBNPG_B8T1020 PLY_C NSD_C NSD_C PSUB
+	DEVICE MN(N_PD1020_G2) RBNPD_B8T1020 PLY_C NSD_C NSD_C PSUB
+	DEVICE MP(P_L1020_G2) RBPGAT_B8T1020 PLY_C PSD_C PSD_C WEL
+#ENDIF
+
+#IFDEF FARADAY_LIB
+	TRACE PROPERTY MN(N_PG400_G2) L L 20
+	TRACE PROPERTY MN(N_PG400_G2) W W 20
+	TRACE PROPERTY MN(N_PD400_G2) L L 20
+	TRACE PROPERTY MN(N_PD400_G2) W W 20
+	TRACE PROPERTY MP(P_L400_G2) L L 20
+	TRACE PROPERTY MP(P_L400_G2) W W 20
+#ELSE
+	TRACE PROPERTY MN(N_PG400_G2) L L mosL_Tol
+	TRACE PROPERTY MN(N_PG400_G2) W W mosW_Tol
+	TRACE PROPERTY MN(N_PD400_G2) L L mosL_Tol
+	TRACE PROPERTY MN(N_PD400_G2) W W mosW_Tol
+	TRACE PROPERTY MP(P_L400_G2) L L mosL_Tol
+	TRACE PROPERTY MP(P_L400_G2) W W mosW_Tol
+#ENDIF
+
+TRACE PROPERTY MN(N_PG1020_G2) L L mosL_Tol
+TRACE PROPERTY MN(N_PG1020_G2) W W mosW_Tol
+TRACE PROPERTY MN(N_PD1020_G2) L L mosL_Tol
+TRACE PROPERTY MN(N_PD1020_G2) W W mosW_Tol
+TRACE PROPERTY MP(P_L1020_G2) L L mosL_Tol
+TRACE PROPERTY MP(P_L1020_G2) W W mosW_Tol
+
+//////////////////////////
+// MIS N N-well Varactor
+//////////////////////////
+
+VARMIS_RF18 = NWEL ENCLOSE (WEL AND (PLY INTERACT VARGATE))
+#IFDEF CCI_or_QCI
+	VARMIS_RF18_T2 = WEL INTERACT VARMIS_RF18  
+	SCONNECT NSD_I VARMIS_RF18_T2 BY NTAP
+	VARMIS_RF18_T1 = PSUB INTERACT VARMIS_RF18
+	SCONNECT PSD_I VARMIS_RF18_T1 BY PTAP
+	DEVICE C(VARMIS_18_RF) VARMIS_RF18 PLY_I(POS) VARMIS_RF18_T2(NEG) VARMIS_RF18_T1(SUB) <VARGATE> NETLIST MODEL "VARMIS_18_RF" NETLIST ELEMENT "X"
+	[       PROPERTY NF
+	        NF=COUNT(VARGATE)
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE C(VARMIS_18_RF) VARMIS_RF18 PLY_I(POS) WEL(NEG) PSUB(SUB) <VARGATE> NETLIST MODEL "VARMIS_18_RF" NETLIST ELEMENT "X"
+	[       PROPERTY NF
+	        NF=COUNT(VARGATE)
+	]
+	#ELSE	
+        DEVICE C(VARMIS_18_RF) VARMIS_RF18 PLY_I(POS) WEL(NEG) PSUB(SUB) <VARGATE>
+        [       PROPERTY NF
+                NF=COUNT(VARGATE)
+        ]
+	TRACE PROPERTY C(VARMIS_18_RF) NF NF 3 
+	#ENDIF
+#ENDIF
+
+VARDIOPRF = CSYMBOL ENCLOSE PNVAR
+SCONNECT PSD_I PNVAR
+#IFDEF CCI_or_QCI
+	VARDIOPRF_T2 = WEL INTERACT VARDIOPRF
+	SCONNECT NSD_I VARDIOPRF_T2 BY NTAP
+	DEVICE C(VARDIOP_RF) VARDIOPRF PNVAR(POS) VARDIOPRF_T2(NEG) NETLIST MODEL "VARDIOP_RF" NETLIST ELEMENT "X"
+	[       PROPERTY NF
+	        NF=COUNT(PNVAR)
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE C(VARDIOP_RF) VARDIOPRF PNVAR(POS) WEL(NEG) NETLIST MODEL "VARDIOP_RF" NETLIST ELEMENT "X"
+	[       PROPERTY NF
+	        NF=COUNT(PNVAR)
+	]
+	#ELSE
+	DEVICE C(VARDIOP_RF) VARDIOPRF PNVAR(POS) WEL(NEG)
+	[       PROPERTY NF
+	        NF=COUNT(PNVAR)
+	]
+	TRACE PROPERTY C(VARDIOP_RF) NF NF 3
+	#ENDIF
+#ENDIF
+
+
+////////////////////////////////////////
+//  Resistor Devices 
+////////////////////////////////////////
+
+#IFDEF CCI_or_QCI
+	WRES_T2 = WEL INTERACT WRES
+	SCONNECT NSD_C WRES_T2 BY NTAP
+	DEVICE R(RSNWELL) WRES WRES_T2(POS) WRES_T2(NEG)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(WRES, WRES_T2) / 2	
+		L  = AREA(WRES) / W
+	        Rs = 415
+	        R  = (408*W/(W-0.32e-6))*L/W
+	]
+#ELSE
+	DEVICE R(RSNWELL) WRES WEL(POS) WEL(NEG)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(WRES, WEL) / 2	
+		L  = AREA(WRES) / W
+	        Rs = 415
+	        R  = (408*W/(W-0.32e-6))*L/W
+	]
+#ENDIF
+#IFDEF FARADAY_LIB
+	TRACE PROPERTY R(RSNWELL) R R 9
+#ELSE
+	TRACE PROPERTY R(RSNWELL) R R resR_Tol
+#ENDIF
+//TRACE PROPERTY R(RSNWELL) L L 3
+//TRACE PROPERTY R(RSNWELL) W W 3
+
+// Salicide N+ Sheet RES
+DEVICE R(RSND) SNSRES NSD_C(POS) NSD_C(NEG)
+[       PROPERTY W,L,R
+        W  = PERIMETER_COINCIDE(SNSRES, NSD_C) / 2
+        L  = AREA(SNSRES) / W
+        Rs = 8
+        R = Rs*L/W
+]
+TRACE PROPERTY R(RSND) R R resR_Tol 
+//TRACE PROPERTY R(RSND) L L 3
+//TRACE PROPERTY R(RSND) W W 3
+
+// Salicide P+ Sheet RES
+DEVICE R(RSPD) SPSRES PSD_C(POS) PSD_C(NEG)
+[       PROPERTY W,L,R
+        W  = PERIMETER_COINCIDE(SPSRES, PSD_C) / 2
+        L  = AREA(SPSRES) / W
+        Rs     = 8
+        R = Rs*L/W
+]
+TRACE PROPERTY R(RSPD) R R resR_Tol
+//TRACE PROPERTY R(RSPD) L L 3
+//TRACE PROPERTY R(RSPD) W W 3
+
+// Salicide N+ Ploy Sheet RES
+DEVICE R(RSNPO) SNPYR PLY_C(POS) PLY_C(NEG)
+[	PROPERTY W,L,R
+	W  = PERIMETER_COINCIDE(SNPYR, PLY_C) / 2	
+	L  = AREA(SNPYR) / W
+	Rs = 8
+	R = Rs*L/(W-0.03e-6)
+]
+TRACE PROPERTY R(RSNPO) R R resR_Tol
+//TRACE PROPERTY R(RSNPO) L L 3
+//TRACE PROPERTY R(RSNPO) W W 3
+
+// Salicide P+ Ploy Sheet RES
+DEVICE R(RSPPO) SPPYR PLY_C(POS) PLY_C(NEG)
+[	PROPERTY W,L,R
+	W  = PERIMETER_COINCIDE(SPPYR, PLY_C) / 2	
+	L  = AREA(SPPYR) / W
+	Rs = 8
+	R = Rs*L/W
+]
+TRACE PROPERTY R(RSPPO) R R resR_Tol
+//TRACE PROPERTY R(RSPPO) L L 3
+//TRACE PROPERTY R(RSPPO) W W 3
+
+// Non-Salicide N+ Sheet RES
+DEVICE R(RNND) NSNSRES NSD_C(POS) NSD_C(NEG)
+[	PROPERTY W,L,R
+	W  = PERIMETER_COINCIDE(NSNSRES, NSD_C) / 2	
+	L  = AREA(NSNSRES) / W
+        Rs     = 67
+	R = (80*W/(W+0.0675e-6))*L/W
+]
+TRACE PROPERTY R(RNND) R R resR_Tol
+//TRACE PROPERTY R(RNND) L L 3
+//TRACE PROPERTY R(RNND) W W 3
+
+// Non-Salicide P+ Sheet RES
+DEVICE R(RNPD) NSPSRES PSD_C(POS) PSD_C(NEG)
+[       PROPERTY W,L,R
+        W  = PERIMETER_COINCIDE(NSPSRES, PSD_C) / 2
+        L  = AREA(NSPSRES) / W
+        Rs     = 158
+        R = (158.66*W/(W+0.087e-6))*L/W
+]
+#IFDEF LIB
+	TRACE PROPERTY R(RNPD) R R 15 //VST:PLL 15% ,ARTISAN:IO 4%
+#ELSE
+	TRACE PROPERTY R(RNPD) R R resR_Tol
+#ENDIF
+//TRACE PROPERTY R(RNPD) l l 3
+//TRACE PROPERTY R(RNPD) w w 3
+
+
+// Non-Salicide N+ Ploy Sheet RES 
+DEVICE R(RNNPO) NSNPYR PLY_C(POS) PLY_C(NEG)
+[	PROPERTY W,L,R
+	W  = PERIMETER_COINCIDE(NSNPYR, PLY_C) / 2	
+	L  = AREA(NSNPYR) / W
+        Rend   = 17e-6
+        Rs     = 113
+        deltaW = -0.097e-6
+	R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+]
+#IFDEF ARTISAN_LIB
+	TRACE PROPERTY R(RNNPO) R R 29
+#ELSE
+	TRACE PROPERTY R(RNNPO) R R resR_Tol
+#ENDIF
+//TRACE PROPERTY R(RNNPO) L L 3
+//TRACE PROPERTY R(RNNPO) W W 3
+
+
+// RNNPO_MM
+#IFDEF CCI_or_QCI
+	NSNPYR_MM_T1 = PSUB INTERACT NSNPYR_MM
+	SCONNECT PSD_C NSNPYR_MM_T1 BY PTAP
+	DEVICE R(RNNPO_MM) NSNPYR_MM PLY_C(POS) PLY_C(NEG) NSNPYR_MM_T1(SUB) NETLIST MODEL "RNNPO_MM" NETLIST ELEMENT "X"
+	[	PROPERTY WR,LR
+		WR  = PERIMETER_COINCIDE(NSNPYR_MM, PLY_C) / 2	
+		LR  = AREA(NSNPYR_MM) / WR
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE R(RNNPO_MM) NSNPYR_MM PLY_C(POS) PLY_C(NEG) PSUB(SUB) NETLIST MODEL "RNNPO_MM" NETLIST ELEMENT "X"
+	[	PROPERTY WR,LR
+		WR  = PERIMETER_COINCIDE(NSNPYR_MM, PLY_C) / 2	
+		LR  = AREA(NSNPYR_MM) / WR
+	]
+	#ELSE
+	DEVICE R(RNNPO_MM) NSNPYR_MM PLY_C(POS) PLY_C(NEG) PSUB(SUB)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(NSNPYR_MM, PLY_C) / 2	
+		L  = AREA(NSNPYR_MM) / W
+		Rend   = 17e-6
+		Rs     = 113
+		deltaW = -0.097e-6
+		R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+	]
+	TRACE PROPERTY R(RNNPO_MM) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNNPO_MM) L L 3
+//TRACE PROPERTY R(RNNPO_MM) W W 3
+
+
+// RF Non-Salicide N+ Ploy Sheet RES 
+#IFDEF CCI_or_QCI
+	NSNPYR_RF_T1 = PSUB INTERACT NSNPYR_RF
+	SCONNECT PSUB NSNPYR_RF_T1
+	DEVICE R(RNNPO_RF) NSNPYR_RF PLY_I(POS) PLY_I(NEG) NSNPYR_RF_T1(SUB)  NETLIST MODEL "RNNPO_RF" NETLIST ELEMENT "X" 
+	[	PROPERTY W,L
+		W  = PERIMETER_COINCIDE(NSNPYR_RF, PLY_I) / 2	
+		L  = AREA(NSNPYR_RF) / W
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE R(RNNPO_RF) NSNPYR_RF PLY_I(POS) PLY_I(NEG) PSUB(SUB)  NETLIST MODEL "RNNPO_RF" NETLIST ELEMENT "X" 
+	[	PROPERTY W,L
+		W  = PERIMETER_COINCIDE(NSNPYR_RF, PLY_I) / 2	
+		L  = AREA(NSNPYR_RF) / W
+	]
+	#ELSE
+	DEVICE R(RNNPO_RF) NSNPYR_RF PLY_I(POS) PLY_I(NEG) PSUB(SUB)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(NSNPYR_RF, PLY_I) / 2	
+		L  = AREA(NSNPYR_RF) / W
+	        Rend   = 17e-6
+	        Rs     = 113
+	        deltaW = -0.097e-6
+		R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+	]
+	TRACE PROPERTY R(RNNPO_RF) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNNPO_RF) W W 3
+//TRACE PROPERTY R(RNNPO_RF) L L 3
+
+
+// Non-Salicide P+ Ploy Sheet RES
+DEVICE R(RNPPO) NSPPYR PLY_C(POS) PLY_C(NEG)
+[	PROPERTY W,L,R
+	W  = PERIMETER_COINCIDE(NSPPYR, PLY_C) / 2	
+	L  = AREA(NSPPYR) / W
+       	Rend   = 105e-6
+       	Rs     = 352
+       	deltaW = -0.046e-6
+	R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+]
+#IFDEF ARTISAN_LIB
+	TRACE PROPERTY R(RNPPO) R R 66
+#ELSE
+	#IFDEF VST_LIB
+		TRACE PROPERTY R(RNPPO) R R 12
+	#ELSE
+		#IFDEF VIRAGE_LIB
+			TRACE PROPERTY R(RNPPO) R R 11
+		#ELSE
+			TRACE PROPERTY R(RNPPO) R R resR_Tol
+		#ENDIF
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNPPO) L L 3
+//TRACE PROPERTY R(RNPPO) W W 3
+
+
+// RNPPO_MM
+#IFDEF CCI_or_QCI
+	NSPPYR_MM_T2 = WEL INTERACT NSPPYR_MM
+	SCONNECT NSD_C NSPPYR_MM_T2 BY NTAP
+	DEVICE R(RNPPO_MM) NSPPYR_MM PLY_C(POS) PLY_C(NEG) NSPPYR_MM_T2(SUB) NETLIST MODEL "RNPPO_MM" NETLIST ELEMENT "X" 
+	[	PROPERTY WR,LR
+		WR  = PERIMETER_COINCIDE(NSPPYR_MM, PLY_C) / 2	
+		LR  = AREA(NSPPYR_MM) / WR
+	]
+#ELSE
+	#IFDEF PEXRUN 
+	DEVICE R(RNPPO_MM) NSPPYR_MM PLY_C(POS) PLY_C(NEG) WEL(SUB)  NETLIST MODEL "RNPPO_MM" NETLIST ELEMENT "X" 
+	[	PROPERTY WR,LR
+		WR  = PERIMETER_COINCIDE(NSPPYR_MM, PLY_C) / 2	
+		LR  = AREA(NSPPYR_MM) / WR
+	]
+	#ELSE
+	DEVICE R(RNPPO_MM) NSPPYR_MM PLY_C(POS) PLY_C(NEG) WEL(SUB)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(NSPPYR_MM, PLY_C) / 2	
+		L  = AREA(NSPPYR_MM) / W
+	        Rend   = 105e-6
+	        Rs     = 352
+	        deltaW = -0.046e-6
+		R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+	]
+	TRACE PROPERTY R(RNPPO_MM) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNPPO_MM) L L 3
+//TRACE PROPERTY R(RNPPO_MM) W W 3
+
+
+// RNPPO_RF
+#IFDEF CCI_or_QCI
+	NSPPYR_RF_T2 = WEL INTERACT NSPPYR_RF
+	SCONNECT WEL NSPPYR_RF_T2
+	DEVICE R(RNPPO_RF) NSPPYR_RF PLY_I(POS) PLY_I(NEG) NSPPYR_RF_T2(SUB)  NETLIST MODEL "RNPPO_RF" NETLIST ELEMENT "X" 
+	[	PROPERTY W,L
+		W  = PERIMETER_COINCIDE(NSPPYR_RF, PLY_I) / 2	
+		L  = AREA(NSPPYR_RF) / W
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE R(RNPPO_RF) NSPPYR_RF PLY_I(POS) PLY_I(NEG) WEL(SUB) NETLIST MODEL "RNPPO_RF" NETLIST ELEMENT "X" 
+	[	PROPERTY W,L
+		W  = PERIMETER_COINCIDE(NSPPYR_RF, PLY_I) / 2	
+		L  = AREA(NSPPYR_RF) / W
+	] 
+	#ELSE
+	DEVICE R(RNPPO_RF) NSPPYR_RF PLY_I(POS) PLY_I(NEG) WEL(SUB)
+	[	PROPERTY W,L,R
+		W  = PERIMETER_COINCIDE(NSPPYR_RF, PLY_I) / 2	
+		L  = AREA(NSPPYR_RF) / W
+	        Rend   = 105e-6
+ 	        Rs     = 352
+ 	        deltaW = -0.046e-6
+		R = 2*Rend/(W+deltaW)+Rs*L/(W+deltaW)
+	]
+	TRACE PROPERTY R(RNPPO_RF) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNPPO_RF) L L 3
+//TRACE PROPERTY R(RNPPO_RF) W W 3
+
+
+// Mixed Mode 3 Terminals HR resistor //
+#IFDEF CCI_or_QCI
+	NSHRPYR_MM_T2 = WEL INTERACT NSHRPYR_MM
+	SCONNECT NSD_C NSHRPYR_MM_T2 BY NTAP
+	DEVICE R(RNHR1000_MM) NSHRPYR_MM PLY_C(POS) PLY_C(NEG) NSHRPYR_MM_T2(SUB) NETLIST MODEL "RNHR1000_MM" NETLIST ELEMENT "X"
+	[       PROPERTY WR,LR
+	        WR = PERIMETER_COINCIDE(NSHRPYR_MM, PLY_C) / 2
+	        LR = AREA(NSHRPYR_MM)/WR
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE R(RNHR1000_MM) NSHRPYR_MM PLY_C(POS) PLY_C(NEG) WEL(SUB) NETLIST MODEL "RNHR1000_MM" NETLIST ELEMENT "X"
+	[       PROPERTY WR,LR
+	        WR = PERIMETER_COINCIDE(NSHRPYR_MM, PLY_C) / 2
+	        LR = AREA(NSHRPYR_MM)/WR
+	]
+	#ELSE
+	DEVICE R(RNHR1000_MM) NSHRPYR_MM PLY_C(POS) PLY_C(NEG) WEL(SUB)
+	[       PROPERTY W,L,R
+	        W = PERIMETER_COINCIDE(NSHRPYR_MM, PLY_C) / 2
+	        L = AREA(NSHRPYR_MM)/W
+	        REND   = 120e-6
+	        RS     = 1039
+	        deltaW = -0.043e-6
+	        R = (2*REND/(W+deltaW)+RS*(L-0.4e-6)/(W+deltaW))
+	]
+	TRACE PROPERTY R(RNHR1000_MM) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNHR1000_MM) L L 3
+//TRACE PROPERTY R(RNHR1000_MM) W W 3
+
+
+// RF 3 Terminals HR resistor //
+#IFDEF CCI_or_QCI
+	NSHRPYR_RF_T2 = WEL INTERACT NSHRPYR_RF
+	SCONNECT WEL NSHRPYR_RF_T2
+	DEVICE R(RNHR_RF) NSHRPYR_RF PLY_I(POS) PLY_I(NEG) NSHRPYR_RF_T2(SUB) NETLIST MODEL "RNHR_RF" NETLIST ELEMENT "X"
+	[       PROPERTY W,L
+	        W = PERIMETER_COINCIDE(NSHRPYR_RF, PLY_I) / 2
+	        L = AREA(NSHRPYR_RF)/W
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE R(RNHR_RF) NSHRPYR_RF PLY_I(POS) PLY_I(NEG) WEL(SUB) NETLIST MODEL "RNHR_RF" NETLIST ELEMENT "X"
+	[       PROPERTY W,L
+	        W = PERIMETER_COINCIDE(NSHRPYR_RF, PLY_I) / 2
+	        L = AREA(NSHRPYR_RF)/W
+	]
+	#ELSE
+	DEVICE R(RNHR_RF) NSHRPYR_RF PLY_I(POS) PLY_I(NEG) WEL(SUB)
+	[       PROPERTY W,L,R
+	        W = PERIMETER_COINCIDE(NSHRPYR_RF, PLY_I) / 2
+	        L = AREA(NSHRPYR_RF)/W
+	        REND   = 120e-6
+	        RS     = 1039
+	        deltaW = -0.043e-6
+	        R = (2*REND/(W+deltaW)+RS*(L-0.4e-6)/(W+deltaW))
+	]
+	TRACE PROPERTY R(RNHR_RF) R R resR_Tol
+	#ENDIF
+#ENDIF
+//TRACE PROPERTY R(RNHR_RF) L L 3
+//TRACE PROPERTY R(RNHR_RF) W W 3
+
+
+// ------ Metal Resistor Devices------
+// Mixed Mode 2 Terminals Metal 1 resistor //
+	DEVICE R(RM1_MM)  ME1RES  ME1_C(POS)  ME1_C(NEG)
+	[      	PROPERTY W,L,R
+        	RS_M1 = 0.077
+        	W = PERIMETER_COINCIDE(ME1RES, ME1_C) / 2
+        	L = AREA(ME1RES) / W
+        	R = (L/W) * RS_M1
+	]
+	TRACE PROPERTY R(RM1_MM) R R resR_Tol
+	//TRACE PROPERTY R(RM1_MM) L L 3
+	//TRACE PROPERTY R(RM1_MM) W W 3
+
+#IFDEF TOP_METAL_ME3
+// Mixed Mode 2 Terminals Metal 2 resistor //
+		DEVICE R(RM2_MM)  ME2RES  SEC_LAST_MET_C(POS)  SEC_LAST_MET_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M2 = 0.062
+        		W = PERIMETER_COINCIDE(ME2RES, SEC_LAST_MET_C) / 2
+        		L = AREA(ME2RES) / W
+        		R = (L/W) * RS_M2
+		]
+		TRACE PROPERTY R(RM2_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM2_MM) L L 3
+		//TRACE PROPERTY R(RM2_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 3 resistor //
+	#IFDEF TOP_METAL_THICKNESS_20K
+			DEVICE R(RM3_MM)  ME3RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M3 = 0.020
+        			W = PERIMETER_COINCIDE(ME3RES, TOP_M_C) / 2
+        			L = AREA(ME3RES) / W
+        			R = (L/W) * RS_M3
+			]
+	#ELSE
+		#IFDEF TOP_METAL_THICKNESS_12K
+			DEVICE R(RM3_MM)  ME3RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M3 = 0.023
+        			W = PERIMETER_COINCIDE(ME3RES, TOP_M_C) / 2
+        			L = AREA(ME3RES) / W
+        			R = (L/W) * RS_M3
+			]
+		#ELSE
+			DEVICE R(RM3_MM)  ME3RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M3 = 0.041
+        			W = PERIMETER_COINCIDE(ME3RES, TOP_M_C) / 2
+        			L = AREA(ME3RES) / W
+        			R = (L/W) * RS_M3
+			]
+			TRACE PROPERTY R(RM3_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM3_MM) L L 3
+			//TRACE PROPERTY R(RM3_MM) W W 3
+		#ENDIF
+	#ENDIF
+#ENDIF
+
+#IFDEF TOP_METAL_ME4
+
+// Mixed Mode 2 Terminals Metal 2 resistor //
+	DEVICE R(RM2_MM)  ME2RES  ME2_C(POS)  ME2_C(NEG)
+	[      	PROPERTY W,L,R
+        	RS_M2 = 0.062
+        	W = PERIMETER_COINCIDE(ME2RES, ME2_C) / 2
+        	L = AREA(ME2RES) / W
+        	R = (L/W) * RS_M2
+	]
+	TRACE PROPERTY R(RM2_MM) R R resR_Tol
+	//TRACE PROPERTY R(RM2_MM) L L 3
+	//TRACE PROPERTY R(RM2_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 3 resistor //
+		DEVICE R(RM3_MM)  ME3RES  SEC_LAST_MET_C(POS)  SEC_LAST_MET_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M3 = 0.062
+        		W = PERIMETER_COINCIDE(ME3RES, SEC_LAST_MET_C) / 2
+        		L = AREA(ME3RES) / W
+        		R = (L/W) * RS_M3
+		]
+		TRACE PROPERTY R(RM3_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM3_MM) L L 3
+		//TRACE PROPERTY R(RM3_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 4 resistor //
+	#IFDEF TOP_METAL_THICKNESS_20K
+			DEVICE R(RM4_MM)  ME4RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M4 = 0.020
+        			W = PERIMETER_COINCIDE(ME4RES, TOP_M_C) / 2
+        			L = AREA(ME4RES) / W
+        			R = (L/W) * RS_M4
+			]
+	#ELSE
+		#IFDEF TOP_METAL_THICKNESS_12K
+			DEVICE R(RM4_MM)  ME4RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M4 = 0.023
+        			W = PERIMETER_COINCIDE(ME4RES, TOP_M_C) / 2
+        			L = AREA(ME4RES) / W
+        			R = (L/W) * RS_M4
+			]
+		#ELSE
+			DEVICE R(RM4_MM)  ME4RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M4 = 0.041
+        			W = PERIMETER_COINCIDE(ME4RES, TOP_M_C) / 2
+        			L = AREA(ME4RES) / W
+        			R = (L/W) * RS_M4
+			]
+			TRACE PROPERTY R(RM4_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM4_MM) L L 3
+			//TRACE PROPERTY R(RM4_MM) W W 3
+		#ENDIF
+	#ENDIF
+#ENDIF
+
+#IFDEF TOP_METAL_ME5
+
+// Mixed Mode 2 Terminals Metal 2 resistor //
+	DEVICE R(RM2_MM)  ME2RES  ME2_C(POS)  ME2_C(NEG)
+	[      	PROPERTY W,L,R
+        	RS_M2 = 0.062
+        	W = PERIMETER_COINCIDE(ME2RES, ME2_C) / 2
+        	L = AREA(ME2RES) / W
+        	R = (L/W) * RS_M2
+	]
+	TRACE PROPERTY R(RM2_MM) R R resR_Tol
+	//TRACE PROPERTY R(RM2_MM) L L 3
+	//TRACE PROPERTY R(RM2_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 3 resistor //
+		DEVICE R(RM3_MM)  ME3RES  ME3_C(POS)  ME3_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M3 = 0.062
+        		W = PERIMETER_COINCIDE(ME3RES, ME3_C) / 2
+        		L = AREA(ME3RES) / W
+        		R = (L/W) * RS_M3
+		]
+		TRACE PROPERTY R(RM3_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM3_MM) L L 3
+		//TRACE PROPERTY R(RM3_MM) W W 3
+// Mixed Mode 2 Terminals Metal 3 resistor //
+		DEVICE R(RM4_MM)  ME4RES  SEC_LAST_MET_C(POS)  SEC_LAST_MET_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M4 = 0.062
+        		W = PERIMETER_COINCIDE(ME4RES, SEC_LAST_MET_C) / 2
+        		L = AREA(ME4RES) / W
+        		R = (L/W) * RS_M4
+		]
+		TRACE PROPERTY R(RM4_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM4_MM) L L 3
+		//TRACE PROPERTY R(RM4_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 5 resistor //
+	#IFDEF TOP_METAL_THICKNESS_20K
+			DEVICE R(RM5_MM)  ME5RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M5 = 0.020
+        			W = PERIMETER_COINCIDE(ME5RES, TOP_M_C) / 2
+        			L = AREA(ME5RES) / W
+        			R = (L/W) * RS_M5
+			]
+			TRACE PROPERTY R(RM5_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM5_MM) L L 3
+			//TRACE PROPERTY R(RM5_MM) W W 3
+	#ELSE
+		#IFDEF TOP_METAL_THICKNESS_12K
+			DEVICE R(RM5_MM)  ME5RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M5 = 0.023
+        			W = PERIMETER_COINCIDE(ME5RES, TOP_M_C) / 2
+        			L = AREA(ME5RES) / W
+        			R = (L/W) * RS_M5
+			]
+			TRACE PROPERTY R(RM5_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM5_MM) L L 3
+			//TRACE PROPERTY R(RM5_MM) W W 3
+		#ELSE
+			DEVICE R(RM5_MM)  ME5RES  TOP_M_C(POS)  TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M5 = 0.041
+        			W = PERIMETER_COINCIDE(ME5RES, TOP_M_C) / 2
+        			L = AREA(ME5RES) / W
+        			R = (L/W) * RS_M5
+			]
+			TRACE PROPERTY R(RM5_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM5_MM) L L 3
+			//TRACE PROPERTY R(RM5_MM) W W 3
+		#ENDIF
+	#ENDIF
+#ENDIF
+
+#IFDEF TOP_METAL_ME6
+
+// Mixed Mode 2 Terminals Metal 2 resistor //
+	DEVICE R(RM2_MM)  ME2RES  ME2_C(POS)  ME2_C(NEG)
+	[      	PROPERTY W,L,R
+        	RS_M2 = 0.062
+        	W = PERIMETER_COINCIDE(ME2RES, ME2_C) / 2
+        	L = AREA(ME2RES) / W
+        	R = (L/W) * RS_M2
+	]
+	TRACE PROPERTY R(RM2_MM) R R resR_Tol
+	//TRACE PROPERTY R(RM2_MM) L L 3
+	//TRACE PROPERTY R(RM2_MM) W W 3
+
+// Mixed Mode 2 Terminals Metal 3 resistor //
+		DEVICE R(RM3_MM)  ME3RES  ME3_C(POS)  ME3_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M3 = 0.062
+        		W = PERIMETER_COINCIDE(ME3RES, ME3_C) / 2
+        		L = AREA(ME3RES) / W
+        		R = (L/W) * RS_M3
+		]
+		TRACE PROPERTY R(RM3_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM3_MM) L L 3
+		//TRACE PROPERTY R(RM3_MM) W W 3
+// Mixed Mode 2 Terminals Metal 4 resistor //
+		DEVICE R(RM4_MM)  ME4RES  ME4_C(POS)  ME4_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M4 = 0.062
+        		W = PERIMETER_COINCIDE(ME4RES, ME4_C) / 2
+        		L = AREA(ME4RES) / W
+        		R = (L/W) * RS_M4
+		]
+		TRACE PROPERTY R(RM4_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM4_MM) L L 3
+		//TRACE PROPERTY R(RM4_MM) W W 3
+// Mixed Mode 2 Terminals Metal 5 resistor //
+		DEVICE R(RM5_MM)  ME5RES  SEC_LAST_MET_C(POS)  SEC_LAST_MET_C(NEG)
+		[	PROPERTY W,L,R
+        		RS_M5 = 0.062
+        		W = PERIMETER_COINCIDE(ME5RES, SEC_LAST_MET_C) / 2
+        		L = AREA(ME5RES) / W
+        		R = (L/W) * RS_M5
+		]
+		TRACE PROPERTY R(RM5_MM) R R resR_Tol
+		//TRACE PROPERTY R(RM5_MM) L L 3
+		//TRACE PROPERTY R(RM5_MM) W W 3
+// Mixed Mode 2 Terminals Metal 6 resistor //
+	#IFDEF TOP_METAL_THICKNESS_20K
+			DEVICE R(RM6_MM)  ME6RES  TOP_M_C(POS)   TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M6 = 0.020
+        			W = PERIMETER_COINCIDE(ME6RES, TOP_M_C) / 2
+        			L = AREA(ME6RES) / W
+        			R = (L/W) * RS_M6
+			]
+			TRACE PROPERTY R(RM6_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM6_MM) L L 3
+			//TRACE PROPERTY R(RM6_MM) W W 3
+	#ELSE
+		#IFDEF TOP_METAL_THICKNESS_12K
+			DEVICE R(RM6_MM)  ME6RES  TOP_M_C(POS)   TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M6 = 0.023
+        			W = PERIMETER_COINCIDE(ME6RES, TOP_M_C) / 2
+        			L = AREA(ME6RES) / W
+        			R = (L/W) * RS_M6
+			]
+			TRACE PROPERTY R(RM6_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM6_MM) L L 3
+			//TRACE PROPERTY R(RM6_MM) W W 3
+		#ELSE
+			DEVICE R(RM6_MM)  ME6RES  TOP_M_C(POS)   TOP_M_C(NEG)
+			[	PROPERTY W,L,R
+        			RS_M6 = 0.041
+        			W = PERIMETER_COINCIDE(ME6RES, TOP_M_C) / 2
+        			L = AREA(ME6RES) / W
+        			R = (L/W) * RS_M6
+			]
+			TRACE PROPERTY R(RM6_MM) R R resR_Tol
+			//TRACE PROPERTY R(RM6_MM) L L 3
+			//TRACE PROPERTY R(RM6_MM) W W 3
+		#ENDIF
+	#ENDIF
+#ENDIF
+
+//////////////////
+// RF PAD Device
+//////////////////
+
+#IFDEF CCI_or_QCI
+DEVICE C(PAD_RF) rf_pad TOP_M_I(POS) ME1_I(NEG) NETLIST MODEL "PAD_RF" NETLIST ELEMENT "X"
+<type1> <type2> <type3> <type4> <type5> <type6> <type7>
+[       PROPERTY INDEX
+        A7=COUNT(type7)
+        A6=COUNT(type6)-1
+        A5=COUNT(type5)-1
+        A4=COUNT(type4)-1
+        A3=COUNT(type3)-1
+        A2=COUNT(type2)-1
+        A1=COUNT(type1)-1
+        INDEX=0
+        IF(A2>0){
+                INDEX=5
+        }ELSE IF(A3>0){
+                INDEX=4
+        }ELSE IF(A4>0){
+                INDEX=3
+        }ELSE IF(A5>0){
+                INDEX=2
+        }ELSE IF(A6>0){
+                INDEX=1
+        }
+]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE C(PAD_RF) rf_pad TOP_M_I(POS) ME1_I(NEG) NETLIST MODEL "PAD_RF" NETLIST ELEMENT "X"
+	<type1> <type2> <type3> <type4> <type5> <type6> <type7>
+	[       PROPERTY INDEX
+        A7=COUNT(type7)
+        A6=COUNT(type6)-1
+        A5=COUNT(type5)-1
+        A4=COUNT(type4)-1
+        A3=COUNT(type3)-1
+        A2=COUNT(type2)-1
+        A1=COUNT(type1)-1
+        INDEX=0
+        IF(A2>0){
+                INDEX=5
+        }ELSE IF(A3>0){
+                INDEX=4
+        }ELSE IF(A4>0){
+                INDEX=3
+        }ELSE IF(A5>0){
+                INDEX=2
+        }ELSE IF(A6>0){
+                INDEX=1
+        }
+	]
+	#ELSE
+	DEVICE C(PAD_RF) rf_pad TOP_M_I(POS) ME1_I(NEG)
+	<type1> <type2> <type3> <type4> <type5> <type6> <type7>
+	[       PROPERTY INDEX
+        A7=COUNT(type7)
+        A6=COUNT(type6)-1
+        A5=COUNT(type5)-1
+        A4=COUNT(type4)-1
+        A3=COUNT(type3)-1
+        A2=COUNT(type2)-1
+        A1=COUNT(type1)-1
+        INDEX=0
+        IF(A2>0){
+                INDEX=5
+        }ELSE IF(A3>0){
+                INDEX=4
+        }ELSE IF(A4>0){
+                INDEX=3
+        }ELSE IF(A5>0){
+                INDEX=2
+        }ELSE IF(A6>0){
+                INDEX=1
+        }
+	]
+	TRACE PROPERTY C(PAD_RF) INDEX INDEX 3
+	#ENDIF
+#ENDIF
+
+////////////////////////////////////////
+//  Diode Devices 
+////////////////////////////////////////
+
+// DION_G2
+#IFDEF CCI_or_QCI
+	DNDIOD_T1 = PSUB INTERACT DNDIOD
+	SCONNECT PSD_C DNDIOD_T1 BY PTAP
+	DEVICE D(DION_G2) DNDIOD DNDIOD_T1(POS) NSD_C(NEG) 
+#ELSE
+	DEVICE D(DION_G2) DNDIOD PSUB(POS) NSD_C(NEG) 
+#ENDIF
+#IFDEF VST_LIB
+	TRACE PROPERTY D(DION_G2) P P 26
+	TRACE PROPERTY D(DION_G2) A A 3 
+#ELSE
+	#IFDEF VIRAGE_LIB
+		TRACE PROPERTY D(DION_G2) P P 4
+		TRACE PROPERTY D(DION_G2) A A 7
+	#ELSE
+		TRACE PROPERTY D(DION_G2) P P diodePJ_Tol
+		TRACE PROPERTY D(DION_G2) A A diodeAREA_Tol
+	#ENDIF
+#ENDIF
+
+// DIOP_G2
+#IFDEF CCI_or_QCI
+	DPDIOD_T2 = WEL INTERACT DPDIOD
+	SCONNECT NSD_C DPDIOD_T2 BY NTAP
+	DEVICE D(DIOP_G2) DPDIOD PSD_C(POS) DPDIOD_T2(NEG)
+#ELSE
+	DEVICE D(DIOP_G2) DPDIOD PSD_C(POS) WEL(NEG)
+#ENDIF
+TRACE PROPERTY D(DIOP_G2) A A diodeAREA_Tol
+#IFDEF VST_LIB
+	TRACE PROPERTY D(DIOP_G2) P P 199
+#ELSE
+	TRACE PROPERTY D(DIOP_G2) P P diodePJ_Tol
+#ENDIF
+
+// DIONW_G2
+#IFDEF CCI_or_QCI
+	NWNACT_T2 = WEL INTERACT NWNACT  
+	SCONNECT NSD_C NWNACT_T2 BY NTAP
+	NWNACT_T1 = PSUB INTERACT NWNACT  
+	SCONNECT PSD_C NWNACT_T1 BY PTAP
+	DEVICE D(DIONW_G2) NWNACT NWNACT_T1(POS) NWNACT_T2(NEG)
+#ELSE
+	DEVICE D(DIONW_G2) NWNACT PSUB(POS) WEL(NEG)
+#ENDIF
+TRACE PROPERTY D(DIONW_G2) A A diodeAREA_Tol
+TRACE PROPERTY D(DIONW_G2) P P diodePJ_Tol
+
+
+// DION_MM
+#IFDEF CCI_or_QCI
+	DNDIOD_MM_T1 = PSUB INTERACT DNDIOD_MM
+	SCONNECT PSD_C DNDIOD_MM_T1 BY PTAP
+	DEVICE D(DION_MM) DNDIOD_MM DNDIOD_MM_T1(POS) NSD_C(NEG) 
+#ELSE
+	DEVICE D(DION_MM) DNDIOD_MM PSUB(POS) NSD_C(NEG) 
+#ENDIF
+TRACE PROPERTY D(DION_MM) A A diodeAREA_Tol
+TRACE PROPERTY D(DION_MM) P P diodePJ_Tol
+
+
+// DIOP_MM
+#IFDEF CCI_or_QCI
+	DPDIOD_MM_T2 = WEL INTERACT DPDIOD_MM
+	SCONNECT NSD_C DPDIOD_MM_T2 BY NTAP
+	DEVICE D(DIOP_MM) DPDIOD_MM PSD_C(POS) DPDIOD_MM_T2(NEG)
+#ELSE
+	DEVICE D(DIOP_MM) DPDIOD_MM PSD_C(POS) WEL(NEG) 
+#ENDIF
+TRACE PROPERTY D(DIOP_MM) A A diodeAREA_Tol
+TRACE PROPERTY D(DIOP_MM) P P diodePJ_Tol
+
+// DIONW_MM
+#IFDEF CCI_or_QCI
+	NWNACT_MM_T2 = WEL INTERACT NWNACT_MM
+	SCONNECT NSD_C NWNACT_MM_T2 BY NTAP
+	NWNACT_MM_T1 = PSUB INTERACT NWNACT_MM 
+	SCONNECT PSD_C NWNACT_MM_T1 BY PTAP
+	DEVICE D(DIONW_MM) NWNACT_MM NWNACT_MM_T1(POS) NWNACT_MM_T2(NEG)
+#ELSE
+	DEVICE D(DIONW_MM) NWNACT_MM PSUB(POS) WEL(NEG)
+#ENDIF
+TRACE PROPERTY D(DIONW_MM) A A diodeAREA_Tol
+TRACE PROPERTY D(DIONW_MM) P P diodePJ_Tol
+
+////////////////////////////////////////
+// BJT
+////////////////////////////////////////
+#IFDEF CCI_or_QCI
+	ACTBJT5_T2 = WEL INTERACT ACTBJT5
+	SCONNECT NSD_C ACTBJT5_T2 BY NTAP
+	ACTBJT5_T1 = PSUB INTERACT ACTBJT5
+	SCONNECT PSD_C ACTBJT5_T1 BY PTAP
+	DEVICE Q(PNP_V50X50_G2) ACTBJT5  ACTBJT5_T1(C)  ACTBJT5_T2(B)  PNP_E_50(E)
+
+	ACTBJT10_T2 = WEL INTERACT ACTBJT10
+	SCONNECT NSD_C ACTBJT10_T2 BY NTAP
+	ACTBJT10_T1 = PSUB INTERACT ACTBJT10
+	SCONNECT PSD_C ACTBJT10_T1 BY PTAP
+	DEVICE Q(PNP_V100X100_G2) ACTBJT10  ACTBJT10_T1(C)  ACTBJT10_T2(B)  PNP_E_100(E)
+
+	ACTBJT5_MM_T2 = WEL INTERACT ACTBJT5_MM
+	SCONNECT NSD_C ACTBJT5_MM_T2 BY NTAP
+	ACTBJT5_MM_T1 = PSUB INTERACT ACTBJT5_MM
+	SCONNECT PSD_C ACTBJT5_MM_T1 BY PTAP
+	DEVICE Q(PNP_V50X50_MM) ACTBJT5_MM  ACTBJT5_MM_T1(C)  ACTBJT5_MM_T2(B)  PNP_E_50_MM(E)
+
+	ACTBJT10_MM_T2 = WEL INTERACT ACTBJT10_MM
+	SCONNECT NSD_C ACTBJT10_MM_T2 BY NTAP
+	ACTBJT10_MM_T1 = PSUB INTERACT ACTBJT10_MM
+	SCONNECT PSD_C ACTBJT10_MM_T1 BY PTAP
+	DEVICE Q(PNP_V100X100_MM) ACTBJT10_MM  ACTBJT10_MM_T1(C)  ACTBJT10_MM_T2(B)  PNP_E_100_MM(E)
+#ELSE
+#IFDEF PEXRUN 
+	DEVICE Q(PNP_V50X50_G2) ACTBJT5  PSUB(C)  WEL(B)  PNP_E_50(E)
+	DEVICE Q(PNP_V100X100_G2) ACTBJT10  PSUB(C)  WEL(B)  PNP_E_100(E)
+	DEVICE Q(PNP_V50X50_MM) ACTBJT5_MM  PSUB(C)  WEL(B)  PNP_E_50_MM(E)
+	DEVICE Q(PNP_V100X100_MM) ACTBJT10_MM  PSUB(C)  WEL(B)  PNP_E_100_MM(E)
+#ELSE
+	DEVICE Q(PNP_V50X50_G2) ACTBJT5  PSUB(C)  WEL(B)  PNP_E_50(E)
+	[	PROPERTY A
+		A=AREA(PNP_E_50)
+	]
+	DEVICE Q(PNP_V100X100_G2) ACTBJT10  PSUB(C)  WEL(B)  PNP_E_100(E)
+	[	PROPERTY A
+		A=AREA(PNP_E_100)
+	]
+	DEVICE Q(PNP_V50X50_MM) ACTBJT5_MM  PSUB(C)  WEL(B)  PNP_E_50_MM(E)
+	[	PROPERTY A
+		A=AREA(PNP_E_50_MM)
+	]
+	DEVICE Q(PNP_V100X100_MM) ACTBJT10_MM  PSUB(C)  WEL(B)  PNP_E_100_MM(E)
+	[	PROPERTY A
+		A=AREA(PNP_E_100_MM)
+	]
+	TRACE PROPERTY Q(PNP_V50X50_G2) A A bjtAREA_Tol
+	TRACE PROPERTY Q(PNP_V100X100_G2) A A bjtAREA_Tol
+	TRACE PROPERTY Q(PNP_V50X50_MM) A A bjtAREA_Tol
+	TRACE PROPERTY Q(PNP_V100X100_MM) A A bjtAREA_Tol
+#ENDIF
+#ENDIF
+
+///////////////////////////////
+// MIM Capacitor
+///////////////////////////////
+
+#IFDEF CCI_or_QCI
+	DEVICE C(MIMCAPS_MM)  CMMC_MM   MMC_C(POS)  SEC_LAST_MET_C(NEG) <CW1_MM> <CL1_MM> NETLIST MODEL "MIMCAPS_MM" NETLIST ELEMENT "X"
+	[       PROPERTY W, L
+		W = PERIMETER_INSIDE(CMMC_MM,CW1_MM)
+		L = PERIMETER_INSIDE(CMMC_MM,CL1_MM)
+	]
+#ELSE
+	#IFDEF PEXRUN 
+	DEVICE C(MIMCAPS_MM)  CMMC_MM   MMC_C(POS)  SEC_LAST_MET_C(NEG) <CW1_MM> <CL1_MM> NETLIST MODEL "MIMCAPS_MM" NETLIST ELEMENT "X"
+	[       PROPERTY W, L
+		W = PERIMETER_INSIDE(CMMC_MM,CW1_MM)
+		L = PERIMETER_INSIDE(CMMC_MM,CL1_MM)
+	]
+	#ELSE
+	DEVICE C(MIMCAPS_MM)  CMMC_MM   MMC_C(POS)  SEC_LAST_MET_C(NEG) <CW1_MM> <CL1_MM>
+	[       PROPERTY C, W, L
+	        Ca = 1e-3         // F/M^2, fF/um^2 = 1e-3F/M^2
+		Cf = 7.5e-11      // F/M, fF/um=10e-9F/M
+		C = Ca * area(CMMC_MM) + Cf * perimeter_inside(CMMC_MM, SEC_LAST_MET_C)
+	        W = PERIMETER_INSIDE(CMMC_MM,CW1_MM)
+	        L = PERIMETER_INSIDE(CMMC_MM,CL1_MM)
+	]
+	TRACE PROPERTY C(MIMCAPS_MM) C C capC_Tol
+	#ENDIF
+#ENDIF
+
+// MIMCAPM_RF 
+#IFDEF CCI_or_QCI
+	CMMC_RF_T1 = PSUB INTERACT CMMC_RF
+	SCONNECT PSD_I CMMC_RF_T1 BY PTAP
+	DEVICE C(MIMCAPM_RF)  CMMC_RF   MMC_I(POS)  SEC_LAST_MET_I(NEG) CMMC_RF_T1(SUB) <CMMC_MSQ> <CMMC_MSQ_X> <CSYMBOL> NETLIST MODEL "MIMCAPM_RF" NETLIST ELEMENT "X"
+	[       PROPERTY W, L, NX, NY
+		NF = COUNT(CMMC_MSQ)
+		NX = COUNT(CMMC_MSQ_X)
+		NY = NF/NX
+		W = (PERIMETER_COINCIDE(CMMC_MSQ,CSYMBOL))/(2*NX)
+		L = (AREA(CMMC_MSQ)/NF)/W
+	]
+#ELSE
+	#IFDEF PEXRUN 
+	DEVICE C(MIMCAPM_RF)  CMMC_RF   MMC_I(POS)  SEC_LAST_MET_I(NEG)  PSUB(SUB)<CMMC_MSQ><CMMC_MSQ_X><CSYMBOL> NETLIST MODEL "MIMCAPM_RF" NETLIST ELEMENT "X"
+	[       PROPERTY W, L, NX, NY
+		NF = COUNT(CMMC_MSQ)
+		NX = COUNT(CMMC_MSQ_X)
+		NY = NF/NX
+		W = (PERIMETER_COINCIDE(CMMC_MSQ,CSYMBOL))/(2*NX)
+		L = (AREA(CMMC_MSQ)/NF)/W
+	]
+	#ELSE
+	DEVICE C(MIMCAPM_RF)  CMMC_RF   MMC_I(POS)  SEC_LAST_MET_I(NEG) PSUB(SUB) <CMMC_MSQ> <CMMC_MSQ_X> <CSYMBOL>
+	[       PROPERTY W, L, NX, NY
+		NF = COUNT(CMMC_MSQ)
+		NX = COUNT(CMMC_MSQ_X)
+		NY = NF/NX
+		W = (PERIMETER_COINCIDE(CMMC_MSQ,CSYMBOL))/(2*NX)
+		L = (AREA(CMMC_MSQ)/NF)/W
+	]
+	TRACE PROPERTY C(MIMCAPM_RF) L L 3
+	TRACE PROPERTY C(MIMCAPM_RF) W W 3
+	TRACE PROPERTY C(MIMCAPM_RF) NX NX 3
+	TRACE PROPERTY C(MIMCAPM_RF) NY NY 3
+	#ENDIF
+#ENDIF
+
+
+// L_SLCR20K_RF
+#IFDEF CCI_or_QCI
+	TOP_MLC_T1 = PSUB INTERACT TOP_MLC
+	SCONNECT PSD_I TOP_MLC_T1 BY PTAP
+	DEVICE L(L_SLCR20K_RF) TOP_MLC TOP_M_C(POS) TOP_M_C(NEG)  TOP_MLC_T1(SUB)  <LDIMETER_C> <SEC_LAST_MET_L1_C> <SEC_LAST_MET_L2_C> NETLIST MODEL "L_SLCR20K_RF" NETLIST ELEMENT "X"
+	[	PROPERTY N,D,W
+ 		S = 2e-6
+ 		N = COUNT(SEC_LAST_MET_L2_C) + 0.5
+ 		W = (PERIMETER_INSIDE(SEC_LAST_MET_L2_C,TOP_MLC)/(2*(N-0.5)))/2
+ 		P = PERIMETER(LDIMETER_C)/2
+ 		A = AREA(LDIMETER_C)
+ 		D0 = (P-SQRT(ABS(P*P-4*A)))/2
+ 		D = D0 - 2*S*(N-1)-2*W*N-(S+W)/2
+	]
+#ELSE
+	#IFDEF PEXRUN
+	DEVICE L(L_SLCR20K_RF) TOP_MLC TOP_M_C(POS) TOP_M_C(NEG)  PSUB(SUB)  <LDIMETER_C> <SEC_LAST_MET_L1_C> <SEC_LAST_MET_L2_C> NETLIST MODEL "L_SLCR20K_RF" NETLIST ELEMENT "X"
+	[	PROPERTY N,D,W
+		S = 2e-6
+		N = COUNT(SEC_LAST_MET_L2_C) + 0.5
+	 	W = (PERIMETER_INSIDE(SEC_LAST_MET_L2_C,TOP_MLC)/(2*(N-0.5)))/2
+	 	P = PERIMETER(LDIMETER_C)/2
+	 	A = AREA(LDIMETER_C)
+	 	D0 = (P-SQRT(ABS(P*P-4*A)))/2
+	 	D = D0 - 2*S*(N-1)-2*W*N-(S+W)/2
+	]
+	#ELSE
+	DEVICE L(L_SLCR20K_RF) TOP_MLC TOP_M_C(POS) TOP_M_C(NEG)  PSUB(SUB)  <LDIMETER_C> <SEC_LAST_MET_L1_C> <SEC_LAST_MET_L2_C>
+	[	PROPERTY N,D,W
+ 		S = 2e-6
+ 		N = COUNT(SEC_LAST_MET_L2_C) + 0.5
+ 		W = (PERIMETER_INSIDE(SEC_LAST_MET_L2_C,TOP_MLC)/(2*(N-0.5)))/2
+ 		P = PERIMETER(LDIMETER_C)/2
+ 		A = AREA(LDIMETER_C)
+ 		D0 = (P-SQRT(ABS(P*P-4*A)))/2
+ 		D = D0 - 2*S*(N-1)-2*W*N-(S+W)/2
+	]
+	TRACE PROPERTY L(L_SLCR20K_RF) D D 3
+	TRACE PROPERTY L(L_SLCR20K_RF) N N 3
+	TRACE PROPERTY L(L_SLCR20K_RF) W W 3
+	#ENDIF
+#ENDIF
+
+#IFDEF PEXRUN
+	PEX ALIAS SECONDARY PSD_C NSD_I PSD_I
+	PEX ALIAS SECONDARY ALLGATES PLY_I
+#IFDEF TOP_METAL_ME6
+	PEX ALIAS ME1_C ME1_I
+  	PEX ALIAS ME2_C ME2_I
+  	PEX ALIAS ME3_C ME3_I
+  	PEX ALIAS ME4_C ME4_I
+  	PEX ALIAS ME5_C ME5_I
+  	PEX ALIAS ME6_C ME6_I
+  	PEX IGNORE CAPACITANCE ALL ME1_I ME2_I ME3_I ME4_I ME5_I ME6_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME1_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME2_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME3_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME4_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME5_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME6_I
+ 	PEX IGNORE RESISTANCE ME1_I
+  	PEX IGNORE RESISTANCE ME2_I
+  	PEX IGNORE RESISTANCE ME3_I
+  	PEX IGNORE RESISTANCE ME4_I
+  	PEX IGNORE RESISTANCE ME5_I
+  	PEX IGNORE RESISTANCE ME6_I
+
+	PEX ALIAS MMC_C MMC_I
+//  	PEX ALIAS MMC_C MMC_I
+
+  	PEX IGNORE CAPACITANCE ALL MMC_I ME6_I ME5_I
+  	PEX IGNORE CAPACITANCE INTRINSIC ALL MMC_I ME6_I ME5_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME5
+	PEX ALIAS ME1_C ME1_I
+  	PEX ALIAS ME2_C ME2_I
+  	PEX ALIAS ME3_C ME3_I
+  	PEX ALIAS ME4_C ME4_I
+  	PEX ALIAS ME5_C ME5_I
+  	PEX IGNORE CAPACITANCE ALL ME1_I ME2_I ME3_I ME4_I ME5_I 
+  	PEX IGNORE CAPACITANCE NEARBODY ME1_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME2_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME3_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME4_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME5_I
+ 	PEX IGNORE RESISTANCE ME1_I
+  	PEX IGNORE RESISTANCE ME2_I
+  	PEX IGNORE RESISTANCE ME3_I
+  	PEX IGNORE RESISTANCE ME4_I
+  	PEX IGNORE RESISTANCE ME5_I
+
+	PEX ALIAS MMC_C MMC_I
+//  	PEX ALIAS MMC_C MMC_I
+
+  	PEX IGNORE CAPACITANCE ALL MMC_I ME5_I ME4_I
+  	PEX IGNORE CAPACITANCE INTRINSIC ALL MMC_I ME5_I ME4_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME4
+	PEX ALIAS ME1_C ME1_I
+  	PEX ALIAS ME2_C ME2_I
+  	PEX ALIAS ME3_C ME3_I
+  	PEX ALIAS ME4_C ME4_I
+  	PEX IGNORE CAPACITANCE ALL ME1_I ME2_I ME3_I ME4_I 
+  	PEX IGNORE CAPACITANCE NEARBODY ME1_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME2_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME3_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME4_I
+ 	PEX IGNORE RESISTANCE ME1_I
+  	PEX IGNORE RESISTANCE ME2_I
+  	PEX IGNORE RESISTANCE ME3_I
+  	PEX IGNORE RESISTANCE ME4_I
+
+	PEX ALIAS MMC_C MMC_I
+//  	PEX ALIAS MMC_C MMC_I
+
+  	PEX IGNORE CAPACITANCE ALL MMC_I ME4_I ME3_I
+  	PEX IGNORE CAPACITANCE INTRINSIC ALL MMC_I ME4_I ME3_I
+#ENDIF
+
+#IFDEF TOP_METAL_ME3
+	PEX ALIAS ME1_C ME1_I
+  	PEX ALIAS ME2_C ME2_I
+  	PEX ALIAS ME3_C ME3_I
+  	PEX IGNORE CAPACITANCE ALL ME1_I ME2_I ME3_I 
+  	PEX IGNORE CAPACITANCE NEARBODY ME1_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME2_I
+  	PEX IGNORE CAPACITANCE NEARBODY ME3_I
+ 	PEX IGNORE RESISTANCE ME1_I
+  	PEX IGNORE RESISTANCE ME2_I
+  	PEX IGNORE RESISTANCE ME3_I
+
+	PEX ALIAS MMC_C MMC_I
+//  	PEX ALIAS MMC_C MMC_I
+
+  	PEX IGNORE CAPACITANCE ALL MMC_I ME3_I ME2_I
+  	PEX IGNORE CAPACITANCE INTRINSIC ALL MMC_I ME3_I ME2_I
+#ENDIF
+#ENDIF
+
+
+//END
+
+VIRTUAL CONNECT BOX NAME "?"
+LVS BOX XMC
+LVS BOX XMD
+LVS BOX YA2GSC
+LVS BOX YA2GSD
+LVS BOX ZMA2GSC
+LVS BOX ZMA2GSD
+
+
+LVS BOX AN2     
+LVS BOX AN2B1   
+LVS BOX AN2B1P  
+LVS BOX AN2B1S  
+LVS BOX AN2B1T  
+LVS BOX AN2P    
+LVS BOX AN2S    
+LVS BOX AN2T    
+LVS BOX AN3     
+LVS BOX AN3B1   
+LVS BOX AN3B1P  
+LVS BOX AN3B1S  
+LVS BOX AN3B1T  
+LVS BOX AN3B2   
+LVS BOX AN3B2P  
+LVS BOX AN3B2S  
+LVS BOX AN3B2T  
+LVS BOX AN3P    
+LVS BOX AN3S    
+LVS BOX AN3T    
+LVS BOX AN4     
+LVS BOX AN4B1   
+LVS BOX AN4B1P  
+LVS BOX AN4B1S  
+LVS BOX AN4B1T  
+LVS BOX AN4P    
+LVS BOX AN4S    
+LVS BOX AN4T    
+LVS BOX AO112   
+LVS BOX AO112P  
+LVS BOX AO112S  
+LVS BOX AO112T  
+LVS BOX AO12    
+LVS BOX AO12P   
+LVS BOX AO12S   
+LVS BOX AO12T   
+LVS BOX AO13    
+LVS BOX AO13P   
+LVS BOX AO13S   
+LVS BOX AO13T   
+LVS BOX AO22    
+LVS BOX AO222   
+LVS BOX AO222P  
+LVS BOX AO222S  
+LVS BOX AO222T  
+LVS BOX AO22P   
+LVS BOX AO22S   
+LVS BOX AO22T   
+LVS BOX AOI112H 
+LVS BOX AOI112HP
+LVS BOX AOI112HS
+LVS BOX AOI112HT
+LVS BOX AOI12H  
+LVS BOX AOI12HP 
+LVS BOX AOI12HS 
+LVS BOX AOI12HT 
+LVS BOX AOI13H  
+LVS BOX AOI13HP 
+LVS BOX AOI13HS 
+LVS BOX AOI13HT 
+LVS BOX AOI222H 
+LVS BOX AOI222HP
+LVS BOX AOI222HS
+LVS BOX AOI22H  
+LVS BOX AOI22HP 
+LVS BOX AOI22HT 
+LVS BOX AOI22S  
+LVS BOX BHD1    
+LVS BOX BUF1    
+LVS BOX BUF12CK 
+LVS BOX BUF1CK  
+LVS BOX BUF1S   
+LVS BOX BUF2    
+LVS BOX BUF2CK  
+LVS BOX BUF3    
+LVS BOX BUF3CK  
+LVS BOX BUF4    
+LVS BOX BUF4CK  
+LVS BOX BUF6    
+LVS BOX BUF6CK  
+LVS BOX BUF8    
+LVS BOX BUF8CK  
+LVS BOX BUFB1   
+LVS BOX BUFB2   
+LVS BOX BUFB3   
+LVS BOX BUFT1   
+LVS BOX BUFT2   
+LVS BOX BUFT3   
+LVS BOX BUFT4   
+LVS BOX CMPE4   
+LVS BOX CMPE4S  
+LVS BOX DBFRBN  
+LVS BOX DBFRSBN 
+LVS BOX DBHRBN  
+LVS BOX DBHRBS  
+LVS BOX DBZRBN  
+LVS BOX DBZRSBN 
+LVS BOX DELA    
+LVS BOX DELB    
+LVS BOX DELC    
+LVS BOX DFCLRBN 
+LVS BOX DFCRBN  
+LVS BOX DFFN    
+LVS BOX DFFP    
+LVS BOX DFFRBN  
+LVS BOX DFFRBP  
+LVS BOX DFFRBS  
+LVS BOX DFFRBT  
+LVS BOX DFFRSBN 
+LVS BOX DFFS    
+LVS BOX DFFSBN  
+LVS BOX DFTRBN  
+LVS BOX DFTRBS  
+LVS BOX DFZCLRBN
+LVS BOX DFZCRBN 
+LVS BOX DFZN    
+LVS BOX DFZP    
+LVS BOX DFZRBN  
+LVS BOX DFZRBP  
+LVS BOX DFZRBS  
+LVS BOX DFZRBT  
+LVS BOX DFZRSBN 
+LVS BOX DFZS    
+LVS BOX DFZSBN  
+LVS BOX DFZTRBN 
+LVS BOX DFZTRBS 
+LVS BOX DLHN    
+LVS BOX DLHP    
+LVS BOX DLHRBN  
+LVS BOX DLHRBP  
+LVS BOX DLHRBS  
+LVS BOX DLHS    
+LVS BOX FA1     
+LVS BOX FA1P    
+LVS BOX FA1S    
+LVS BOX FA1T    
+LVS BOX FA2     
+LVS BOX FA2P    
+LVS BOX FA2S    
+LVS BOX FA3     
+LVS BOX FA3P    
+LVS BOX FA3S    
+LVS BOX FACS1   
+LVS BOX FACS1P  
+LVS BOX FACS1S  
+LVS BOX FACS2   
+LVS BOX FACS2P  
+LVS BOX FACS2S  
+LVS BOX GCKETF  
+LVS BOX GCKETN  
+LVS BOX GCKETP  
+LVS BOX GCKETT  
+LVS BOX HA1     
+LVS BOX HA1P    
+LVS BOX HA1S    
+LVS BOX HA1T    
+LVS BOX HA2     
+LVS BOX HA2P    
+LVS BOX HA2T    
+LVS BOX HA3     
+LVS BOX HA3P    
+LVS BOX HA3T    
+LVS BOX INV1    
+LVS BOX INV12   
+LVS BOX INV12CK 
+LVS BOX INV1CK  
+LVS BOX INV1S   
+LVS BOX INV2    
+LVS BOX INV2CK  
+LVS BOX INV3    
+LVS BOX INV3CK  
+LVS BOX INV4    
+LVS BOX INV4CK  
+LVS BOX INV6    
+LVS BOX INV6CK  
+LVS BOX INV8    
+LVS BOX INV8CK  
+LVS BOX INVT1   
+LVS BOX INVT2   
+LVS BOX INVT4   
+LVS BOX JKFN    
+LVS BOX JKFRBN  
+LVS BOX JKFRBP  
+LVS BOX JKZN    
+LVS BOX JKZRBN  
+LVS BOX JKZRBP  
+LVS BOX MAO222  
+LVS BOX MAO222P 
+LVS BOX MAO222S 
+LVS BOX MAO222T 
+LVS BOX MAOI1   
+LVS BOX MAOI1H  
+LVS BOX MAOI1HP 
+LVS BOX MAOI1HT 
+LVS BOX MAOI1S  
+LVS BOX MOAI1   
+LVS BOX MOAI1H  
+LVS BOX MOAI1HP 
+LVS BOX MOAI1HT 
+LVS BOX MOAI1S  
+LVS BOX MULBE   
+LVS BOX MULBEP  
+LVS BOX MULBET  
+LVS BOX MULPA   
+LVS BOX MULPAP  
+LVS BOX MULPAT  
+LVS BOX MUX2    
+LVS BOX MUX2F   
+LVS BOX MUX2P   
+LVS BOX MUX2S   
+LVS BOX MUX2T   
+LVS BOX MUX3    
+LVS BOX MUX3P   
+LVS BOX MUX3S   
+LVS BOX MUX3T   
+LVS BOX MUX4    
+LVS BOX MUX4P   
+LVS BOX MUX4S   
+LVS BOX MUX4T   
+LVS BOX MUXB2   
+LVS BOX MUXB2P  
+LVS BOX MUXB2S  
+LVS BOX MUXB2T  
+LVS BOX MUXB4   
+LVS BOX MUXB4P  
+LVS BOX MUXB4S  
+LVS BOX MUXB4T  
+LVS BOX MXL2H   
+LVS BOX MXL2HF  
+LVS BOX MXL2HP  
+LVS BOX MXL2HS  
+LVS BOX MXL2HT  
+LVS BOX MXL3    
+LVS BOX MXL3P   
+LVS BOX MXL3S   
+LVS BOX MXL3T   
+LVS BOX ND2     
+LVS BOX ND2F    
+LVS BOX ND2P    
+LVS BOX ND2S    
+LVS BOX ND2T    
+LVS BOX ND3     
+LVS BOX ND3HT   
+LVS BOX ND3P    
+LVS BOX ND3S    
+LVS BOX ND4     
+LVS BOX ND4P    
+LVS BOX ND4S    
+LVS BOX ND4T    
+LVS BOX NR2     
+LVS BOX NR2F    
+LVS BOX NR2P    
+LVS BOX NR2T    
+LVS BOX NR3     
+LVS BOX NR3H    
+LVS BOX NR3HP   
+LVS BOX NR3HT   
+LVS BOX NR4     
+LVS BOX NR4P    
+LVS BOX NR4S    
+LVS BOX NR4T    
+LVS BOX OA112   
+LVS BOX OA112P  
+LVS BOX OA112S  
+LVS BOX OA112T  
+LVS BOX OA12    
+LVS BOX OA12P   
+LVS BOX OA12S   
+LVS BOX OA12T   
+LVS BOX OA13    
+LVS BOX OA13P   
+LVS BOX OA13S   
+LVS BOX OA13T   
+LVS BOX OA22    
+LVS BOX OA222   
+LVS BOX OA222P  
+LVS BOX OA222S  
+LVS BOX OA222T  
+LVS BOX OA22P   
+LVS BOX OA22S   
+LVS BOX OA22T   
+LVS BOX OAI112H 
+LVS BOX OAI112HP
+LVS BOX OAI112HS
+LVS BOX OAI112HT
+LVS BOX OAI12H  
+LVS BOX OAI12HP 
+LVS BOX OAI12HS 
+LVS BOX OAI12HT 
+LVS BOX OAI13H  
+LVS BOX OAI13HP 
+LVS BOX OAI13HS 
+LVS BOX OAI13HT 
+LVS BOX OAI222H 
+LVS BOX OAI222HP
+LVS BOX OAI222HT
+LVS BOX OAI222S 
+LVS BOX OAI22H  
+LVS BOX OAI22HP 
+LVS BOX OAI22HT 
+LVS BOX OAI22S  
+LVS BOX OR2     
+LVS BOX OR2B1   
+LVS BOX OR2B1P  
+LVS BOX OR2B1S  
+LVS BOX OR2B1T  
+LVS BOX OR2P    
+LVS BOX OR2S    
+LVS BOX OR2T    
+LVS BOX OR3     
+LVS BOX OR3B1   
+LVS BOX OR3B1P  
+LVS BOX OR3B1S  
+LVS BOX OR3B1T  
+LVS BOX OR3B2   
+LVS BOX OR3B2P  
+LVS BOX OR3B2S  
+LVS BOX OR3B2T  
+LVS BOX OR3P    
+LVS BOX OR3S    
+LVS BOX OR3T    
+LVS BOX PDI     
+LVS BOX PDIX    
+LVS BOX PUI     
+LVS BOX QDBHN   
+LVS BOX QDBHS   
+LVS BOX QDFFN   
+LVS BOX QDFFP   
+LVS BOX QDFFRBN 
+LVS BOX QDFFRBP 
+LVS BOX QDFFRBS 
+LVS BOX QDFFRBT 
+LVS BOX QDFFRSBN
+LVS BOX QDFFS   
+LVS BOX QDFZN   
+LVS BOX QDFZP   
+LVS BOX QDFZRBN 
+LVS BOX QDFZRBP 
+LVS BOX QDFZRBS 
+LVS BOX QDFZRBT 
+LVS BOX QDFZRSBN
+LVS BOX QDFZS   
+LVS BOX QDLHN   
+LVS BOX QDLHP   
+LVS BOX QDLHRBN 
+LVS BOX QDLHRBP 
+LVS BOX QDLHRBS 
+LVS BOX QDLHS   
+LVS BOX QDLHSN  
+LVS BOX RAM2    
+LVS BOX RAM2S   
+LVS BOX RAM3    
+LVS BOX RAM3S   
+LVS BOX RAM5    
+LVS BOX RAM5S   
+LVS BOX TIE0
+LVS BOX TIE1
+LVS BOX XNR2H   
+LVS BOX XNR2HP  
+LVS BOX XNR2HS  
+LVS BOX XNR2HT  
+LVS BOX XNR3    
+LVS BOX XNR3P   
+LVS BOX XNR3S   
+LVS BOX XNR3T   
+LVS BOX XNR4    
+LVS BOX XNR4P   
+LVS BOX XNR4S   
+LVS BOX XNR4T   
+LVS BOX XOR2H   
+LVS BOX XOR2HP  
+LVS BOX XOR2HS  
+LVS BOX XOR2HT  
+LVS BOX XOR3    
+LVS BOX XOR3P   
+LVS BOX XOR3S   
+LVS BOX XOR3T   
+LVS BOX XOR4    
+LVS BOX XOR4P   
+LVS BOX XOR4S   
+LVS BOX XOR4T   

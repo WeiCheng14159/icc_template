@@ -1,4 +1,5 @@
-set top traffic_light
+set design_top traffic_light
+set top CHIP
 
 # Don't change anything below this line
 set_host_options -max_cores 16
@@ -9,7 +10,7 @@ current_design [get_designs ${top}]
 link
 
 # Setting Clock Constraits
-source -echo -verbose ../script/${proc}/${top}.sdc.${proc}
+source -echo -verbose ../script/${proc}/${design_top}.sdc.${proc}
 
 # High fanout threshold
 set high_fanout_net_threshold 0
@@ -17,9 +18,12 @@ report_net_fanout -high_fanout
 
 uniquify
 set_fix_multiple_port_nets -all -buffer_constants [get_designs *]
- 
+
+set_dont_touch [get_cell ipad*]
+set_dont_touch [get_cell opad*]
+
 set_structure -timing true
- 
+
 check_design
 
 #compile -map_effort high
@@ -29,9 +33,9 @@ compile_ultra
 compile_ultra -incremental
 
 current_design [get_designs ${top}]
- 
+
 remove_unconnected_ports -blast_buses [get_cells -hierarchical *]
- 
+
 set bus_inference_style {%s[%d]}
 set bus_naming_style {%s[%d]}
 set hdlout_internal_busses true
@@ -46,7 +50,7 @@ change_names -hierarchy -rules name_rule
 write -format ddc -hierarchy -output "${top}_syn.ddc"
 write_file -format verilog -hierarchy -output ../syn/${top}_syn.v
 write_sdf -version 2.0 -context verilog  ../syn/${top}_syn.sdf
-write_sdc -version 2.0 ${top}.sdc
+write_sdc -version 2.0 ../syn/${top}.sdc
 report_area > area.log
 report_timing > timing.log
 report_qor > ${top}_syn.qor

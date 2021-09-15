@@ -1,0 +1,234 @@
+
+//----- Start of file -----
+
+
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//     Title     : DRC (Calibre) of 0.15um and Above 1P6M           //
+//                 Process for Metal Dummy and Slot Rule            //
+//                                                                  //
+//     DRC Version  : 2.1_P1                                        //
+//                                                                  //
+//     Parent Doc: G-03DS-GENERATION15_ABOVE-METAL-TLR/DUMMY_SLOT   //
+//                 ver 2.1_P1                                       //
+//                                                                  //
+//     Copyright (c) United Microelectronics Corporation, 1980-2005 //
+//     All Right Reserved.                                          //
+//     LIMITATION OF LIABILITY:                                     //
+//        United Microelectronics Corp. is not  liable  for  any    //
+//        property damage, personal  injury,  loss  of  profits,    //
+//        interruption of business,  or  for  any other special,    //
+//        consequential or incidental  damages, however  caused,    //
+//        whether for breach of warranty,contract tort(including    //
+//        negligence),strict liability or otherwise.                //
+//                                                                  //
+//     This runset is validated with Calibre 2004.3.                //     
+//////////////////////////////////////////////////////////////////////
+// revision    date        who              changes                 //
+//========= ========== =========== =================================//
+//  2.1-P1  06/02/2009   Y.C Lee     1.New create                   //
+//                                                                  //
+//////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)                                //
+// =================================                                //
+// (1) Please set up RESOLUTION,LAYOUT PATH,LAYOUT PRIMARY          //
+//     according to your design before run CALIBRE drc.             //
+//                                                                  //
+// (2) This document includes 8 file.                               //
+//     G-DF-GENERATION15_ABOVE-1P2M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     G-DF-GENERATION15_ABOVE-1P3M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     G-DF-GENERATION15_ABOVE-1P4M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     G-DF-GENERATION15_ABOVE-1P5M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     G-DF-GENERATION15_ABOVE-1P6M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     G-DF-GENERATION15_ABOVE-1P7M-METAL_DUMMY_SLOT-CALIBRE-DRC-2.1_P1 //
+//     Release_notes                                                //
+//     check.list                                                   //
+//////////////////////////////////////////////////////////////////////
+
+
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+DRC RESULTS DATABASE "../Metal.db" ASCII
+DRC SUMMARY REPORT   "../Metal.sum"
+
+
+DRC CHECK TEXT       COMMENTS RFI
+DRC KEEP EMPTY       NO  
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+//DRC TOLERANCE FACTOR .003
+
+
+
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+//
+
+// Layer Mapping
+LAYER	MAP	46	DATATYPE	0	1001
+LAYER	ME1	1001	// Metal1
+
+LAYER	MAP	47	DATATYPE	0	1002
+LAYER	VI1	1002	// Mvia1
+
+LAYER	MAP	48	DATATYPE	0	1003
+LAYER	ME2	1003	// Metal2
+
+LAYER	MAP	49	DATATYPE	0	1004
+LAYER	VI2	1004	// Mvia2
+
+LAYER	MAP	50	DATATYPE	0	1005
+LAYER	ME3	1005	// Metal3
+
+LAYER	MAP	51	DATATYPE	0	1006
+LAYER	VI3	1006	// Mvia3
+
+LAYER	MAP	52	DATATYPE	0	1007
+LAYER	ME4	1007	// Metal4
+
+LAYER	MAP	53	DATATYPE	0	1008
+LAYER	VI4	1008	// Mvia4
+
+LAYER	MAP	54	DATATYPE	0	1009
+LAYER	ME5	1009	// Metal5
+
+LAYER	MAP	55	DATATYPE	0	1010
+LAYER	VI5	1010	// Mvia5
+
+LAYER	MAP	56	DATATYPE	0	1011
+LAYER	ME6	1011	// Metal6
+
+LAYER	MAP	57	DATATYPE	0	1012
+LAYER	VI6	1012	// Mvia6
+
+LAYER	MAP	58	DATATYPE	0	1013
+LAYER	ME7	1013	// Metal7
+
+LAYER	MAP	72	DATATYPE	8	1014
+LAYER	M1DUMY	1014	// Metal1 dummy creation by customer
+
+LAYER	MAP	73	DATATYPE	8	1015
+LAYER	M2DUMY	1015	// Metal2 dummy creation by customer
+
+LAYER	MAP	74	DATATYPE	8	1016
+LAYER	M3DUMY	1016	// Metal3 dummy creation by customer
+
+LAYER	MAP	75	DATATYPE	8	1017
+LAYER	M4DUMY	1017	// Metal4 dummy creation by customer
+
+LAYER	MAP	76	DATATYPE	8	1018
+LAYER	M5DUMY	1018	// Metal5 dummy creation by customer
+
+LAYER	MAP	77	DATATYPE	8	1019
+LAYER	M6DUMY	1019	// Metal6 dummy creation by customer
+
+LAYER	MAP	78	DATATYPE	8	1020
+LAYER	M7DUMY	1020	// Metal7 dummy creation by customer
+
+LAYER	MAP	117	DATATYPE	36	1021
+LAYER	IND	1021	// Inductor layer
+
+LAYER	MAP	88	DATATYPE	0	1022
+LAYER	FUSEMARK	1022	// To mark Fuse region for dummy pattern block and DRC
+
+LAYER	MAP	90	DATATYPE	0	1023
+LAYER	PADMARK	1023	// PAD Area Marker
+
+
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+
+RESOLUTION 1
+PRECISION  1000
+
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+ 
+//===================================================================
+//===  Defined types from combinations of layers (DO NOT MODIFY)  ===
+//===================================================================
+ 
+DRC:1     = EXTENT
+BULK      = SIZE DRC:1 BY 1.0
+
+//  ========================
+//  ====== DUMMY RULE ======
+//  ========================
+
+    
+
+6.1Aa_ME1 {@ Minimum METAL1_CUSTOMER_DUMMY to METAL1 spacing is 1um
+   EXT M1DUMY ME1 < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M1DUMY ME1
+}
+
+6.1Ab_ME1 {@ Minimum METAL1_CUSTOMER_DUMMY to FUSE_MARK spacing is 1um
+   EXT M1DUMY FUSEMARK < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M1DUMY FUSEMARK
+}       
+
+6.1Aa_ME2 {@ Minimum METAL2_CUSTOMER_DUMMY to METAL2 spacing is 1um
+   EXT M2DUMY ME2 < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M2DUMY ME2
+}
+
+6.1Ab_ME2 {@ Minimum METAL2_CUSTOMER_DUMMY to FUSE_MARK spacing is 1um
+   EXT M2DUMY FUSEMARK < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M2DUMY FUSEMARK
+}       
+
+6.1Aa_ME3 {@ Minimum METAL3_CUSTOMER_DUMMY to METAL3 spacing is 1um
+   EXT M3DUMY ME3 < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M3DUMY ME3
+}
+
+6.1Ab_ME3 {@ Minimum METAL3_CUSTOMER_DUMMY to FUSE_MARK spacing is 1um
+   EXT M3DUMY FUSEMARK < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M3DUMY FUSEMARK
+}       
+
+6.1Aa_ME4 {@ Minimum METAL4_CUSTOMER_DUMMY to METAL4 spacing is 1um
+   EXT M4DUMY ME4 < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M4DUMY ME4
+}
+
+6.1Ab_ME4 {@ Minimum METAL4_CUSTOMER_DUMMY to FUSE_MARK spacing is 1um
+   EXT M4DUMY FUSEMARK < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M4DUMY FUSEMARK
+}       
+
+6.1Aa_ME5 {@ Minimum METAL5_CUSTOMER_DUMMY to METAL5 spacing is 1um
+   EXT M5DUMY ME5 < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M5DUMY ME5
+}
+
+6.1Ab_ME5 {@ Minimum METAL5_CUSTOMER_DUMMY to FUSE_MARK spacing is 1um
+   EXT M5DUMY FUSEMARK < 1 ABUT<90 SINGULAR OVERLAP REGION
+   AND M5DUMY FUSEMARK
+}       
+
+6.1Ba_ME6 {@ Minimum METAL6_CUSTOMER_DUMMY to METAL6 spacing is 2um
+   EXT M6DUMY ME6 < 2 ABUT<90 SINGULAR OVERLAP REGION
+   AND M6DUMY ME6
+}
+
+6.1Bb_ME6 {@ Minimum METAL6_CUSTOMER_DUMMY to FUSE_MARK spacing is 2um
+   EXT M6DUMY FUSEMARK < 2 ABUT<90 SINGULAR OVERLAP REGION
+   AND M6DUMY FUSEMARK
+}       

@@ -1,0 +1,876 @@
+
+//----- Start of file -----
+
+
+//////////////////////////////////////////////////////////////////////
+//                                                                  //
+//     Title     : Calibre DRC of Bonding Pad 1P7M Layout Guideline //
+//                 for 0.11um/0.15um/0.18um/0.25um Generation       //
+//     DRC Version  : 2.1_P3                                        //
+//     Parent Doc: G-03P-GENERATION15_ABOVE-TLR/PAD 2.1_P3          //
+//                                                                  //
+//     Copyright (c) United Microelectronics Corporation, 1980-2013 //
+//     All Right Reserved.                                          //
+//     LIMITATION OF LIABILITY:                                     //
+//        United Microelectronics Corp. is not  liable  for  any    //
+//        property damage, personal  injury,  loss  of  profits,    //
+//        interruption of business,  or  for  any other special,    //
+//        consequential or incidental  damages, however  caused,    //
+//        whether for breach of warranty,contract tort(including    //
+//        negligence),strict liability or otherwise.                //
+//                                                                  //
+//        This file includes SVRF/TVF Technology under   license    //
+//        by Mentor Graphics Corporation.  "SVRF/TVF Technology  " //
+//        shall  mean  Mentor   Graphics' Standard  Verification    //
+//        rule  Format (" SVRF ") and  Tcl Verification   Format  //
+//        ( " TVF " )   proprietary   syntaxes   for  expressing  //
+//        process rules. You shall not use  SVRF/TVF  Technology    //
+//        unless  you  are a Mentor  Graphics  customer  with  a    //
+//        license   to  use  Mentor   Graphics' CalibreR  tools.    //
+//        The exact terms  of your  obligations  and  rights are    //
+//        governed  by your  respective  license. You  shall not    //
+//        use  SVRF/TVF Technology except for  use  with  Mentor    //
+//        Graphics'  CalibreR  tools.    All SVRF/FVF Technology    //
+//        contained  in this file  constitutes or contains trade    //
+//        secrets   and   confidential   information  of  Mentor    //
+//        Graphics or its licensors.   Unless you  have obtained    //
+//        Mentor Graphics' prior written consent, you  shall not    //
+//        make SVRF/TVF  Technology  available  in any form to a    //
+//        Mentor Graphics Competitor.                               //
+//                                                                  //
+//      This runset is validated with Calibre 2008.4.3726           //    
+//////////////////////////////////////////////////////////////////////
+// revision  date      who              changes                     //
+//========= ======= ======== =======================================//
+//   0.5 P1  12/10/2001       create from G-1B-014                  //
+//   0.5-P2  02/03/2002       update 5.1A 5.1A1 5.1E                //
+//                            add VARIABLE PMR                      //
+//   0.5-P3  02/06/2002       establishing connectivity             //
+//   5-P1    06/27/2003       Add stagger rules                     //
+//   6-P1    08/28/2003       Grid size set to 0.001um              //
+//   6-P1    08/28/2003       According version(version 6)          //
+//   6-P2    09/18/2003       Add the metal 7 layer                 //
+//   6-P2    11/26/2003       Update the 5.2I* rules                //
+//   6-P3    12/26/2003       Update the 5.1A1,5.1D rules           //
+//   7-P1    08/17/2004  Momo Update layer name/no 		    //
+//			      Update value of 4.1A/4.1A1/4.1B/4.1H  //
+//			      Update 5.2E_M2/M3/M4/M5/M6            //
+//			      Add 5.2.1/5.2.2/5.2.3/5.2.4           //
+//			      Seperate to 0.25/0.18/0.15 three DRC deck
+//   2.0-P1  05/28/2005 C.C Chang   Rename                         //
+//                              from G-DF_1B-014-L180-calibre-drc-7-//
+//                            P1.cal                                //
+//                              to   G-DF-GENERATION18-PAD-CALIBRE  //
+//                            -DRC-2.0-P1.cal                       //
+//   2.0-P2  09/05/2005 C.C Chang                                   //
+//                            1. Merge GENERATION15/18/25 into one  //
+//                              command file.                       //
+//                            2. Update 5.1A1.inline, 5.1A1.STAGGER,//
+//                              5.1D, 5.1F, 5.2B, 5.2E, 5.2.1, 5.2.2,/
+//                              remove the rule 5.2.3 in 2.0P1 DRC  //
+//                              update 5.2.4 and rename as 5.2.3.   //
+//                            3. Add 5.1A2.inline, 5.1A2.STAGGER,   // 
+//                              5.1A3.inline, 5.1A3.STAGGER,        //
+//                              5.1H.a.inline, 5.1H.a.STAGGER       //
+//                              5.1H.a.STAGGER 5.1H.b.inline,       //
+//                              5.1H.b.STAGGER, 5.1.extra.          //
+//   2.0-P3  09/19/2005 C.C Chang                                   //
+//                            1. Update derived layer setting and   //
+//                              influence rule 5.2*                 //
+//                            2. Update connection setting.         //
+//   2.0-P4  10/15/2008 Y.C Lee                                     //
+//                            1.Modify                              //
+//                              5.1A1.inline    5.1A1.stagger       //
+//                              5.1A3.inline    5.1A3.stagger       //
+//                              5.1D.inline     5.1D.stagger        //
+//                              5.1F_NWEL       5.1F_DIFF           //
+//                              5.1F_ME1        5.1F_ME2            //
+//                              5.1F_ME3        5.1F_ME4            //
+//                              5.1F_ME5        5.1F_ME6            //
+//                              5.1F_ME7        5.1H.a.inline       //
+//                              5.1H.a.stagger                      //
+//                             2.Split DRC comand file              //
+//   2.1-P1  11/19/2008 Y.C Lee                                     //
+//                            1.Update version                      //
+//   2.1-P2  03/03/2011 Eric  1. Add : 1P2M                         //
+//   2.1-P2  09/08/2011 Eric  1. Add: 0.30/0.35/0.45/0.5 5.2GHI     //
+//   2.1-P3  03/25/2013 C.T Lai                                     //
+//                            1. Add 0.11um process 5.2GHI          //
+//////////////////////////////////////////////////////////////////////
+// Notice (Important, Read Me First)
+// =================================
+// (1) Please set up correct GENERATION to process the command file.
+// (2) Please set up correct PAD TYPE in "INLINE" OR "STAGGERED" 
+//     to process the command file.
+// (3) Please set up RESOLUTION,LAYOUT PATH,LAYOUT PRIMARY
+//     according to your design before run CALIBRE drc.
+// (4) This document includes 8 file.
+//     G-DF-GENERATION15_ABOVE-PAD-1P2M-CALIBRE-DRC-2.1_P3
+//     G-DF-GENERATION15_ABOVE-PAD-1P3M-CALIBRE-DRC-2.1_P3
+//     G-DF-GENERATION15_ABOVE-PAD-1P4M-CALIBRE-DRC-2.1_P3
+//     G-DF-GENERATION15_ABOVE-PAD-1P5M-CALIBRE-DRC-2.1_P3
+//     G-DF-GENERATION15_ABOVE-PAD-1P6M-CALIBRE-DRC-2.1_P3
+//     G-DF-GENERATION15_ABOVE-PAD-1P7M-CALIBRE-DRC-2.1_P3
+//     Release_notes
+//     check.list
+//////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////
+// SPECIFICATION STATEMENTS
+//////////////////////////////////////////////
+
+//  ** Please setup correct GENERATION and 
+// PAD TYPE (INLINE/STAGGERED) to process the command file
+//-------------------------------------------
+
+// * GENERATION Setting:
+// Warning! Do not set 2 or more options at the same   
+//          time. If do that, an error can occur.
+
+//  #DEFINE GENERATION11	// To switch DRC to GENERATION11
+//  #DEFINE GENERATION15	// To switch DRC to GENERATION15
+  #DEFINE GENERATION18	// To switch DRC to GENERATION18
+//  #DEFINE GENERATION25	// To switch DRC to GENERATION25
+//  #DEFINE GENERATION30	// To switch DRC to GENERATION30
+//  #DEFINE GENERATION35	// To switch DRC to GENERATION35
+//  #DEFINE GENERATION45	// To switch DRC to GENERATION45
+//  #DEFINE GENERATION50	// To switch DRC to GENERATION50
+
+
+// * PAD TYPE (INLINE/STAGGERED) Setting:
+// Warning! Do not set 2 or more options at the same   
+//          time. If do that, an error can occur.
+
+  #DEFINE PAD_INLINE		// To switch DRC to INLINE    PAD RULE 
+//  #DEFINE PAD_STAGGER 	// To switch DRC to STAGGERED PAD RULE  
+
+//================================
+//===  Setup Defaults for DRC  ===
+//================================
+//
+
+LAYOUT PATH "../CHIP_pr.gds"
+LAYOUT PRIMARY "CHIP"
+DRC RESULTS DATABASE "../PAD.db" ASCII
+DRC SUMMARY REPORT   "../PAD.sum"
+
+
+DRC CHECK TEXT       COMMENTS RFI
+DRC KEEP EMPTY       NO  
+DRC MAXIMUM RESULTS  1000
+DRC MAXIMUM VERTEX   199
+//DRC TOLERANCE FACTOR .003
+
+
+
+
+//======================
+//===  INPUT-LAYERS  ===
+//======================
+//
+
+
+LAYER	MAP	1	DATATYPE	0	1000
+LAYER	DIFF		1000			//Diffusion
+
+LAYER	MAP	3	DATATYPE	0	1006
+LAYER	NWEL		1006			//N-well
+
+LAYER	MAP	39	DATATYPE	0	1062
+LAYER	CONT		1062			//Contact
+
+LAYER	MAP	41	DATATYPE	0	1064
+LAYER	PO1		1064			//Poly1
+
+LAYER	MAP	41	DATATYPE	1	1065
+LAYER	PO0		1065			//Poly0
+
+LAYER	MAP	41	DATATYPE	6	1066
+LAYER	PO2		1066			//Poly2
+
+LAYER	MAP	46	DATATYPE	0	1071
+LAYER	ME1		1071			//Metal1
+
+LAYER	MAP	47	DATATYPE	0	1072
+LAYER	VI1		1072			//Mvia1
+
+LAYER	MAP	48	DATATYPE	0	1073
+LAYER	ME2		1073			//Metal2
+
+LAYER	MAP	49	DATATYPE	0	1074
+LAYER	VI2		1074			//Mvia2
+
+LAYER	MAP	50	DATATYPE	0	1075
+LAYER	ME3		1075			//Metal3
+
+LAYER	MAP	51	DATATYPE	0	1076
+LAYER	VI3		1076			//Mvia3
+
+LAYER	MAP	52	DATATYPE	0	1077
+LAYER	ME4		1077			//Metal4
+
+LAYER	MAP	53	DATATYPE	0	1078
+LAYER	VI4		1078			//Mvia4
+
+LAYER	MAP	54	DATATYPE	0	1079
+LAYER	ME5		1079			//Metal5
+
+LAYER	MAP	55	DATATYPE	0	1080
+LAYER	VI5		1080			//Mvia5
+
+LAYER	MAP	56	DATATYPE	0	1081
+LAYER	ME6		1081			//Metal6
+
+LAYER	MAP	57	DATATYPE	0	1082
+LAYER	VI6		1082			//Mvia6
+
+LAYER	MAP	58	DATATYPE	0	1083
+LAYER	ME7		1083			//Metal7
+
+LAYER	MAP	59	DATATYPE	0	1084
+LAYER	VI7		1084			//Mvia6
+
+LAYER	MAP	65	DATATYPE	0	1085
+LAYER	MMC		1085			//Metal Cap (top Plate)
+
+LAYER	MAP	66	DATATYPE	0	1086
+LAYER	PAD		1086			//for wire bonding pad only
+
+
+//===========================
+//===  Setup Environment  ===
+//===========================
+//
+
+LAYOUT DEPTH  ALL
+LAYOUT SYSTEM GDSII
+
+RESOLUTION 1
+PRECISION  1000
+
+UNIT CAPACITANCE FF
+UNIT LENGTH      U
+UNIT RESISTANCE  OHM
+UNIT TIME        US
+ 
+//===================================================================
+//===  Defined types from combinations of layers (DO NOT MODIFY)  ===
+//===================================================================
+ 
+DRC:1     = EXTENT
+BULK      = SIZE DRC:1 BY 1.0
+
+//  ======================
+//  ====== PAD RULE ======
+//  ======================
+
+    
+//----- generate connectivity -----//
+
+CONNECT PAD ME6
+CONNECT ME6 MMC ME5 BY VI5
+CONNECT ME5 ME4 BY VI4
+CONNECT ME4 ME3 BY VI3
+CONNECT ME3 ME2 BY VI2
+CONNECT ME2 ME1 BY VI1
+CONNECT ME1 NWEL BY CONT
+CONNECT ME1 DIFF BY CONT
+CONNECT ME1 PO2 PO1 PO0 BY CONT
+
+
+//----- define Metal PAD region -----//
+
+P1  = SIZE PAD BY 20 INSIDE OF ME1 STEP 0.8 TRUNCATE 0
+P2  = SIZE PAD BY 20 INSIDE OF ME2 STEP 0.8 TRUNCATE 0
+P3  = SIZE PAD BY 20 INSIDE OF ME3 STEP 0.8 TRUNCATE 0
+P4  = SIZE PAD BY 20 INSIDE OF ME4 STEP 0.8 TRUNCATE 0
+P5  = SIZE PAD BY 20 INSIDE OF ME5 STEP 0.8 TRUNCATE 0
+P6  = SIZE PAD BY 20 INSIDE OF ME6 STEP 0.8 TRUNCATE 0
+M1H = ( HOLES P1 ) AND PAD
+M2H = ( HOLES P2 ) AND PAD
+M3H = ( HOLES P3 ) AND PAD
+M4H = ( HOLES P4 ) AND PAD
+M5H = ( HOLES P5 ) AND PAD
+M6H = ( HOLES P6 ) AND PAD
+
+//----- Metal PAD hollow go away -----//
+
+PADM1E_NOSLOT   = ( ME1 INTERACT PAD )  OR M1H
+PADM2E_NOSLOT   = ( ME2 INTERACT PAD )  OR M2H
+PADM3E_NOSLOT   = ( ME3 INTERACT PAD )  OR M3H
+PADM4E_NOSLOT   = ( ME4 INTERACT PAD )  OR M4H
+PADM5E_NOSLOT   = ( ME5 INTERACT PAD )  OR M5H
+PADM6E_NOSLOT   = ( ME6 INTERACT PAD )  OR M6H
+PADM1_AREA_PRE =  SIZE ( SIZE PADM1E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM1E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM2_AREA_PRE =  SIZE ( SIZE PADM2E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM2E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM3_AREA_PRE =  SIZE ( SIZE PADM3E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM3E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM4_AREA_PRE =  SIZE ( SIZE PADM4E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM4E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM5_AREA_PRE =  SIZE ( SIZE PADM5E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM5E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM6_AREA_PRE =  SIZE ( SIZE PADM6E_NOSLOT BY -20 ) BY 20 INSIDE OF PADM6E_NOSLOT STEP 0.8  TRUNCATE 20
+PADM1E = ( EXTENTS PADM1_AREA_PRE ) INTERACT PAD
+PADM2E = ( EXTENTS PADM2_AREA_PRE ) INTERACT PAD
+PADM3E = ( EXTENTS PADM3_AREA_PRE ) INTERACT PAD
+PADM4E = ( EXTENTS PADM4_AREA_PRE ) INTERACT PAD
+PADM5E = ( EXTENTS PADM5_AREA_PRE ) INTERACT PAD
+PADM6E = ( EXTENTS PADM6_AREA_PRE ) INTERACT PAD
+PADM1_AREA  = AND PADM1E  PADM1E_NOSLOT
+PADM2_AREA  = AND PADM2E  PADM2E_NOSLOT
+PADM3_AREA  = AND PADM3E  PADM3E_NOSLOT
+PADM4_AREA  = AND PADM4E  PADM4E_NOSLOT
+PADM5_AREA  = AND PADM5E  PADM5E_NOSLOT
+PADM6_AREA  = AND PADM6E  PADM6E_NOSLOT
+
+//----- Metal PAD MVIA region -----//
+
+PADV1   = VI1 INTERACT PADM1E
+PADV2   = VI2 INTERACT PADM2E
+PADV3   = VI3 INTERACT PADM3E
+PADV4   = VI4 INTERACT PADM4E
+PADV5   = VI5 INTERACT PADM5E
+PADV6   = VI6 INTERACT PADM6E
+
+//----- define Long Metal PAD region -----//
+
+LONG_PAD     = EXTENTS ( PAD WITH EDGE ( LENGTH PAD > 100 ) )
+LONG_PADM1E  = RECTANGLE PADM1E >= 100.00 BY >= 50.00
+LONG_PADM2E  = RECTANGLE PADM2E >= 100.00 BY >= 50.00
+LONG_PADM3E  = RECTANGLE PADM3E >= 100.00 BY >= 50.00
+LONG_PADM4E  = RECTANGLE PADM4E >= 100.00 BY >= 50.00
+LONG_PADM5E  = RECTANGLE PADM5E >= 100.00 BY >= 50.00
+LONG_PADM6E  = RECTANGLE PADM6E >= 100.00 BY >= 50.00
+
+//----- define Metal PAD corner region -----//
+
+BULK_CORNER_1 = INT BULK < 550 ABUT == 90 PERP ONLY REGION
+BULK_CORNER   = EXTENTS BULK_CORNER_1
+CORNER_PAD_M1 = PADM1_AREA INTERACT BULK_CORNER
+CORNER_PAD_M2 = PADM2_AREA INTERACT BULK_CORNER
+CORNER_PAD_M3 = PADM3_AREA INTERACT BULK_CORNER
+CORNER_PAD_M4 = PADM4_AREA INTERACT BULK_CORNER
+CORNER_PAD_M5 = PADM5_AREA INTERACT BULK_CORNER
+CORNER_PAD_M6 = PADM6_AREA INTERACT BULK_CORNER
+    
+//=============================
+//== Generation Option Setup ==
+//=============================   
+
+#IFDEF   GENERATION11
+//For 0.11 process
+VARIABLE  G  0.18
+VARIABLE  H  0.54
+VARIABLE  I  0.18
+#ENDIF
+
+#IFDEF   GENERATION15
+//For 0.15 process
+VARIABLE  G  0.22
+VARIABLE  H  0.66
+VARIABLE  I  0.22
+#ENDIF
+
+#IFDEF   GENERATION18
+//For 0.18 process
+VARIABLE  G  0.28
+VARIABLE  H  0.84
+VARIABLE  I  0.28
+#ENDIF
+
+#IFDEF   GENERATION25
+//For 0.25 process
+VARIABLE  G  0.4
+VARIABLE  H  1.2
+VARIABLE  I  0.4
+#ENDIF
+
+
+#IFDEF   GENERATION30
+//For 0.30 process
+VARIABLE  G  0.45
+VARIABLE  H  1.29
+VARIABLE  I  0.42
+#ENDIF
+
+
+#IFDEF   GENERATION35
+//For 0.35 process
+VARIABLE  G  0.45
+VARIABLE  H  1.45
+VARIABLE  I  0.5
+#ENDIF
+
+
+#IFDEF   GENERATION45
+//For 0.45 process
+VARIABLE  G  0.54
+VARIABLE  H  1.52
+VARIABLE  I  0.49
+#ENDIF
+
+#IFDEF   GENERATION50
+//For 0.50 process
+VARIABLE  G  0.6
+VARIABLE  H  1.7
+VARIABLE  I  0.55
+#ENDIF
+    
+//====================================
+//== inline/staggered  Option Setup ==
+//==================================== 
+
+#IFDEF   PAD_INLINE 
+DRC UNSELECT CHECK PAD_stagger
+GROUP PAD_inline ?inline?
+GROUP PAD_stagger ?stagger?
+#ENDIF
+
+#IFDEF   PAD_STAGGER  
+DRC UNSELECT CHECK PAD_inline
+GROUP PAD_inline ?inline?
+GROUP PAD_stagger ?stagger?
+#ENDIF
+    
+
+
+//==================
+//=== Rule Check ===
+//==================    
+    
+
+5.1A.inline {@ Minimum pad window size is 43um X 56um
+   PADE = EXTENTS PAD
+   NOT RECTANGLE PADE >= 43.00 BY >= 56.00
+}
+
+5.1A.stagger {@ Minimum pad window size is 52um X 56um
+   PADE = EXTENTS PAD
+   NOT RECTANGLE PADE >= 52.00 BY >= 56.00
+}
+
+5.1A1.inline {@ Minimum pad metal6 size is 47um X 60um
+   NOT RECTANGLE PADM6E >= 47.00 BY >= 60.00    
+}
+
+5.1A1.stagger {@ Minimum pad metal6 size is 56um X 60um
+   NOT RECTANGLE PADM6E >= 56.00 BY >= 60.00    
+}
+
+5.1A2.inline {@ Minimum pad window size is 146um X 56um
+   NOT RECTANGLE LONG_PAD >= 146.00 BY >= 56.00
+}
+
+5.1A2.stagger {@ Minimum pad window size is 146um X 52um
+   NOT RECTANGLE LONG_PAD >= 146.00 BY >= 52.00
+}
+
+5.1A3.inline {@ Minimum pad metal6 size is 150um X 60um
+   NOT RECTANGLE LONG_PADM6E >= 150.00 BY >= 60.00    
+}
+
+5.1A3.stagger {@ Minimum pad metal6 size is 150um X 56um
+   NOT RECTANGLE LONG_PADM6E >= 150.00 BY >= 56.00    
+}
+
+5.1B.inline {@ Minimum pad window spacing is 7um
+   EXT PAD < 7 ABUT SINGULAR REGION
+}
+
+5.1B.stagger {@ Minimum pad window spacing is 18um
+   EXT PAD < 18 ABUT SINGULAR  REGION
+}
+
+5.1C.inline {@ Minimum pad pitch is 50um
+   X = EXTENTS PAD CENTERS
+   EXT X < 49 ABUT>0<90 SINGULAR REGION  // 50 - 1 = 49
+}
+
+5.1C.stagger {@ Minimum pad pitch is 70um
+   X = EXTENTS PAD CENTERS
+   EXT X < 69 ABUT>0<90 SINGULAR REGION  // 70 - 1 = 69
+}
+
+5.1D.inline {@ Minimum enclosure of pad metal6 and pad window is 2um
+   ENC PAD ME6 < 2 ABUT SINGULAR OVERLAP OUTSIDE ALSO REGION
+   PAD NOT ME6
+}
+
+5.1D_stagger {@ Minimum enclosure of pad metal6 and pad window is 2um
+   ENC PAD ME6 < 2 ABUT SINGULAR OVERLAP OUTSIDE ALSO REGION
+   PAD NOT ME6
+}
+
+5.1E {@ Minimum enclosure of pad metal6 and mvia5 is 2um
+   ENC PADV5 ME6 < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.1F_NWEL {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+           @ Minimum PAD Metal6 to N_WELL spacing is 10um
+   PADM6C = STAMP PADM6_AREA BY ME6
+   EXT PADM6C NWEL < 10 ABUT<90 SINGULAR OVERLAP NOT CONNECTED REGION
+}
+
+5.1F_DIFF {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+           @ Minimum PAD Metal6 to DIFFUSION spacing is 10um
+   PADM6C = STAMP PADM6_AREA BY ME6
+   EXT PADM6C DIFF < 10 ABUT<90 SINGULAR OVERLAP NOT CONNECTED REGION
+}
+
+5.1F_POLY1 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+            @ Minimum PAD Metal6 to POLY1 spacing is 10um
+   PADM6C = STAMP PADM6_AREA BY ME6
+   EXT PADM6C PO1 < 10 ABUT<90 SINGULAR OVERLAP NOT CONNECTED REGION
+}
+
+5.1F_POLY0 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+            @ Minimum PAD Metal6 to POLY0 spacing is 10um
+   PADM6C = STAMP PADM6_AREA BY ME6
+   EXT PADM6C PO0 < 10 ABUT<90 SINGULAR OVERLAP NOT CONNECTED REGION
+}
+
+5.1F_POLY2 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+            @ Minimum PAD Metal6 to POLY2 spacing is 10um
+   PADM6C = STAMP PADM6_AREA BY ME6
+   EXT PADM6C PO2 < 10 ABUT<90 SINGULAR OVERLAP NOT CONNECTED REGION
+}
+    
+5.1F_M1 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL1 spacing is 2um
+   EXT PADM6_AREA ME1 < 2 ABUT>0<90 SINGULAR REGION
+}
+    
+5.1F_M2 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL2 spacing is 2um
+   EXT PADM6_AREA ME2 < 2 ABUT>0<90 SINGULAR REGION
+}
+    
+5.1F_M3 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL3 spacing is 2um
+   EXT PADM6_AREA ME3 < 2 ABUT>0<90 SINGULAR REGION
+}
+    
+5.1F_M4 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL4 spacing is 2um
+   EXT PADM6_AREA ME4 < 2 ABUT>0<90 SINGULAR REGION
+}
+    
+5.1F_M5 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL5 spacing is 2um
+   EXT PADM6_AREA ME5 < 2 ABUT>0<90 SINGULAR REGION
+}
+    
+5.1F_M6 {@ Minimum PAD Metal6 to unreleated conduction layer rule:
+         @ Minimum PAD Metal6 to METAL6 spacing is 2um
+   EXT PADM6_AREA ME6 < 2 ABUT>0<90 SINGULAR REGION
+}
+        
+5.1.extra {@ Incorrect PAD metal6
+   ( ME6 AND PAD ) NOT PADM6E 
+   ( PAD INTERACT ME6 ) NOT ME6
+}
+
+
+//5.1G {@ Minimum spacing between pad metal and scribe line
+// Refer to TLR
+//}     //5.1G not check
+
+
+5.1H.a.inline {@ Minimum spacing between pad metals for
+               @ the four pad metals in a row closest to any die corner is 33um
+   EXT CORNER_PAD_M6 < 33 ABUT<90 SPACE SINGULAR REGION
+}
+
+5.1H.a.stagger {@ Minimum spacing between pad metals for
+                @ the four pad metals in a row closest to any die corner is 44um
+   EXT CORNER_PAD_M6 < 44 ABUT<90 SPACE SINGULAR REGION
+}
+
+5.1H.b_inline {@ Minimum spacing between pad metal is 3um
+   EXT PADM6_AREA < 3 ABUT<90 SPACE SINGULAR REGION
+}
+
+5.1H.b_stagger {@ Minimum spacing between pad metals is 14um
+   EXT PADM6_AREA < 14 ABUT<90 SPACE SINGULAR REGION
+}
+
+// 5.1I,5.1J not checking
+
+
+// For PAD METAL1 and VI1 structures checking
+
+
+ME1_SLOT = M1H INSIDE PADM1_AREA
+
+5.2A_M1 {@ Exact Metal-1 Slot width and length 3um X 3um
+   NOT RECTANGLE ME1_SLOT == 3  BY == 3
+}
+
+// TLR check Exact, but it will get false violations and cannot check Maximum. So DRC only checks minimum.
+5.2B_M1 {@ Minimum slot to Metal1 edge spacing 10 um
+   ENC ( ME1_SLOT AND PADM1_AREA ) PADM1E_NOSLOT < 10.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2C_M1 {@ Minimum spacing between slot is 3 um
+   EXT ME1_SLOT < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+// 5.2D_M1 not checking
+
+5.2E_V1_M1 {@ Minimum enclosure of Metal1 outer edge to VIA1 spacing 2 um
+   ENC PADV1 PADM1E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2E_V1_M2 {@ Minimum enclosure of Metal2 outer edge to VIA1 spacing 2 um
+   ENC PADV1 PADM2E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2F_V1_M1 {@ Minimum slot to VIA1 spacing 0.5 um
+   EXT PADV1 ME1_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV1 NOT ME1 // MVIA1 should be inside METAL1 region
+}
+        
+5.2F_V1_M2 {@ Minimum slot to VIA1 spacing 0.5 um
+   EXT PADV1 ME2_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV1 NOT ME2 // MVIA1 should be inside METAL2 region
+}
+        
+5.2G_V1 {@ Minimum and maximum width of a MVIA1 region is ^G um
+   NOT RECTANGLE PADV1 == G BY == G
+}
+
+5.2H_V1 {@ Minimum space between two VI1 regions is ^H um
+   EXT PADV1 < H ABUT>0<90 PROJECTING SINGULAR REGION
+}
+
+5.2I_V1_V2 {@ Minimum VI1 to VI2 spacing is ^I um, no VI1 on VI2
+   EXT PADV1 PADV2 < I ABUT SINGULAR OVERLAP INSIDE ALSO REGION
+}
+
+// For PAD METAL2 and VI2 structures checking
+
+
+ME2_SLOT = M2H INSIDE PADM2_AREA
+
+5.2A_M2 {@ Exact Metal-2 Slot width and length 3um X 3um
+   NOT RECTANGLE ME2_SLOT == 3  BY == 3
+}
+
+// TLR check Exact, but it will get false violations and cannot check Maximum. So DRC only checks minimum.
+5.2B_M2 {@ Minimum slot to Metal2 edge spacing 10 um
+   ENC ( ME2_SLOT AND PADM2_AREA ) PADM2E_NOSLOT < 10.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2C_M2 {@ Minimum spacing between slot is 3 um
+   EXT ME2_SLOT < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+// 5.2D_M2 not checking
+
+5.2E_V2_M2 {@ Minimum enclosure of Metal2 outer edge to VIA2 spacing 2 um
+   ENC PADV2 PADM2E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2E_V2_M3 {@ Minimum enclosure of Metal3 outer edge to VIA2 spacing 2 um
+   ENC PADV2 PADM3E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2F_V2_M2 {@ Minimum slot to VIA2 spacing 0.5 um
+   EXT PADV2 ME2_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV2 NOT ME2 // MVIA2 should be inside METAL2 region
+}
+        
+5.2F_V2_M3 {@ Minimum slot to VIA2 spacing 0.5 um
+   EXT PADV2 ME3_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV2 NOT ME3 // MVIA2 should be inside METAL3 region
+}
+        
+5.2G_V2 {@ Minimum and maximum width of a MVIA2 region is ^G um
+   NOT RECTANGLE PADV2 == G BY == G
+}
+
+5.2H_V2 {@ Minimum space between two VI2 regions is ^H um
+   EXT PADV2 < H ABUT>0<90 PROJECTING SINGULAR REGION
+}
+
+5.2I_V2_V3 {@ Minimum VI2 to VI3 spacing is ^I um, no VI2 on VI3
+   EXT PADV2 PADV3 < I ABUT SINGULAR OVERLAP INSIDE ALSO REGION
+}
+
+// For PAD METAL3 and VI3 structures checking
+
+
+ME3_SLOT = M3H INSIDE PADM3_AREA
+
+5.2A_M3 {@ Exact Metal-3 Slot width and length 3um X 3um
+   NOT RECTANGLE ME3_SLOT == 3  BY == 3
+}
+
+// TLR check Exact, but it will get false violations and cannot check Maximum. So DRC only checks minimum.
+5.2B_M3 {@ Minimum slot to Metal3 edge spacing 10 um
+   ENC ( ME3_SLOT AND PADM3_AREA ) PADM3E_NOSLOT < 10.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2C_M3 {@ Minimum spacing between slot is 3 um
+   EXT ME3_SLOT < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+// 5.2D_M3 not checking
+
+5.2E_V3_M3 {@ Minimum enclosure of Metal3 outer edge to VIA3 spacing 2 um
+   ENC PADV3 PADM3E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2E_V3_M4 {@ Minimum enclosure of Metal4 outer edge to VIA3 spacing 2 um
+   ENC PADV3 PADM4E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2F_V3_M3 {@ Minimum slot to VIA3 spacing 0.5 um
+   EXT PADV3 ME3_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV3 NOT ME3 // MVIA3 should be inside METAL3 region
+}
+        
+5.2F_V3_M4 {@ Minimum slot to VIA3 spacing 0.5 um
+   EXT PADV3 ME4_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV3 NOT ME4 // MVIA3 should be inside METAL4 region
+}
+        
+5.2G_V3 {@ Minimum and maximum width of a MVIA3 region is ^G um
+   NOT RECTANGLE PADV3 == G BY == G
+}
+
+5.2H_V3 {@ Minimum space between two VI3 regions is ^H um
+   EXT PADV3 < H ABUT>0<90 PROJECTING SINGULAR REGION
+}
+
+5.2I_V3_V4 {@ Minimum VI3 to VI4 spacing is ^I um, no VI3 on VI4
+   EXT PADV3 PADV4 < I ABUT SINGULAR OVERLAP INSIDE ALSO REGION
+}
+
+// For PAD METAL4 and VI4 structures checking
+
+
+ME4_SLOT = M4H INSIDE PADM4_AREA
+
+5.2A_M4 {@ Exact Metal-4 Slot width and length 3um X 3um
+   NOT RECTANGLE ME4_SLOT == 3  BY == 3
+}
+
+// TLR check Exact, but it will get false violations and cannot check Maximum. So DRC only checks minimum.
+5.2B_M4 {@ Minimum slot to Metal4 edge spacing 10 um
+   ENC ( ME4_SLOT AND PADM4_AREA ) PADM4E_NOSLOT < 10.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2C_M4 {@ Minimum spacing between slot is 3 um
+   EXT ME4_SLOT < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+// 5.2D_M4 not checking
+
+5.2E_V4_M4 {@ Minimum enclosure of Metal4 outer edge to VIA4 spacing 2 um
+   ENC PADV4 PADM4E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2E_V4_M5 {@ Minimum enclosure of Metal5 outer edge to VIA4 spacing 2 um
+   ENC PADV4 PADM5E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2F_V4_M4 {@ Minimum slot to VIA4 spacing 0.5 um
+   EXT PADV4 ME4_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV4 NOT ME4 // MVIA4 should be inside METAL4 region
+}
+        
+5.2F_V4_M5 {@ Minimum slot to VIA4 spacing 0.5 um
+   EXT PADV4 ME5_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV4 NOT ME5 // MVIA4 should be inside METAL5 region
+}
+        
+5.2G_V4 {@ Minimum and maximum width of a MVIA4 region is ^G um
+   NOT RECTANGLE PADV4 == G BY == G
+}
+
+5.2H_V4 {@ Minimum space between two VI4 regions is ^H um
+   EXT PADV4 < H ABUT>0<90 PROJECTING SINGULAR REGION
+}
+
+5.2I_V4_V5 {@ Minimum VI4 to VI5 spacing is ^I um, no VI4 on VI5
+   EXT PADV4 PADV5 < I ABUT SINGULAR OVERLAP INSIDE ALSO REGION
+}
+
+// For PAD METAL5 and VI5 structures checking
+
+
+ME5_SLOT = M5H INSIDE PADM5_AREA
+
+5.2A_M5 {@ Exact Metal-5 Slot width and length 3um X 3um
+   NOT RECTANGLE ME5_SLOT == 3  BY == 3
+}
+
+// TLR check Exact, but it will get false violations and cannot check Maximum. So DRC only checks minimum.
+5.2B_M5 {@ Minimum slot to Metal5 edge spacing 10 um
+   ENC ( ME5_SLOT AND PADM5_AREA ) PADM5E_NOSLOT < 10.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2C_M5 {@ Minimum spacing between slot is 3 um
+   EXT ME5_SLOT < 3.0 ABUT>0<90 SINGULAR REGION
+}
+
+// 5.2D_M5 not checking
+
+5.2E_V5_M5 {@ Minimum enclosure of Metal5 outer edge to VIA5 spacing 2 um
+   ENC PADV5 PADM5E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2E_V5_M6 {@ Minimum enclosure of Metal6 outer edge to VIA5 spacing 2 um
+   ENC PADV5 PADM6E_NOSLOT < 2.0 ABUT<90 SINGULAR OVERLAP REGION
+}
+
+5.2F_V5_M5 {@ Minimum slot to VIA5 spacing 0.5 um
+   EXT PADV5 ME5_SLOT < 0.5 ABUT>0<90 SINGULAR REGION
+   PADV5 NOT ME5 // MVIA5 should be inside METAL5 region
+}
+        
+5.2G_V5 {@ Minimum and maximum width of a MVIA5 region is ^G um
+   NOT RECTANGLE PADV5 == G BY == G
+}
+
+5.2H_V5 {@ Minimum space between two VI5 regions is ^H um
+   EXT PADV5 < H ABUT>0<90 PROJECTING SINGULAR REGION
+}
+        
+// Top Metal at PAD region should not have hollow
+// 5.2 section does not need checking Top Metal region
+        
+
+5.2.1 {@ PAD area Top Metal6 should not have metal-slot
+   HOLES (PAD AND ME6)
+}
+
+5.2.2_M1 {@ Adding METAL1 pad is optional. However, if METAL1 pad is added
+             @ METAL1 should have metal-slot at PAD region
+   PADM1_AREA NOT INTERACT M1H
+}
+
+5.2.2_M2 {@ Adding METAL2 pad is optional. However, if METAL2 pad is added
+             @ METAL2 should have metal-slot at PAD region
+   PADM2_AREA NOT INTERACT M2H
+}
+
+5.2.2_M3 {@ Adding METAL3 pad is optional. However, if METAL3 pad is added
+             @ METAL3 should have metal-slot at PAD region
+   PADM3_AREA NOT INTERACT M3H
+}
+
+5.2.2_LTM {@ Third topmost metal4 should have metal-slot
+           @ PAD area should be with the third topmost metal. 
+   PAD NOT INTERACT M4H
+}
+
+5.2.2_LSM {@ Second topmost metal5 should have metal-slot
+           @ PAD area should be with the second topmost metal. 
+   PAD NOT INTERACT M5H
+}
+
+5.2.3 {@ Pad structure consist : three topmost metal layer is necessary in PAD area.
+       @ Pad edge should be inside metal area 
+   NOT PAD ME6
+   NOT PAD PADM5E_NOSLOT
+   NOT PAD PADM4E_NOSLOT 
+}

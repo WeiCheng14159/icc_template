@@ -2,7 +2,7 @@
 
 `define ANSTXT "ans.txt"
 `define TOTAL_CYCLES 8192
-`define CYCLE 10
+`define CYCLE 50
 
 module traffic_light_tb;
 

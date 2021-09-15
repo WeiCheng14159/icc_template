@@ -4,6 +4,19 @@
 *.fsdb
 *.dc
 *.sdf
+*.gds
+*.err
+*.bak
+# DRC
+*.db
+*.sum
+# LVS
+*.rep
+*.rep.ext
+*layout.spi
+*source.spi
+*svdb/
+icc/run/
 jgproject/
 syn/
 build/
