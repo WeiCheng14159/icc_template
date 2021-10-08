@@ -4,7 +4,6 @@
 *.fsdb
 *.dc
 *.sdf
-*.gds
 *.err
 *.bak
 # DRC
