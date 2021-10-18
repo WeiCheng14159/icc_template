@@ -27,5 +27,5 @@ source ../scripts/createNplace_bondpads_umc.tcl
 #createNplace_bondpads -inline_pad_ref_name BONDPADCGU_m -stagger true -stagger_pad_ref_name BONDPADCNU_m
 createNplace_bondpads -inline_pad_ref_name BONDPADD_m
 
-#save_mw_cel -design "CHIP"
-#save_mw_cel -design "CHIP" -as "dfm"
+save_mw_cel -design "CHIP"
+save_mw_cel -design "CHIP" -as "dfm"
