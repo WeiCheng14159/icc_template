@@ -37,7 +37,7 @@ else
 	IO_CELL          =
 endif
 
-.PHONY: default init check rtl nw sv syn syn_chip syn_init icc_init autosyn pre pre_chip pre_sv clean gen_def
+.PHONY: default init check rtl nw sv syn syn_chip syn_init icc_init autosyn pre pre_chip pre_sv clean gen_def format
 
 # Show available all command
 default:
@@ -87,6 +87,10 @@ gen_hex:
 # Check HDL syntax
 check:
 	jg -superlint $(SCRIPT_DIR)/superlint.tcl &
+
+# Format SystemVerilog/Verilog files in $(SRC_DIR)
+format:
+	find $(SRC_DIR) -name "*.sv" -or -name "*.v" -or -name "*.svh" | xargs verible-verilog-format --inplace
 
 # Run RTL simulation
 rtl: $(BUILD) gen_def cp_tb_src
