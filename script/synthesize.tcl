@@ -9,7 +9,7 @@ current_design [get_designs ${top}]
 link
 
 # Setting Clock Constraits
-source -echo -verbose ../script/${proc}/${top}.sdc.${proc}
+source -echo -verbose ../script/${top}.sdc
 
 # High fanout threshold
 set high_fanout_net_threshold 0

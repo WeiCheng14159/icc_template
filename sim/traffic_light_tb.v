@@ -40,8 +40,8 @@ always #(`CYCLE / 2) sysclk = ~sysclk;
 
 // Wave
 initial begin
-    $shm_open(`SHM_FILE);
-    $shm_probe("ASM");
+   // $shm_open(`SHM_FILE);
+   // $shm_probe("ASM");
     $fsdbDumpfile(`FSDB_FILE);
     $fsdbDumpvars;
     $fsdbDumpMDA;

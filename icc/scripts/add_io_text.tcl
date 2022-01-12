@@ -1,1 +1,0 @@
-/usr/cad/CBDK/CBDK018_UMC_Faraday_v1.0/CIC/ICC/add_io_text.tcl

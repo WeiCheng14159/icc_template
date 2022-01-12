@@ -1,1 +1,0 @@
-/usr/cad/CBDK/CBDK018_UMC_Faraday_v1.0/CIC/ICC/umc_018_1p6m_mk_20ka_cic.tf
