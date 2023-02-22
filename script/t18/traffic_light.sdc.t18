@@ -1,4 +1,4 @@
-# CHIP Level Constraint
+# Design Constraint
 set cycle  50.0        ; # clock period defined by designer
 set t_in   5.0         ; # input delay defined by designer
 set t_out  1.0         ; # output delay defined by designer

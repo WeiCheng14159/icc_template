@@ -17,7 +17,7 @@ SRC=$(filter-out $(SRC_DIR)/CHIP.v, $(shell ls $(SRC_DIR)/*.v))
 TB_SRC=$(SIM_DIR)/ans.txt
 
 # icc, u18, t18
-PROC               =t18
+PROC               =u18
 ifeq ($(PROC), icc)
 	CBDK_DIR         =/usr/cad/lib/CBDK_IC_Contest_v2.1/Verilog
 	CORE_CELL        =tsmc13_neg.v
@@ -105,7 +105,7 @@ synthesize: $(BUILD) syn_init
 	rm -rf $(SYN_DIR)/*; \
 	cd $(BUILD_DIR); \
 	cp $(SCRIPT_DIR)/${PROC}/synopsys_dc.setup.$(PROC) $(BUILD_DIR)/.synopsys_dc.setup; \
-	dcnxt_shell -f $(SCRIPT_DIR)/synthesize.tcl -x "set proc ${PROC}";
+	dcnxt_shell -f $(SCRIPT_DIR)/dc_syn.tcl -x "set proc ${PROC}";
 
 # Run gate-level simulation (nWave)
 syn: $(BUILD) cp_tb_src syn_init
@@ -127,7 +127,7 @@ synthesize_chip: $(BUILD) syn_init cp_CHIP_v
 	rm -rf $(SYN_DIR)/*; \
 	cd $(BUILD_DIR); \
 	cp $(SCRIPT_DIR)/${PROC}/synopsys_dc.setup.$(PROC) $(BUILD_DIR)/.synopsys_dc.setup; \
-	dcnxt_shell -f $(SCRIPT_DIR)/synthesize_chip.tcl -x "set proc ${PROC}";
+	dcnxt_shell -f $(SCRIPT_DIR)/dc_syn_chip.tcl -x "set proc ${PROC}";
 
 # Run gate-level simulation (nWave)
 syn_chip: $(BUILD) cp_tb_src syn_init cp_CHIP_v
