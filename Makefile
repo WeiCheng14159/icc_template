@@ -52,10 +52,6 @@ icc_init:
 	mkdir -p $(APR_DIR)/verify/drc; \
 	mkdir -p $(APR_DIR)/verify/lvs;
 
-# Generate header
-gen_def:
-	sh $(SRC_DIR)/gen_def.sh > $(SRC_DIR)/def.v; \
-
 cp_tb_src: gen_hex
 	cd $(BUILD_DIR); \
 	cp $(TB_SRC) .;
@@ -69,7 +65,7 @@ check:
 	jg -superlint $(SCRIPT_DIR)/superlint.tcl &
 
 # Run RTL simulation
-rtl: $(BUILD) gen_def cp_tb_src
+rtl: $(BUILD) cp_tb_src
 	cd $(BUILD_DIR); \
 	ncverilog $(SIM_DIR)/$(TB_TOP).v $(SRC) \
 	+incdir+$(SRC_DIR) \
@@ -79,9 +75,8 @@ rtl: $(BUILD) gen_def cp_tb_src
 
 # View waveform using nWave
 nw: $(BUILD)
-	cp $(NC_DIR)/rtl.rc $(BUILD_DIR); \
 	cd $(BUILD_DIR); \
-	nWave -f $(TOP).fsdb -sswr $(NC_DIR)/rtl.rc +access+r +nc64bit &
+	nWave -f $(TOP).fsdb -sswr $(NC_DIR)/signal.rc +access+r +nc64bit &
 
 # Run synthesize with Design Compiler
 synthesize: $(BUILD) syn_init
