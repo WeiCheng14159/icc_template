@@ -1,4 +1,4 @@
-// This is generated automatically on 2021/09/03-01:03:41
+<<<<<<< HEAD
 // Check the # of bits for state registers !!!
 // Check the # of bits for flag registers !!!
 
