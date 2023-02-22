@@ -88,7 +88,7 @@ synthesize: $(BUILD) syn_init
 	rm -rf $(SYN_DIR)/*; \
 	cd $(BUILD_DIR); \
 	cp $(SCRIPT_DIR)/synopsys_dc.setup $(BUILD_DIR)/.synopsys_dc.setup; \
-	dcnxt_shell -f $(SCRIPT_DIR)/synthesize.tcl;
+	dcnxt_shell -f $(SCRIPT_DIR)/dc_syn.tcl;
 
 # Auto run synthesize with Design Compiler
 autosyn: $(BUILD) syn_init
