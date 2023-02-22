@@ -17,7 +17,7 @@ SRC=$(filter-out $(SRC_DIR)/CHIP.v, $(shell ls $(SRC_DIR)/*.v))
 TB_SRC=$(SIM_DIR)/ans.txt
 
 # icc, u18, t18
-PROC               =u18
+PROC               =t18
 ifeq ($(PROC), icc)
 	CBDK_DIR         =/usr/cad/lib/CBDK_IC_Contest_v2.1/Verilog
 	CORE_CELL        =tsmc13_neg.v
@@ -80,6 +80,10 @@ gen_hex:
 # Check HDL syntax
 check:
 	jg -superlint $(SCRIPT_DIR)/superlint.tcl &
+
+# Format SystemVerilog/Verilog files in $(SRC_DIR)
+format:
+	find $(SRC_DIR) -name "*.sv" -or -name "*.v" -or -name "*.svh" | xargs verible-verilog-format --inplace
 
 # Run RTL simulation
 rtl: $(BUILD) cp_tb_src
