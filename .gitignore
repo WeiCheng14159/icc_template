@@ -6,16 +6,44 @@
 *.sdf
 *.err
 *.bak
-# DRC
+
+# Calibre DRC
 *.db
 *.sum
-# LVS
+
+# Calibre LVS
 *.rep
 *.rep.ext
 *layout.spi
 *source.spi
 *svdb/
+
 icc/run/
 jgproject/
 syn/
 build/
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
