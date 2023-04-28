@@ -33,7 +33,7 @@ module dp (
   assign Y = state[`S_Y];
   assign R = state[`S_R];
 
-  reg  [`CNT_W-1:0]                            cnt;
+  reg  [`CNT_W-1:0] cnt;
   wire [`CNT_W-1:0] cnt_zero = {`CNT_W{1'b0}};
 
   // Interrupts

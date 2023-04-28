@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Check the # of bits for state registers !!!
 // Check the # of bits for flag registers !!!
 

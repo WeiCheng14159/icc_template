@@ -9,13 +9,13 @@ module ctrl (
     input                     pass
 );
 
-  reg                                 [`STATE_W-1:0] next_state;
-  reg                                 [  `CNT_W-1:0] cnt;
+  reg  [`STATE_W-1:0] next_state;
+  reg  [  `CNT_W-1:0] cnt;
 
-  wire init_done = fb_flags[`S_INIT];
-  wire turn_yellow = fb_flags[`S_G];
-  wire turn_red = fb_flags[`S_Y];
-  wire turn_end = fb_flags[`S_R];
+  wire                init_done = fb_flags[`S_INIT];
+  wire                turn_yellow = fb_flags[`S_G];
+  wire                turn_red = fb_flags[`S_Y];
+  wire                turn_end = fb_flags[`S_R];
 
   // State Register (S)
   always @(posedge clk, posedge reset) begin
