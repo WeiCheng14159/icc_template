@@ -5,4 +5,4 @@ for d in */ ; do
     cd ..
 done
 
-more *.sum > DRC.all.sum
+more *.sum > DRC.all.summary
