@@ -4,7 +4,6 @@ BUILD_DIR          =$(ROOT_DIR)/$(BUILD)
 SRC_DIR            =$(ROOT_DIR)/src
 SIM_DIR            =$(ROOT_DIR)/sim
 SYN_DIR            =$(ROOT_DIR)/syn
-APR_DIR            =$(ROOT_DIR)/icc
 SCRIPT_DIR         =$(ROOT_DIR)/script
 REPORT_DIR         =$(ROOT_DIR)/report
 NC_DIR             =$(ROOT_DIR)/conf
@@ -36,6 +35,8 @@ else
 	IO_CELL          =
 endif
 
+APR_DIR            =$(ROOT_DIR)/icc/$(PROC)/run
+
 .PHONY: default init check rtl nw sv syn syn_chip syn_init icc_init autosyn pre pre_chip pre_sv clean
 
 # Show available all command
@@ -61,10 +62,10 @@ syn_init:
 	mkdir -p $(SYN_DIR);
 
 icc_init:
-	mkdir -p $(APR_DIR)/design_data; \
-	mkdir -p $(APR_DIR)/run; \
-	mkdir -p $(APR_DIR)/verify/drc; \
-	mkdir -p $(APR_DIR)/verify/lvs;
+	mkdir -p $(APR_DIR); \
+	mkdir -p $(APR_DIR)/../design_data; \
+	mkdir -p $(APR_DIR)/../verify/drc; \
+	mkdir -p $(APR_DIR)/../verify/lvs;
 
 cp_tb_src: gen_hex
 	cd $(BUILD_DIR); \
@@ -92,7 +93,6 @@ rtl: $(BUILD) cp_tb_src
 	+incdir+$(SRC_DIR) \
 	+nc64bit \
 	+access+r \
-	+define+SHM_FILE=\"$(TOP).shm\" \
 	+define+FSDB_FILE=\"$(TOP).fsdb\"
 
 # View waveform using nWave
@@ -110,15 +110,25 @@ synthesize: $(BUILD) syn_init
 # Run gate-level simulation (nWave)
 syn: $(BUILD) cp_tb_src syn_init
 	cd $(BUILD_DIR); \
-	cp $(SYN_DIR)/$(TOP)_syn.sdf $(BUILD_DIR); \
 	ncverilog $(SIM_DIR)/$(TB_TOP).v $(SYN_DIR)/$(TOP)_syn.v \
 	-v $(CBDK_DIR)/$(CORE_CELL) \
 	+nc64bit \
 	+access+r \
-	+define+SHM_FILE=\"$(TOP).shm\" \
 	+define+FSDB_FILE=\"$(TOP).fsdb\" \
 	+define+SDF \
 	+define+SDFFILE=\"$(SYN_DIR)/$(TOP)_syn.sdf\"
+
+# Run post-apr simulation (nWave)
+pr: $(BUILD) cp_tb_src
+	cd $(BUILD_DIR); \
+	cp $(APR_DIR)/$(TOP)_pr.sdf $(BUILD_DIR); \
+	ncverilog $(SIM_DIR)/$(TB_TOP).v $(APR_DIR)/$(TOP)_pr.v \
+	-v $(CBDK_DIR)/$(CORE_CELL) \
+	+nc64bit \
+	+access+r \
+	+define+FSDB_FILE=\"$(TOP).fsdb\" \
+	+define+SDF \
+	+define+SDFFILE=\"$(APR_DIR)/$(TOP)_pr.sdf\"
 
 ### chip-level ###
 
@@ -132,13 +142,11 @@ synthesize_chip: $(BUILD) syn_init cp_CHIP_v
 # Run gate-level simulation (nWave)
 syn_chip: $(BUILD) cp_tb_src syn_init cp_CHIP_v
 	cd $(BUILD_DIR); \
-	cp $(SYN_DIR)/CHIP_syn.sdf $(BUILD_DIR); \
 	ncverilog $(SIM_DIR)/$(TB_TOP).v $(SYN_DIR)/CHIP_syn.v \
 	-v $(CBDK_DIR)/$(CORE_CELL) \
 	-v $(CBDK_DIR)/$(IO_CELL) \
 	+nc64bit \
 	+access+r \
-	+define+SHM_FILE=\"$(TOP).shm\" \
 	+define+FSDB_FILE=\"$(TOP).fsdb\" \
 	+define+SDF \
 	+define+SDFFILE=\"$(SYN_DIR)/CHIP_syn.sdf\"
@@ -146,12 +154,16 @@ syn_chip: $(BUILD) cp_tb_src syn_init cp_CHIP_v
 # Run ICC APR flow
 icc: syn_init icc_init
 	if [ $(PROC) == "icc" ]; then \
-		print "$(PROC) doesn't support APR"; \
+		cp $(SYN_DIR)/${TOP}_syn.v $(APR_DIR)/../design_data; \
+		cp $(SYN_DIR)/${TOP}.sdc $(APR_DIR)/../design_data; \
+		cp $(SCRIPT_DIR)/${PROC}/synopsys_dc.setup.$(PROC) $(APR_DIR)/.synopsys_dc.setup; \
+		cd $(APR_DIR); \
+		icc_shell -gui; \
 	else \
-		cp $(SYN_DIR)/CHIP_syn.v $(APR_DIR)/design_data; \
-		cp $(SYN_DIR)/CHIP.sdc $(APR_DIR)/design_data; \
-		cp $(SCRIPT_DIR)/${PROC}/synopsys_dc.setup.$(PROC) $(APR_DIR)/run/.synopsys_dc.setup; \
-		cd $(APR_DIR)/run; \
+		cp $(SYN_DIR)/CHIP_syn.v $(APR_DIR)/../design_data; \
+		cp $(SYN_DIR)/CHIP.sdc $(APR_DIR)/../design_data; \
+		cp $(SCRIPT_DIR)/${PROC}/synopsys_dc.setup.$(PROC) $(APR_DIR)/.synopsys_dc.setup; \
+		cd $(APR_DIR); \
 		icc_shell -gui; \
 	fi
 

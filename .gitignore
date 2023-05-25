@@ -10,6 +10,7 @@
 # Calibre DRC
 *.db
 *.sum
+*.density
 
 # Calibre LVS
 *.rep
@@ -18,7 +19,7 @@
 *source.spi
 *svdb/
 
-icc/run/
+icc/*/run/
 jgproject/
 syn/
 build/

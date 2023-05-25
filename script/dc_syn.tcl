@@ -47,7 +47,7 @@ change_names -hierarchy -rules name_rule
 write -format ddc -hierarchy -output "${top}_syn.ddc"
 write_file -format verilog -hierarchy -output ../syn/${top}_syn.v
 write_sdf -version ${SDF_VERSION} -context verilog -load_delay net ../syn/${top}_syn.sdf
-write_sdc -version 2.0 ${top}.sdc
+write_sdc -version 2.0 ../syn/${top}.sdc
 report_area > area.log
 report_timing > timing.log
 report_qor > ${top}_syn.qor
